@@ -6,8 +6,8 @@ export const siteConfig = {
   description: "Generate insights and exclusive badges from your matches!",
 	navItems: [
 		{
-			label: "Upload",
-			href: "/replay-files", 
+			label: "Replays",
+			href: "/replays", 
 		},
     // {
     //   label: "Featured", 

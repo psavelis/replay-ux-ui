@@ -1,4 +1,4 @@
-"use client"
+
 
 import { Button } from '@nextui-org/button'
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/dropdown'
@@ -8,7 +8,6 @@ import { signIn, signOut, useSession } from 'next-auth/react'
 import { Kbd } from '@nextui-org/kbd'
 
 export const LoginButton = () => {
-  const { data: session } = useSession()
 return (
   <Dropdown>
     <DropdownTrigger>

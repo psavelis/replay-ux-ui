@@ -2,7 +2,7 @@
 'use client'
 import React, { useState } from 'react';
 import { Card, Input, Button, Spacer, Snippet, Chip, Tabs, Tab, CardBody, CardHeader, LinkIcon, Divider } from '@nextui-org/react';
-import { CopyDocumentIcon, MailIcon, SteamFadedIcon, SteamIcon } from '@/components/icons';
+import { CopyDocumentIcon, SteamIcon } from '@/components/icons';
 import { UploadForm } from '@/components/replay/upload/upload';
 import { logo, subtitle, title } from '@/components/primitives';
 
@@ -122,7 +122,7 @@ const SubmitReplay: React.FC = () => {
             <Divider />
             <Spacer y={4} />
             <Spacer y={2} />
-            <Snippet size="sm" color="primary" variant="bordered">export STEAM_DIR="C:\..."</Snippet>
+            <Snippet size="sm" color="primary" variant="bordered">{`export STEAM_DIR="C:\..."`}</Snippet>
             <Spacer y={10} />
             <Snippet size="sm" color="primary" variant="solid">docker run -v $STEAM_DIR:/dem_files</Snippet>
             </CardBody>

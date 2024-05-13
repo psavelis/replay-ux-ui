@@ -1,4 +1,4 @@
-export default function TapedeckLayout({
+export default function MatchLayout({
 	children,
 }: {
 	children: React.ReactNode;

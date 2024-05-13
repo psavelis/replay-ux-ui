@@ -32,16 +32,6 @@ export function UploadForm() {
     } 
   }
 
-   // axios.post("/api/uploa/replay", data, {
-  //   onUploadProgress: (progressEvent) => {
-  //     // console.log('progressEvent', progressEvent)
-  //     if (progressEvent.bytes) {
-  //       console.log(Math.round((progressEvent.loaded / progressEvent.total)*100));
-        
-  //     }
-  //   },
-  // });
-
   const onUploadFile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!file) {
@@ -65,18 +55,12 @@ export function UploadForm() {
             (progressEvent.loaded * 100) / progressEvent.total!
           );
           console.log(`Upload progress: ${percentCompleted}%`);
-          // Update your progress bar here
           setProgress(percentCompleted/2);
         },
       };
-  
-      // Use Axios to send the file
-      // const response = await axios.post("/api/upload/replay", formData, options);
-      // `${process.env.REPLAY_API_URL!}/games/${game_id}/replay`
 
       const response = await axios.post("http://localhost:4991/games/csgo/replay", formData, options);
-  
-      // Handle the response as needed
+
       console.log("Upload successful:", response.data);
       setProgress(100);
     } catch (error) {

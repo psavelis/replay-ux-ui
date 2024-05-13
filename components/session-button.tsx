@@ -5,7 +5,7 @@ import { DeleteDocumentIcon, LogOutIcon, Logo, PlusIcon, PowerButtonIcon, UserIc
 import { logo } from './primitives';
 import { button as buttonStyles } from "@nextui-org/theme";
 import { useSession, signIn, signOut } from "next-auth/react"
-import { VerticalDotsIcon } from '@/app/replay-files/VerticalDotsIcon';
+import { VerticalDotsIcon } from '@/app/replays/VerticalDotsIcon';
 
 export default function SessionButton() {
   const { data: session } = useSession();

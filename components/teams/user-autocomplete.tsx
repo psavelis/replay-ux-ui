@@ -50,7 +50,7 @@ export default function App() {
       radius="full"
       variant="bordered"
     >
-      {(item) => (
+      {(item: any) => (
         <AutocompleteItem key={item.id} textValue={item.name}>
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">

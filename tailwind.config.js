@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'dark_bg_tailwind' : "url('./public/dark_bg_tailwind.png')",
+        'dark_bg_tailwind' : "url('./dark_bg_tailwind.png')",
       }
     },
   },

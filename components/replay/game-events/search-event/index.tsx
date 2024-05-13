@@ -44,7 +44,7 @@ export default function SearchEvent() {
           content: "p-1 border-small border-default-100 bg-background",
         },
       }}
-      startContent={<SearchIcon className="text-default-500" strokeWidth={2.5} size={20} />}
+      startContent={<SearchIcon className="text-default-500" strokeWidth={2.5} size={20} width={undefined} height={undefined} />}
       radius="full"
       variant="bordered"
     >
