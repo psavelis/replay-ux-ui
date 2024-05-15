@@ -23,6 +23,7 @@ import PaymentForm from "./payment-form";
 import PaymentMethodRadio from "./payment-method-radio";
 import { logo } from '@/components/primitives';
 import { AddStarIcon, ShareIcon } from '@/components/icons';
+import DefaultLogo from '@/components/logo/DefautLogo';
 
 export default function MatchAnalyzer() {
   const [[page, direction], setPage] = React.useState([0, 0]);
@@ -157,7 +158,7 @@ export default function MatchAnalyzer() {
           <div className="flex items-center">
             {/* <AcmeIcon size={40} />
             <p className="font-semibold">ACME</p> */}
-            <p className="font-bold text-inherit">Team<span className={logo({ color: "blue" })}>PRO</span></p>
+            <DefaultLogo />
           </div>
           <div className="flex items-center gap-2">
             <p>

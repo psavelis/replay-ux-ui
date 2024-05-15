@@ -11,6 +11,7 @@ import Box from './box';
 import { logo } from '@/components/primitives';
 import { Chip, Divider, LinkIcon, Spacer } from '@nextui-org/react';
 import Head from 'next/head';
+import FooterColumns from '../footer-columns/app';
 
 export const metadata: Metadata = {
   title: {
@@ -61,40 +62,7 @@ export default function RootLayout({
               <main className="container mx-auto max-w pt-4 flex-grow">
                 {children}
               </main>
-              <footer className="w-full flex items-center justify-center py-3">
-                <Link
-                  isExternal
-                  className="flex items-center gap-1 text-current"
-                  href="https://d-ash.io?utm_source=next-app-template"
-                  title="nextui.org homepage"
-                >
-                  {/* <p><span className={logo()}>Team</span><span className={logo({ color: "blue" })}>PRO</span></p> | Powered by */}
-
-                  {/*                   
-                  <Chip
-                    // startContent={<SteamIcon size={18} />}
-                    variant="dot"
-                    color="danger"
-                  // endContent={<LinkIcon />}
-
-                  >
-                    <span className={logo({ color: "pink" })}>Replay<strong>API</strong>®</span>
-                  </Chip> */}
-
-                  <Chip
-                    // startContent={<SteamIcon size={18} />}
-                    variant="dot"
-                    color="danger"
-                  // endContent={<LinkIcon />}
-
-                  >
-                    <span className={logo({ color: "pink" })}>Replay<strong>API</strong>® </span>
-                    {/* <span className={logo({ color: "green" })}> LIVE<strong></strong></span> */}
-                  </Chip>
-
-
-                </Link>
-              </footer>
+               <FooterColumns />
             </div>
           </Providers>
         </Box>

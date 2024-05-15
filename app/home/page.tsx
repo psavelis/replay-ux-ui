@@ -1,51 +1,82 @@
-// import { Link } from "@nextui-org/link";
-// import { Snippet } from "@nextui-org/snippet";
-// import { Code } from "@nextui-org/code"
-// import { button as buttonStyles } from "@nextui-org/theme";
-// import { siteConfig } from "@/config/site";
-// import { title, subtitle } from "@/components/primitives";
-// import { GithubIcon } from "@/components/icons";
+'use client'; // Make sure to enable Client Components for next/link
+
+import {
+  Image,
+  Button,
+  Spacer,
+  Divider,
+  Card,
+  Link,
+} from "@nextui-org/react";
+import DefautLogo from '@/components/logo/logo-default';
+import { title, subtitle, logo } from "@/components/primitives";
 
 export default function Home() {
-	return (
-		<section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-			{/* <div className="inline-block max-w-lg text-center justify-center">
-				<h1 className={title()}>Make&nbsp;</h1>
-				<h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
-				<br />
-				<h1 className={title()}>
-					websites regardless of your design experience.
-				</h1>
-				<h2 className={subtitle({ class: "mt-4" })}>
-					Beautiful, fast and modern React UI library.
-				</h2>
-			</div>
+  return (
+    <div className="flex w-full flex-col align-center justify-center gap-12">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "2rem",
+          placeItems: "center",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "2rem",
+        }}
+      >
+        <div className="flex flex-col items-start justify-center">
+          {/* <DefautLogo /> */}
+          <Spacer y={2} />
+          <h1 className={title()}>
 
-			<div className="flex gap-3">
-				<Link
-					isExternal
-					href={siteConfig.links.docs}
-					className={buttonStyles({ color: "primary", radius: "full", variant: "shadow" })}
-				>
-					Documentation
-				</Link>
-				<Link
-					isExternal
-					className={buttonStyles({ variant: "bordered", radius: "full" })}
-					href={siteConfig.links.github}
-				>
-					<GithubIcon size={20} />
-					GitHub
-				</Link>
-			</div>
+            
+          <span className={title({ color: "green" })}>Stop Guessing.</span> <span className={title({ color: "cyan" })}>Start Winning.</span>
+          </h1>
+          <h3 className={subtitle()}>
+          Don&apos;t just dream of victory, engineer it.
+          </h3>
+          <Spacer y={2} />
+          <p style={{ lineHeight: "$md" }}>
+            <span className={logo()}>LeetGaming.PRO</span> gives you the tools to <strong>outthink</strong>, <strong>outplay</strong>, and <strong>outlast</strong> the competition.
+          </p>
+          <Spacer y={4} />
+          <Button
+            radius="full"
+            className="bg-gradient-to-tr from-blue-500 to-cyan-500 text-white shadow-lg"
+            as={Link}
+            href="/sign-up"
+          >
+            Get Started
+          </Button>
+        </div>
 
-			<div className="mt-8">
-				<Snippet hideSymbol hideCopyButton variant="flat">
-					<span>
-						Get started by editing <Code color="primary">app/page.tsx</Code>
-					</span>
-				</Snippet>
-			</div> */}
-		</section>
-	);
+        <Card className="w-full max-w-md p-0">
+          <Image
+            src="/gameplay-screenshot.png"
+            alt="Gameplay Screenshot"
+            // objectFit="cover"
+            width={500}
+            height={300}
+            className="rounded-lg"
+          />
+        </Card>
+      </div>
+      <Divider />
+      <div
+        style={{
+          display: "grid",
+          placeItems: "center",
+          maxWidth: "1200px",
+          margin: "0 auto",
+          padding: "2rem",
+        }}
+      >
+        {/* ... additional sections ... */}
+
+       
+
+      </div>
+    </div>
+  );
 }

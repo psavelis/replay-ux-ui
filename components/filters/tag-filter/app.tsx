@@ -5,11 +5,11 @@ import {CheckboxGroup} from "@nextui-org/checkbox";
 
 import TagGroupItem from "./tag-group-item";
 
-export default function Component() {
+export default function Component(props: any) {
   return (
     <div className="my-auto flex max-w-lg flex-col gap-2">
       <h3 className="text-medium font-medium leading-8 text-default-600">Amenities</h3>
-      <CheckboxGroup aria-label="Select amenities" className="gap-1" orientation="horizontal">
+      <CheckboxGroup {...props} aria-label="Select amenities" className="gap-1" orientation="horizontal">
         <TagGroupItem icon="solar:home-wifi-angle-bold" value="wifi">
           Wifi
         </TagGroupItem>

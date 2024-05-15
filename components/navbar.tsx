@@ -36,6 +36,8 @@ import { LoginButton } from './login-button';
 import SessionButton from './session-button';
 import { useSession } from 'next-auth/react';
 
+import DefaultLogo from './logo/logo-default';
+
 export const Navbar = () => {
 
   let SessionArea;
@@ -78,7 +80,7 @@ export const Navbar = () => {
           <NextLink className="flex justify-start items-center gap-1" href="/">
             {/* <Logo /> */}
 
-            <p className="font-bold text-inherit">Team<span className={logo({ color: "blue" })}>PRO</span></p>
+            <DefaultLogo />
             {/* <Chip
               variant="shadow"
               classNames={{

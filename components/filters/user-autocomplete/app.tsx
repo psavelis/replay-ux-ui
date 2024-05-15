@@ -4,7 +4,7 @@ import { SearchIcon } from '../../icons';
 
 
 
-export default function App() {
+export default function App(props: any) {
   const users = [] as any
   // TODO: implementar call para paginar /games/:id/players
   return (
@@ -49,6 +49,7 @@ export default function App() {
       startContent={<SearchIcon className="text-default-400" strokeWidth={2.5} size={20} />}
       radius="full"
       variant="bordered"
+      {...props}
     >
       {(item: any) => (
         <AutocompleteItem key={item.id} textValue={item.name}>

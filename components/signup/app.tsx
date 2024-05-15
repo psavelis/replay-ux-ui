@@ -4,9 +4,11 @@ import React from "react";
 import {Button, Input, Checkbox, Link, Divider} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {AcmeIcon} from "./social";
+import {AcmeIcon, GoogleIcon} from "./social";
 import { logo } from '../primitives';
 import { SteamIcon } from '../icons';
+
+import DefaultLogo from '../logo/DefautLogo';
 
 export default function SignUp() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -28,9 +30,7 @@ export default function SignUp() {
       {/* Brand Logo */}
       <div className="absolute right-10 top-10">
         <div className="flex items-center">
-          <AcmeIcon className="text-white" size={40} />
-          {/* <p className="font-medium text-white">ACME</p> */}
-          <p className="font-bold text-inherit">Team<span className={logo({ color: "blue" })}>PRO</span></p>
+          <DefaultLogo />
         </div>
       </div>
 
@@ -38,10 +38,10 @@ export default function SignUp() {
       <div className="absolute bottom-10 right-10 hidden md:block">
         <p className="max-w-xl text-right text-white/60">
           <span className="font-medium">“</span>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc eget augue nec massa
-          volutpat aliquet.
+        Get fast and reliable servers to your favorite games, metrics, and more.
           <span className="font-medium">”</span>
         </p>
+        - PRO Dev Team
       </div>
 
       {/* Sign Up Form */}
