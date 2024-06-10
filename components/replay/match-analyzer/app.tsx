@@ -23,7 +23,7 @@ import PaymentForm from "./payment-form";
 import PaymentMethodRadio from "./payment-method-radio";
 import { logo } from '@/components/primitives';
 import { AddStarIcon, ShareIcon } from '@/components/icons';
-import DefaultLogo from '@/components/logo/DefautLogo';
+import DefaultLogo from '@/components/logo/logo-default';
 
 export default function MatchAnalyzer() {
   const [[page, direction], setPage] = React.useState([0, 0]);
@@ -265,7 +265,7 @@ export default function MatchAnalyzer() {
               ))}
             </div>
             <Link className="text-white/60" href="#" size="sm" underline="always">
-              120 views
+              0 views
             </Link>
           </div>
         </div>

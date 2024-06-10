@@ -1,3 +1,218 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* html {
+    font-size: 15px;
+  } */
+
+/* ******* HERO 1 ******** */
+/* ******* HERO 1 ******** */
+/* ******* HERO 1 ******** */
+/* ******* HERO 1 ******** */
+/* ******* HERO 1 ******** */
+/* ******* HERO 1 ******** */
+
+.hero-banner {
+  position: relative;
+  margin-top: -60px;
+}
+
+.hero-banner video {
+  object-fit: cover;
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+  /* Ensure it's above the video */
+}
+
+.hero-content {
+  color: #f5f0e1;
+  /* Cream color for the text */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2;
+  /* Ensure it's above the video */
+  /* color: white;  */
+}
+
+.hero-subtitle {
+  background: linear-gradient(to right,
+      transparent,
+      /* Start transparent */
+      rgba(52, 68, 92, 1) 50%,
+      /* 50% is black (adjust opacity if needed) */
+      transparent
+      /* End transparent */
+    );
+  padding: 20px;
+  /* Optional padding for better content spacing */
+
+  position: relative;
+}
+
+.hero-subtitle::before,
+.hero-subtitle::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px; /* Thin border */
+  background: inherit; /* Inherit the gradient from the parent */
+  pointer-events: none; 
+}
+
+.hero-subtitle::before {
+  top: 0;
+}
+
+.hero-subtitle::after {
+  bottom: 0;
+}
+.hero-title {
+  color: #f5f0e1;
+  /* Cream color for the text */
+  font-size: 4rem;
+  /* Adjust the font size as needed */
+  margin-bottom: 1rem;
+  text-shadow:
+    0 0 1px #f5f0e1,
+    /* Smaller, brighter inner glow */
+    0 0 8px #f5f0e1,
+    /* Medium glow */
+    0 0 1px #34445C;
+  /* Larger, softer outer glow */
+}
+
+.hero-title b {
+  color: #f5f0e1;
+  /* Cream color for the text */
+  text-shadow:
+    0 0 5px #F2F2F2,
+    /* Smaller, brighter inner glow */
+    0 0 10px #F2F2F2,
+    /* Medium glow */
+    0 0 20px #34445C;
+  /* Larger, softer outer glow */
+}
+
+.cta-button {
+  /* Style your CTA button as you like */
+}
+
+
+/* ******* MINI-PROFILE  ******** */
+/* ******* MINI-PROFILE  ******** */
+/* ******* MINI-PROFILE  ******** */
+/* ******* MINI-PROFILE  ******** */
+/* ******* MINI-PROFILE  ******** */
+/* ******* MINI-PROFILE  ******** */
+.viewProfileHighlightsButton {
+  background-color: #34445C;
+  color: #f5f0e1; 
+}
+
+.viewProfileHighlightsButtonDark {
+  background-color: #DCFF37;
+  color: #34445C; 
+}
+
+.watchProfileButton {
+  background-color: #34445C;
+  color: #f5f0e1; 
+}
+
+.watchProfileWatching {
+
+}
+
+
+
+.profileBackdropContent {
+  background: linear-gradient(to right,
+      transparent,
+      /* Start transparent for DCFF37*/
+      #f2f2f2 80%,
+      /* 50% is black (adjust opacity if needed) */
+      transparent
+      /* End transparent */
+    );
+  padding: 20px;
+  /* Optional padding for better content spacing */
+
+  position: relative;
+}
+
+.profileBackdropContent::before,
+.profileBackdropContent::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px; /* Thin border */
+  background: inherit; /* Inherit the gradient from the parent */
+  pointer-events: none; 
+}
+
+.profileBackdropContent::before {
+  top: 0;
+}
+
+.profileBackdropContent::after {
+  bottom: 0;
+}
+
+.profileBackdropContentDark {
+  background: linear-gradient(to right,
+      transparent,
+      /* Start transparent for #DCFF37 */
+      rgba(52, 68, 92, 1) 50%,
+      /* 50% is black (adjust opacity if needed) */
+      transparent
+      /* End transparent */
+    );
+  padding: 20px;
+  /* Optional padding for better content spacing */
+
+  position: relative;
+}
+
+.profileBackdropContentDark::before,
+.profileBackdropContentDark::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1px; /* Thin border */
+  background: inherit; /* Inherit the gradient from the parent */
+  pointer-events: none; 
+}
+
+.profileBackdropContentDark::before {
+  top: 0;
+}
+
+.profileBackdropContentDark::after {
+  bottom: 0;
+}
+
+.glue-div {
+  position: absolute;
+  top: 50%;          /* Position at the vertical midpoint of the container */
+  left: 0;
+  right: 0;          /* Stretch to fill container width */
+  transform: translateY(-50%); /* Align top edge with container's midpoint */
+  z-index: 10;        /* Ensure it's on top of div1 and div2 */
+  /* Add other styles for background, borders, etc. */
+}

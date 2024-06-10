@@ -10,12 +10,12 @@ const games = [
     label: "CS2",
     src: "/cs2/cs2-logo-icon.png"
   },
-  {
-    name: "Counter-Strike: Global Offensive",
-    game_id: "csgo",
-    label: "CS:GO",
-    src: "/csgo/csgologo.jpeg"
-  },
+  // {
+  //   name: "Counter-Strike: Global Offensive",
+  //   game_id: "csgo",
+  //   label: "CS:GO",
+  //   src: "/csgo/csgologo.jpeg"
+  // },
   // {
   //   name: "Valorant",
   //   game_id: "valorant",
@@ -30,7 +30,6 @@ export default function App(params:any) {
       label="Game"
       placeholder="Select a game"
       className="max-w-xs"
-      startContent={<LeetGamingIcon />}
       defaultSelectedKeys={["cs2"]}
       {...params}
     >

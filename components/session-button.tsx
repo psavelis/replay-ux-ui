@@ -6,6 +6,7 @@ import { logo } from './primitives';
 import { button as buttonStyles } from "@nextui-org/theme";
 import { useSession, signIn, signOut } from "next-auth/react"
 import { VerticalDotsIcon } from '@/app/replays/VerticalDotsIcon';
+import BattleButton from './filters/ctas/battle-button/battle-button';
 
 export default function SessionButton() {
   const { data: session } = useSession();
@@ -20,7 +21,7 @@ export default function SessionButton() {
       }}
     >
       <DropdownTrigger>
-        <Button variant="light" disableRipple endContent={<VerticalDotsIcon width={undefined} height={undefined} />}>Console</Button>
+        <BattleButton variant="light" disableRipple endContent={<VerticalDotsIcon width={undefined} height={undefined} />}>Console</BattleButton>
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Custom item styles"

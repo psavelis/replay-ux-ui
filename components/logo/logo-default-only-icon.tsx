@@ -1,8 +1,20 @@
-import { GameIconsCrownedSkull } from './icons/crowned-skull';
+import { GameIconsCrownedSkull, GameIconsCrownedSkullForecolor, GameIconsCrownedSkullSmall } from './icons/crowned-skull';
 import { SVGProps } from 'react';
 
-export default function DefautLogoOnlyIcon(props: SVGProps<SVGSVGElement>) {
+export function DefaultLogoOnlyIcon(props: SVGProps<SVGSVGElement>) {
   return (
-  <div style={{ display: "inline-block", verticalAlign: "middle" }}><GameIconsCrownedSkull /> </div>
+  <div style={{ display: "inline-block", verticalAlign: "middle" }}><GameIconsCrownedSkull {...props}/> </div>
+  )
+}
+
+export function DefaultLogoOnlyIconSmall(props: SVGProps<SVGSVGElement>) {
+  return (
+  <div style={{ display: "inline-block", verticalAlign: "middle" }}><GameIconsCrownedSkullSmall {...props}/> </div>
+  )
+}
+
+export function DefaultLogoOnlyIconForecolor(props: SVGProps<SVGSVGElement>) {
+  return (
+  <div style={{ display: "inline-block", verticalAlign: "middle" }}><GameIconsCrownedSkullForecolor {...props}/> </div>
   )
 }

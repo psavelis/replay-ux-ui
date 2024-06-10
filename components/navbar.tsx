@@ -1,4 +1,3 @@
-"use client"
 import {
   Navbar as NextUINavbar,
   NavbarContent,
@@ -8,10 +7,7 @@ import {
   NavbarItem,
   NavbarMenuItem,
 } from "@nextui-org/navbar";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, Chip } from "@nextui-org/react";
-import { Kbd } from "@nextui-org/kbd";
 import { Link } from "@nextui-org/link";
-import { Input } from "@nextui-org/input";
 
 import { link as linkStyles } from "@nextui-org/theme";
 
@@ -29,16 +25,32 @@ import {
   SteamIcon,
   LogOutIcon,
   HeartFilledIcon,
+  StarredIcon,
 } from "@/components/icons";
 
 import { logo, title } from './primitives';
 import { LoginButton } from './login-button';
 import SessionButton from './session-button';
 import { useSession } from 'next-auth/react';
+import SearchInput from "./search/search-modal/search-modal";
 
 import DefaultLogo from './logo/logo-default';
+import { useTheme } from "next-themes";
+import NavBarSection from "./navbar_section";
+import { GameIconsArrowScope, GameIconsCamera, GameIconsChest, GameIconsCloud, GameIconsMouse } from "./logo/icons/arrow-scope";
+import { GameIconsLaurelCrown } from "./logo/icons/laurel-crown";
+import { GameIconsPerpendicularRings } from "./logo/icons/perpendicular-rings";
+import { GameIconsFireDash } from "./logo/icons/fire-dash";
+import { GameIconsAerodynamicHarpoon } from "./logo/icons/aerodynamic-harpoon";
+import { Kbd } from "@nextui-org/kbd";
 
 export const Navbar = () => {
+
+  let { theme, setTheme } = useTheme();
+
+  if (theme === null || theme === undefined) {
+    theme = "dark";
+  }
 
   let SessionArea;
 
@@ -51,33 +63,16 @@ export const Navbar = () => {
     SessionArea = LoginButton;
   }
 
-
-  const searchInput = (
-    <Input
-      aria-label="Search"
-      classNames={{
-        inputWrapper: "bg-default-100",
-        input: "text-sm",
-      }}
-      endContent={
-        <Kbd className="hidden lg:inline-block" keys={["command"]}>
-          K
-        </Kbd>
-      }
-      labelPlacement="outside"
-      placeholder="Search..."
-      startContent={
-        <SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-      }
-      type="search"
-    />
-  );
+  const searchInput = SearchInput();
 
   return (
-    <NextUINavbar maxWidth="xl" position="sticky" isBordered={true} isBlurred={true} shouldHideOnScroll={false}>
-      <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-        <NavbarBrand as="li" className="gap-3 max-w-fit">
-          <NextLink className="flex justify-start items-center gap-1" href="/">
+    <NextUINavbar maxWidth="full" height={62} position="sticky" isBordered={true} isBlurred={true}       style={{
+      // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
+      // backgroundSize: "cover",
+    }}>
+      <NavbarContent className="basis-1/5 sm:basis-full">
+        <NavbarBrand as="li" className=" max-w-fit">
+          <NextLink className="lg:flex flex justify-left items-left align-left" href="/">
             {/* <Logo /> */}
 
             <DefaultLogo />
@@ -95,19 +90,38 @@ export const Navbar = () => {
             </Chip> */}
 
           </NextLink>
+          {/* <NavBarSection /> */}
         </NavbarBrand>
-        <ul className="hidden lg:flex gap-4 justify-start ml-2">
+        <ul className="hidden lg:flex justify-start ml-2 h-16 justify-center align-items align-center">
           {siteConfig.navItems.map((item) => (
-            <NavbarItem key={item.href}>
+            <NavbarItem key={item.href}
+            style={{
+              height: "100%",
+              backgroundColor: item.href === "/match-making" ? "#DCFF37" : (item.href === "/supply" ? "#34445C" : ""),
+              minWidth: "105px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              
+            }}
+            >
               <NextLink
                 className={clsx(
-                  linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium"
+                  "data-[active=true]:text-primary data-[active=true]:font-medium justify-center align-items align-center w-full text-center"
                 )}
-                color="foreground"
                 href={item.href}
               >
-                {item.label}
+                { item.href === "/match-making" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#34445C"}}><GameIconsArrowScope className="flex w-full "/> {item.label} <small> <Kbd>w</Kbd></small></span>}
+                { item.href === "/replays" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}><GameIconsCamera className="flex w-full"/> {item.label} <small> <Kbd>q</Kbd></small></span>}
+                { item.href === "/blog" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}> <GameIconsLaurelCrown className="flex w-full"/> <span className="ml-2">{item.label}</span><small> <Kbd>d</Kbd></small></span>}
+                { item.href === "/cloud" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}><GameIconsCloud className="flex w-full"/> {item.label} <small> <Kbd>s</Kbd></small></span>}
+                { item.href === "/supply" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#f5f0e1"}}><GameIconsChest className="flex w-full"/> {item.label} <small> <Kbd>b</Kbd></small></span>}
+                { item.href === "/stats" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#f5f0e1"}}><GameIconsChest className="flex w-full"/> {item.label}</span>}
+                { item.href === "/news" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#f5f0e1"}}><GameIconsPerpendicularRings width={"1.8em"} height={"1.8em"} className="flex w-full"/> {item.label}</span>}
+                
+
+                { !["/replays", "/match-making", "/blog", "/cloud", "/supply", "/news" ].includes(item.href) && item.label}
+                
               </NextLink>
             </NavbarItem>
           ))}
@@ -119,15 +133,15 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal href={siteConfig.links.twitter} aria-label="Twitter">
+          {/* <Link isExternal href={siteConfig.links.twitter} aria-label="Twitter">
             <TwitterIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.discord} aria-label="Discord">
+          </Link> */}
+          {/* <Link isExternal href={siteConfig.links.discord} aria-label="Discord">
             <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.github} aria-label="Github">
+          </Link> */}
+          {/* <Link isExternal href={siteConfig.links.github} aria-label="Github">
             <GithubIcon className="text-default-500" />
-          </Link>
+          </Link> */}
           <ThemeSwitch />
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
@@ -155,7 +169,7 @@ export const Navbar = () => {
 
       </NavbarContent>
 
-      <NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
+      <NavbarContent className="sm:hidden basis-1" justify="end">
         <Link isExternal href={siteConfig.links.github} aria-label="Github">
           <GithubIcon className="text-default-500" />
         </Link>
@@ -167,7 +181,7 @@ export const Navbar = () => {
         {searchInput}
         <div className="mx-4 mt-2 flex flex-col gap-2">
           {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
+            <NavbarMenuItem key={`${item}-${index}`} className="h-full">
               <Link
                 color={
                   index === 2

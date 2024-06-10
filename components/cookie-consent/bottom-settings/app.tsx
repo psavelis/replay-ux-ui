@@ -12,8 +12,8 @@ const variants = {
   hidden: {opacity: 0},
 };
 
-export default function Component() {
-  const [isSettingsOpen, setIsSettingsOpen] = React.useState(true);
+export default function CookieSettingsConsent() {
+  const [isSettingsOpen, setIsSettingsOpen] = React.useState(false);
 
   const AnimatedWrapper = ({
     children,
@@ -97,7 +97,7 @@ export default function Component() {
           radius="lg"
           style={{
             border: "solid 2px transparent",
-            backgroundImage: `linear-gradient(hsl(var(--nextui-background)), hsl(var(--nextui-background))), linear-gradient(83.87deg, #F54180, #9353D3)`,
+            backgroundImage: `linear-gradient(hsl(var(--nextui-background)), hsl(var(--nextui-background))), linear-gradient(83.87deg, rgb(6, 182, 212), rgb(34, 197, 94))`,
             backgroundOrigin: "border-box",
             backgroundClip: "padding-box, border-box",
           }}
@@ -132,7 +132,7 @@ export default function Component() {
           radius="lg"
           style={{
             border: "solid 2px transparent",
-            backgroundImage: `linear-gradient(hsl(var(--nextui-background)), hsl(var(--nextui-background))), linear-gradient(83.87deg, #F54180, #9353D3)`,
+            backgroundImage: `linear-gradient(hsl(var(--nextui-background)), hsl(var(--nextui-background))), linear-gradient(83.87deg, rgb(6, 182, 212), rgb(34, 197, 94))`,
             backgroundOrigin: "border-box",
             backgroundClip: "padding-box, border-box",
           }}

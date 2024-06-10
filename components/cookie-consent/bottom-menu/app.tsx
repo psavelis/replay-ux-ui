@@ -1,9 +1,9 @@
 import React from "react";
 import {Button, Link} from "@nextui-org/react";
 
-export default function Component() {
+export default function CookieBottomMenu() {
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 px-6 pb-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 px-6 pb-6 z-20">
       <div className="pointer-events-auto ml-auto max-w-sm rounded-large border border-divider bg-background/15 p-6 shadow-small backdrop-blur">
         <p className="text-small font-normal text-default-700">
           We use cookies on our website to give you the most relevant experience by remembering your
@@ -23,12 +23,12 @@ export default function Component() {
             radius="lg"
             style={{
               border: "solid 2px transparent",
-              backgroundImage: `linear-gradient(hsl(var(--nextui-background)), hsl(var(--nextui-background))), linear-gradient(83.87deg, #F54180, #9353D3)`,
+              backgroundImage: `linear-gradient(hsl(var(--nextui-background)), hsl(var(--nextui-background))), linear-gradient(83.87deg, #FF4654, #FFC700)`,
               backgroundOrigin: "border-box",
               backgroundClip: "padding-box, border-box",
             }}
           >
-            Accept All
+            Cookie Settings
           </Button>
           <Button
             fullWidth
@@ -44,7 +44,7 @@ export default function Component() {
             radius="lg"
             variant="light"
           >
-            Cookie Settings
+            Accept All
           </Button>
         </div>
       </div>

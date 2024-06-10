@@ -1,8 +1,9 @@
 /* eslint-disable @next/next/no-head-element */
+"use client"
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
+import { fontSans, pressStart2P } from "@/config/fonts";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/navbar";
 import { Link } from "@nextui-org/link";
@@ -10,7 +11,6 @@ import clsx from "clsx";
 import Box from './box';
 import { logo } from '@/components/primitives';
 import { Chip, Divider, LinkIcon, Spacer } from '@nextui-org/react';
-import Head from 'next/head';
 import FooterColumns from '../footer-columns/app';
 
 export const metadata: Metadata = {
@@ -50,8 +50,8 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background bg-scroll dark_bg_tailwind font-sans antialiased",
-          fontSans.variable
+          "min-h-screen bg-background bg-scroll dark_bg_tailwind antialiased",
+          pressStart2P.className
         )}
       >
         <Box>
@@ -59,7 +59,9 @@ export default function RootLayout({
             <div className="relative flex flex-col h-screen">
               <Navbar  />
               {/* <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow"> */}
-              <main className="container mx-auto max-w pt-4 flex-grow">
+              <main className="flex max-w-fit" style={{
+                width: '100%',
+              }}>
                 {children}
               </main>
                <FooterColumns />

@@ -2,7 +2,8 @@
 // Filter events by round range (ie: 5 to 12):
 // https://nextui.org/docs/components/slider#custom-styles
 
-
+// TODO FRONT: separar cores do layout (lijme -> dark, navy -> light)
+// TODO FRONT: remove icons (only if trayed)
 
 // // (Views) <--
 // metrificar visualizacoes, plays, eventos, mais vistos, --minted, etc

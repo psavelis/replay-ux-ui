@@ -1,7 +1,7 @@
 import { Chip } from '@nextui-org/react';
 import { logo } from '../primitives';
 
-export default function DefautLogoNoIcon(params: { tag: boolean }) {
+export default function DefaultLogoNoIcon(params: { tag: boolean }) {
   const proChip = (tag: boolean)  => {
     if (tag) {
       return (

@@ -19,8 +19,9 @@ import Box from '../default-layout/box';
 import { logo } from '../primitives';
 import { SessionProvider, signOut, useSession } from 'next-auth/react';
 import DefaultLogo from '../logo/logo-default';
+import { useTheme } from 'next-themes';
 
-import DefaultLogoOnlyIcon from '../logo/logo-default-only-icon';
+import { DefaultLogoOnlyIcon } from '../logo/logo-default-only-icon';
 import DefaultLogoNoIcon from '../logo/logo-default-no-icon';
 
 export const metadata: Metadata = {
@@ -55,6 +56,10 @@ export default function ConsoleLayout({
   children: React.ReactNode;
 }) {
   const { data: session } = useSession()
+  let { theme, setTheme, systemTheme } = useTheme()
+
+  theme ??= "light"
+  const backfilter = theme === "light" ? "brightness(1)" : "brightness(0.4)"
 
 
   const isCompact = useMediaQuery("(max-width: 768px)");
@@ -77,10 +82,25 @@ export default function ConsoleLayout({
   }
 
   return (
-    <Box>
-      <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-
         <div className="flex h-dvh w-full">
+          <div className="absolute top-0 left-0 w-full h-full z-[-1]"
+
+            style={{
+              backgroundImage: `url('/1337gg/crowd_arena.png')`,
+              backgroundSize: "cover",
+              filter: backfilter,
+              content: '',
+              position: "absolute",
+              top: "0",
+              left: "0",
+              width: "100%",
+              height: "100%",
+              zIndex: -1,
+              opacity: (theme === "light" ? "10%" : "100%")
+            }}
+          > {/* Move background div here and set z-index */}
+            {/* ... your background style here ... */}
+          </div>
           <div
             className={cn(
               "relative flex h-full w-72 flex-col !border-r-small border-divider p-6 transition-width",
@@ -212,7 +232,5 @@ export default function ConsoleLayout({
             </main>
           </div>
         </div>
-      </Providers>
-    </Box>
   );
 }

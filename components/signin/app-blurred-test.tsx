@@ -19,7 +19,7 @@ export default function SignInBlurreds() {
   const buttonClasses = "bg-foreground/10 dark:bg-foreground/20";
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-rose-400 via-fuchsia-500 to-indigo-500 p-2 sm:p-4 lg:p-8">
+    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-green-300 via-cyan-400 to-blue-4500 p-2 sm:p-4 lg:p-8">
       <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
         <p className="pb-2 text-xl font-medium">Log In</p>
         <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>

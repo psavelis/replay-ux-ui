@@ -7,7 +7,7 @@ export default function ReplaysLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html>
+    <html suppressHydrationWarning >
       <head />
       <body>
         <SessionConsoleLayout>

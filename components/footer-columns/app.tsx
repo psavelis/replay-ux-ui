@@ -3,33 +3,46 @@
 import type {IconProps} from "@iconify/react";
 
 import React from "react";
-import {Chip, Divider, Link, Spacer} from "@nextui-org/react";
+import {Avatar, Chip, Divider, Link, Spacer} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
 import {AcmeIcon} from "./social";
 import ThemeSwitch from "./theme-switch";
-import DefautLogo from '../logo/logo-default';
+import DefaultLogo from '../logo/logo-default';
+import { logo } from "../primitives";
+import FullLogo from "../logo/logo-full";
+import LogoGrayscale from "../logo/logo-grayscale";
 
 type SocialIconProps = Omit<IconProps, "icon">;
 
 const footerNavigation = {
   resources: [
-    { name: "Game Guides", href: "#" },
-    { name: "Pro Player Tips", href: "#" },
-    { name: "Match Analysis", href: "#" },
-    { name: "Replay Database", href: "#" },
+    { name: "Service Status", href: "/service-status" },
+    { name: "Authenticator", href: "/authenticator" },
+    { name: "CloudStorage", href: "/vault" },
+    { name: "Dedicated Servers", href: "/game-servers" },
+    { name: "Supply", href: "#" },
   ],
   community: [
     { name: "Forums", href: "#" },
-    { name: "Tournaments", href: "#" },
-    { name: "Leaderboards", href: "#" },
-    { name: "Partnerships", href: "#" }, // Potential for sponsorships/teams
+    { name: "Stats", href: "#" },
+    { name: "Featured", href: "#" },
+    { name: <Divider className="w-full max-w-md p-0 w-12"/>, href: "#" },
+    { name: "Highlights", href: "#" },
+    { name: "Players", href: "#" },
+    { name: "Teams", href: "#" },
+    { name: "Matches", href: "#" },
+    { name: "Replays", href: "#" },
+
   ],
   company: [
-    { name: "About Us", href: "#" },
     { name: "Blog", href: "#" }, // Content related to eSports and improvement
-    { name: "Contact Us", href: "#" },
-    { name: "FAQ", href: "#" }, 
+    { name: "Project Board", href: "#" },
+    { name: "Developer Portal", href: "#" },
+    { name: "Careers", href: "#" },
+    { name: "Partnerships", href: "#" },
+    { name: "Customer Support", href: "#" },
+    { name: "Frequently Asked Questions", href: "#" },
   ],
   legal: [ // Keep these as they are essential
     { name: "Terms of Service", href: "#" },
@@ -62,7 +75,7 @@ const footerNavigation = {
 
 export default function FooterColumns() {
   const renderList = React.useCallback(
-    ({title, items}: {title: string; items: {name: string; href: string}[]}) => (
+    ({title, items}: {title: string; items: {name: any; href: string}[]}) => (
       <div>
         <h3 className="text-small font-semibold text-default-600">{title}</h3>
         <ul className="mt-6 space-y-4">
@@ -80,25 +93,18 @@ export default function FooterColumns() {
   );
 
   return (
-    <footer className="flex w-full flex-col">
-      <div className="w-full px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+    <div className="basis-1/5 sm:basis-full justify-center align-items align-center">
+    <footer className="flex w-full justify-center">
+      <div className="gap-3 max-w-fit px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 md:pr-8">
-            <div className="flex items-center justify-start">
-              <DefautLogo />
+            <div className="flex items-center justify-start logo-container">
+              <LogoGrayscale />
             </div>
-            <p className="text-small text-default-500">
-              Crush Your Competition, One Replay at a Time.
-              <Spacer y={4}/>
-              <span className="font-medium">“</span>
-              <em>Outthink. Outplay. Outlast.</em>
-              <span className="font-medium">”</span>
+            <p className="font-medium text-small text-default-500">
+              Get to clutch in the international stage.
+             </p>
 
-              {/* Don&apost Dream of Victory, Analyze It. */}
-              
-              {/* Your Potential is <strong>Limitless.</strong> */}
-            </p>
-            
             <div className="flex space-x-6">
               {footerNavigation.social.map((item) => (
                 <Link key={item.name} isExternal className="text-default-400" href={item.href}>
@@ -130,5 +136,6 @@ export default function FooterColumns() {
         </div>
       </div>
     </footer>
+    </div>
   );
 }

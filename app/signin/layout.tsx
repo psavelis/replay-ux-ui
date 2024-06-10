@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import { Metadata, Viewport } from "next";
 import { siteConfig } from "@/config/site";
-import { fontSans } from "@/config/fonts";
+import { fontSans, pressStart2P } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
@@ -47,7 +47,7 @@ export default function RootLayout({
       <body
         className={clsx(
           "min-h-screen bg-background bg-scroll dark_bg_tailwind font-sans antialiased",
-          fontSans.variable
+          pressStart2P.className
         )}
       >
         <Box>

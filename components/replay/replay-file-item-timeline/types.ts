@@ -1,0 +1,10 @@
+
+export interface RoundData {
+  roundNumber: number;
+  winner: "ct" | "t" | null; // Add winner information
+  keyEvents: string[]; // Array to store key events in the round
+}
+
+export interface TimelineWinnerCardProps {
+  roundData: RoundData
+}

@@ -81,7 +81,7 @@ const ShippingForm = React.forwardRef<HTMLDivElement, ShippingFormProps>(
                   <Avatar
                     alt="Country Flag"
                     className="h-6 w-6"
-                    src={`https://flagcdn.com/${item.code.toLowerCase()}.svg`}
+                    // src={`https://flagcdn.com/${item.code.toLowerCase()}.svg`}
                   />
                 }
                 value={item.code}

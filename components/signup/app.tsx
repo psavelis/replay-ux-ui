@@ -4,11 +4,9 @@ import React from "react";
 import {Button, Input, Checkbox, Link, Divider} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {AcmeIcon, GoogleIcon} from "./social";
-import { logo } from '../primitives';
 import { SteamIcon } from '../icons';
 
-import DefaultLogo from '../logo/DefautLogo';
+import DefaultLogo from '../logo/logo-full';
 
 export default function SignUp() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -22,7 +20,7 @@ export default function SignUp() {
       className="flex h-screen w-screen items-center justify-start overflow-hidden rounded-small bg-content1 p-2 sm:p-4 lg:p-8"
       style={{
         backgroundImage:
-          "url('/nextui-cache/black-background-texture-2.jpeg')",
+          "url('/dark_bg_tailwind.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
