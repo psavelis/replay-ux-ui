@@ -41,8 +41,6 @@ const UploadArea = () => {
         console.log("Upload successful:", response.data);
         setProgress(100);
 
-
-
         console.log(acceptedFiles);
     }, []);
 

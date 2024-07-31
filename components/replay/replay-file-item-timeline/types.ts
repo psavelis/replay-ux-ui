@@ -7,6 +7,10 @@ export interface RoundData {
   currentTeam?: "ct" | "t" | null | undefined;
 }
 
+export interface MapRegionData {
+  
+}
+
 export interface TimelineWinnerCardProps {
   roundData: RoundData
 }

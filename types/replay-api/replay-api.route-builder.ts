@@ -1,57 +1,112 @@
+import { Loggable } from "@/lib/logger";
 import { ApiResource, ReplayApiResourceType, ReplayApiSettings } from "./settings";
-
-// interface Loggable {
-//   // TODO: 
-// }
-
-export type Loggable = any // TODO: implementar
+import { CSFilters, UUIDParams } from "./searchable";
 
 export interface ResultOptions {
   offset?: string | number,
   sort?: string | string[]
 }
 
+export type RootFilterMethod = 'forGame' | 'forMatch' | 'forRound' | 'forPlayer' | 'forTeam'
+
 export type ReplayApiAction = [string, ReplayApiResourceType, ({
   [key: string]: string;
 } | undefined)?]
 
-export class RouteBuilder<T extends Object> { // TODO: criar interface (generica) para retornos
+export class RouteBuilder { // TODO: refactor ==>> criar interface (generica) para retornos
   private pathSegments: string[] = [];
   private params: { [key: string]: string } = {};
 
   constructor(readonly settings: ReplayApiSettings, readonly logger: Loggable) { }
 
-  forGame(gameId: string): RouteBuilder<T> {
-    return this.filter(ReplayApiResourceType.Game, { gameId });
+  withFilter({ gameIds, matchIds, roundNumbers, playerIds }: CSFilters): RouteBuilder {
+    return this.forGame(gameIds)
+    .forMatch(matchIds)
+    .forRound(roundNumbers)
+    .forPlayer(playerIds)
   }
 
-  forMatch(matchId: string): RouteBuilder<T> {
-    return this.filter(ReplayApiResourceType.Match, { matchId });
+  forGame(gameId?: UUIDParams): RouteBuilder {
+    if (!gameId) {
+      return this
+    }
+
+    if (Array.isArray(gameId)) {
+      if (gameId.length > 1) {
+        return this.filter({ gameId })
+      }
+
+      return this.route(ReplayApiResourceType.Game, { gameId: gameId[0] });
+    }
+
+    return this.route(ReplayApiResourceType.Game, { gameId: gameId });
   }
 
-  forRound(roundId: string | number): RouteBuilder<T> {
-    return this.filter(ReplayApiResourceType.Round, { roundId: typeof roundId !== "string" ? roundId.toString() : roundId});
+  forMatch(matchId?: UUIDParams): RouteBuilder {
+    if (!matchId) {
+      return this
+    }
+
+    if (Array.isArray(matchId)) {
+      if (matchId.length > 1) {
+        return this.filter({ matchId })
+      }
+
+      return this.route(ReplayApiResourceType.Match, { matchId: matchId[0] });
+    }
+
+    return this.route(ReplayApiResourceType.Match, { matchId }); 
   }
 
-  forPlayer(playerId: string): RouteBuilder<T> {
-    return this.filter(ReplayApiResourceType.Player, { playerId });
+  forRound(roundId?: UUIDParams): RouteBuilder {
+    if (!roundId) return this
+
+    if (Array.isArray(roundId)) {
+      if (roundId.length > 1) {
+        return this.filter({ roundId })
+      }
+
+      return this.route(ReplayApiResourceType.Round, { roundId: roundId[0] });
+    }
+
+    return this.route(ReplayApiResourceType.Round, { roundId });
   }
 
-  forTeam(teamId: string): RouteBuilder<T> {
-    return this.filter(ReplayApiResourceType.Team, { teamId });
+  forPlayer(playerId?: UUIDParams): RouteBuilder {
+    if (!playerId) return this
+
+    if (Array.isArray(playerId)) {
+      if (playerId.length > 1) {
+        return this.filter({ playerId })
+      }
+
+      return this.route(ReplayApiResourceType.Round, { playerId: playerId[0] });
+    }
+
+    return this.route(ReplayApiResourceType.Player, { playerId });
   }
 
-  async get(resourceLeaf: ReplayApiResourceType, resultOptions?: ResultOptions): Promise<T | undefined> {
-    const url = this.buildUrl(resourceLeaf, resultOptions)
+  forTeam(teamId: UUIDParams): RouteBuilder {
+    if (Array.isArray(teamId)) {
+      if (teamId.length > 1) {
+        return this.filter({ teamId })
+      }
 
-    console.log('fetch(url)', url)
+      return this.route(ReplayApiResourceType.Round, { teamId: teamId[0] });
+    }
+
+    return this.route(ReplayApiResourceType.Team, { teamId });
+  }
+
+  async get<T extends Object>(resource: ReplayApiResourceType, resultOptions?: ResultOptions): Promise<T | undefined> {
+    const url = this.buildUrl(resource, resultOptions)
 
     const res: Response = await fetch(url, {
       method: 'GET',
     })
 
     const content: T | undefined = await res.json().catch((e) => {
-      this.logger.error(e)
+      this.logger.error(e, `json: error deserializing response body from: GET ${url} => ${res.status}-${res.statusText}`, resource, resultOptions)
       return undefined
     })
 
@@ -64,10 +119,10 @@ export class RouteBuilder<T extends Object> { // TODO: criar interface (generica
     return content
   }
 
-  filter(
+  route(
     resourceType: ReplayApiResourceType,
     params?: { [key: string]: string }
-  ): RouteBuilder<T> {
+  ): RouteBuilder {
     const resource = this.findResource(resourceType, this.settings.resources);
     if (!resource) {
       throw new Error(`Resource not found: ${resourceType}`);
@@ -77,23 +132,30 @@ export class RouteBuilder<T extends Object> { // TODO: criar interface (generica
     return this;
   }
 
-  fromAction(...actions: ReplayApiAction[]): RouteBuilder<T>  {
+  filter(params: { [key: string]: string[] }): RouteBuilder {
+    this.params = Object.assign(this.params, params)
+
+    return this
+  }
+
+  fromAction(...actions: ReplayApiAction[]): RouteBuilder  {
     for (const [action, resourceType, params] of actions) {
       if (!params) {
         continue
       }
 
       if (action === "with") {
-        this.filter(resourceType, params);
+        this.route(resourceType, params);
       } else if (action.startsWith("for")) {
         for (const k of Object.keys(params)) {
-          this[action as keyof RouteBuilder<T>](params[k] as any); 
+          this[action as RootFilterMethod](params[k] as any); 
         }
       }
     }
 
     return this
   }
+
   private buildQueryStrings(resultOptions?: ResultOptions): URLSearchParams {
     const params = new URLSearchParams();
     if (resultOptions) {
@@ -118,8 +180,8 @@ export class RouteBuilder<T extends Object> { // TODO: criar interface (generica
     return path;
   }
 
-  public buildUrl(resourceLeaf: ReplayApiResourceType, resultOptions?: ResultOptions, omitBaseUrl = false): string {
-    const pathSegments = [...this.pathSegments, resourceLeaf];
+  public buildUrl(resource: ReplayApiResourceType, resultOptions?: ResultOptions, omitBaseUrl = false): string {
+    const pathSegments = [...this.pathSegments, resource];
     const url = new URL(pathSegments.join('/'), this.settings.baseUrl);
 
     url.search = this.buildQueryStrings(resultOptions).toString();

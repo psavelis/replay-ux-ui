@@ -30,7 +30,7 @@ const RoundPage: React.FC<ReplayPageProps> = (props: ReplayPageProps) => {
         <CardHeader className="backdrop-blur">
           <div className="flex">
             {/*  Overall Timeline [partial results?user config?]  */}
-            <MatchTimelineHorizontalFull filter={filter} size={size} />
+            <MatchTimelineHorizontalFull mapViewModes={mapViewModes} filter={filter} size={size} />
           </div>
           <div className="flex">
             <div>

@@ -1,10 +1,11 @@
+import { Loggable } from "@/lib/logger";
 import { ResultOptions, RouteBuilder } from "./replay-api.route-builder";
 import { ReplayApiSettingsMock, ReplayApiResourceType } from "./settings";
 import { ClutchSituationStats, EconomyStats, EventStats, HighlightStats, MapRegionStats, MatchStats, Stats, StrategyStats } from "./stats.types";
-import nock from 'nock'
 
-const loggerMock = {
-  error: (e: any) => console.error(e)
+const loggerMock: any = {
+  error: (e: any) => console.error(e),
+  info: (msg: string, ...args: any[]) => console.info(msg, args)
 }
 
 describe("RouteBuilder - Complex Scenarios", () => {
@@ -21,8 +22,7 @@ describe("RouteBuilder - Complex Scenarios", () => {
     resultOptions?: ResultOptions;
     mockStatusCode?: number;
     expectedRoute: string;
-    leaf: ReplayApiResourceType;
-    mockResponse?: any;
+    resource: ReplayApiResourceType;
     error?: string;
   }[] = [
     {
@@ -32,9 +32,8 @@ describe("RouteBuilder - Complex Scenarios", () => {
         [ReplayApiResourceType.Player, { playerId: "player123" }],
       ],
       endpoint: new RouteBuilder<EconomyStats>(ReplayApiSettingsMock, loggerMock),
-      leaf: ReplayApiResourceType.Economy,
+      resource: ReplayApiResourceType.Economy,
       expectedRoute: `/games/cs2/players/player123/economy`,
-      mockResponse: { data: "mocked" },
     },
     {
       description: "Team strategy stats in a specific round of a match",
@@ -45,7 +44,7 @@ describe("RouteBuilder - Complex Scenarios", () => {
         [ReplayApiResourceType.Team, { teamId: "teamAlpha" }],
       ],
       endpoint: strategyApi,
-      leaf: ReplayApiResourceType.Strategy,
+      resource: ReplayApiResourceType.Strategy,
       expectedRoute: `/games/cs2/matches/match456/rounds/round789/teams/teamAlpha/strategy`,
     },
     {
@@ -56,7 +55,7 @@ describe("RouteBuilder - Complex Scenarios", () => {
         [ReplayApiResourceType.Player, { playerId: "pro1" }],
       ],
       endpoint: clutchApi,
-      leaf: ReplayApiResourceType.ClutchSituation,
+      resource: ReplayApiResourceType.ClutchSituation,
       expectedRoute: `/games/cs2/matches/match999/players/pro1/clutch-situation`,
     },
     {
@@ -66,7 +65,7 @@ describe("RouteBuilder - Complex Scenarios", () => {
         [ReplayApiResourceType.Round, { roundId: "round1" }],
       ],
       endpoint: highlightApi,
-      leaf: ReplayApiResourceType.Highlight,
+      resource: ReplayApiResourceType.Highlight,
       expectedRoute: `/games/cs2/rounds/round1/highlights`,
     },
     {
@@ -76,7 +75,7 @@ describe("RouteBuilder - Complex Scenarios", () => {
         [ReplayApiResourceType.Player, { playerId: "ninja" }],
       ],
       endpoint: eventApi,
-      leaf: ReplayApiResourceType.Event,
+      resource: ReplayApiResourceType.Event,
       expectedRoute: `/games/cs2/players/ninja/events`,
     },
     {
@@ -88,7 +87,7 @@ describe("RouteBuilder - Complex Scenarios", () => {
         [ReplayApiResourceType.Player, { playerId: "player123" }],
       ],
       endpoint: new RouteBuilder<EconomyStats>(ReplayApiSettingsMock, loggerMock),
-      leaf: ReplayApiResourceType.Economy,
+      resource: ReplayApiResourceType.Economy,
       resultOptions: { offset: "2", sort: "date_desc" },
       expectedRoute: `/games/cs2/matches/match123/rounds/round456/players/player123/economy?offset=2&sort=date_desc`,
     },
@@ -98,24 +97,22 @@ describe("RouteBuilder - Complex Scenarios", () => {
         [ReplayApiResourceType.Game, { gameId: "cs2" }],
       ],
       endpoint: new RouteBuilder<MatchStats>(ReplayApiSettingsMock, loggerMock),
-      leaf: ReplayApiResourceType.Match,
+      resource: ReplayApiResourceType.Match,
       resultOptions: { offset: "2", sort: "date_desc" },
       expectedRoute: `/games/cs2/matches?offset=2&sort=date_desc`,
     },
   ];
 
-  nock.disableNetConnect()
-
-  testCases.forEach(({ description, filters, endpoint, leaf, expectedRoute, resultOptions, error }) => {
+  testCases.forEach(({ description, filters, endpoint, resource, expectedRoute, resultOptions, error }) => {
     it(description, () => {
       const req = filters.reduce((acc, [resourceType, params]) => {
-        return acc.filter(resourceType, params);
+        return acc.route(resourceType, params);
       }, endpoint);
   
-      const builtUrl = req.buildUrl(leaf, resultOptions);
+      const builtUrl = req.buildUrl(resource, resultOptions);
   
       if (error) {
-        expect(() => req.buildUrl(leaf, resultOptions)).toThrow(error);
+        expect(() => req.buildUrl(resource, resultOptions)).toThrow(error);
       } else {
         expect(builtUrl).toEqual(`${ReplayApiSettingsMock.baseUrl}${expectedRoute}`);
       }

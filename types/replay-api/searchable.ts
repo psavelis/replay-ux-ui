@@ -7,7 +7,7 @@ export enum MapViewModeType {
     MapHeatmapLayer = 'heatmap-layer',
 }
 
-export type UUIDParams = string | string[] | null
+export type UUIDParams = string | string[]
 
 export interface TickRange {
     start: string;
@@ -19,6 +19,22 @@ export interface DateRange {
     end: string;
 }
 
+// common aggregate types
+// common aggregate types
+// common aggregate types
+export interface RoundData {
+  roundNumber: number;
+  winner: "ct" | "t" | null; // Add winner information
+  keyEvents: string[]; // Array to store key events in the round
+  current?: boolean | null | undefined; // Add current round information
+  currentTeam?: "ct" | "t" | null | undefined;
+}
+
+export interface MapRegionData {
+}
+
+
+
 // TODO: convert to table-data (persist/config on replay side)
 // TODO: create pkg and import from common.Searchable
 export interface CSFilters {
@@ -27,7 +43,7 @@ export interface CSFilters {
     playerIds?: UUIDParams
     replayFiles?: UUIDParams
     matchIds?: UUIDParams
-    roundNumbers?: string[] | number[] | null
+    roundNumbers?: UUIDParams
 
     groups?: UUIDParams
     sideIds?: UUIDParams // Sides CT/T
@@ -120,7 +136,7 @@ export const EmptyFilter: CSFilters = {
 }
 
 export interface ReplayPageProps {
-    filter: CSFilters | Iterable<CSFilters>,
+    filter: CSFilters,
     size: number,
     mapViewModes: MapViewModeType[],
 }

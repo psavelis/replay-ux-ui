@@ -3,16 +3,17 @@ import TimelineWinnerCard, { getColor } from './winner-card';
 import { RoundData } from './types';
 import { electrolize } from "@/config/fonts";
 import { MapViewModeType, CSFilters, ReplayPageProps } from "@/types/replay-api/searchable";
+import { fetchRoundData } from "@/app/api/search/rounds";
 
 interface MatchTimelineData {
   rounds: RoundData[]
 }
 
-export default function MatchTimelineHorizontalFull(props: ReplayPageProps) {
+export default async function MatchTimelineHorizontalFull(props: ReplayPageProps) {
   const [viewModes, setViewModes] = useState<MapViewModeType[]>([MapViewModeType.MapHeatmapLayer]);
   const mock: MatchTimelineData = { rounds: [] } as any
 
-  const { rounds } = fetchRoundData();
+  const { rounds } = await fetchRoundData(props.filter)
 
   const getConditionalCard = (round: RoundData, side: string) => {
     const borderPrefix = round.winner === "ct" ? "borderTop" : "borderBottom"
@@ -35,7 +36,7 @@ export default function MatchTimelineHorizontalFull(props: ReplayPageProps) {
     <div className={`relative w-full overflow-x-auto ${electrolize.className}`} {...props}>
       <div className="flex w-full py-2">
         <div className="flex w-full">
-          {rounds.map((round, index: number) => (
+          {rounds.map((round: RoundData, index: number) => (
             <React.Fragment key={index}> {/* Added Fragment to wrap multiple elements */}
               <div className={`flex flex-col w-6 mx-0.1rem pr-[0.1rem] ${electrolize.className}`}>
                 {getConditionalCard(round, "ct")}
@@ -48,7 +49,7 @@ export default function MatchTimelineHorizontalFull(props: ReplayPageProps) {
                       fontSize: "1.2rem",
                       color: getColor(round),
                       marginLeft: `${((index) * 24)}px`,
-                    }}>{(index + 1) % 5 === 0 && index + 1}</span> {/* Display the round number */}
+                    }}></span> {/* Display the round number */}
                   </div>
                 )}
 
