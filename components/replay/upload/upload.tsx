@@ -92,7 +92,7 @@ export function UploadForm() {
                   classNames={{
                     base: "max-w-md",
                     track: "drop-shadow-md border border-default",
-                    indicator: "bg-gradient-to-r from-pink-500 to-yellow-500",
+                    indicator: "bg-gradient-to-r from-amber-500 to-yellow-500",
                     label: "tracking-wider font-medium text-default-600",
                     value: "text-foreground/60",
                   }}
@@ -103,7 +103,7 @@ export function UploadForm() {
           Upload
         </Button> */}
       </div>
-      <Input type="submit" radius="full" className="bg-gradient-to-tr from-pink-500 to-red-500 text-white shadow-lg" value="" />
+      <Input type="submit" radius="full" className="bg-gradient-to-tr from-amber-500 to-red-500 text-white shadow-lg" value="" />
     </form>
 
   )

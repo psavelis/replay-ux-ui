@@ -18,7 +18,7 @@ import {
 } from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 import {FilterTypeEnum} from "./filters-types";
 
 import ColorRadioItem from "./color-radio-item";
@@ -78,7 +78,7 @@ const FiltersWrapper = React.forwardRef<HTMLDivElement, FiltersWrapperProps>(
                 <Switch
                   key={option.value}
                   classNames={{
-                    base: cn(
+                    base: cl(
                       "inline-flex flex-row-reverse w-full max-w-md bg-content1 hover:bg-content2 items-center",
                       "justify-between cursor-pointer rounded-lg gap-2 -mr-2 px-4 py-3",
                     ),
@@ -144,7 +144,7 @@ const FiltersWrapper = React.forwardRef<HTMLDivElement, FiltersWrapperProps>(
     return (
       <div
         ref={ref}
-        className={cn("h-full max-h-fit w-full max-w-sm rounded-medium bg-content1 p-6", className)}
+        className={cl("h-full max-h-fit w-full max-w-sm rounded-medium bg-content1 p-6", className)}
       >
         {showTitle && (
           <>
@@ -153,7 +153,7 @@ const FiltersWrapper = React.forwardRef<HTMLDivElement, FiltersWrapperProps>(
           </>
         )}
         <ScrollShadow
-          className={cn(
+          className={cl(
             "-mx-6 h-full px-6",
             {
               "max-h-[calc(100%_-_220px)]": showActions,

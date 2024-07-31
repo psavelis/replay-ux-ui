@@ -4,7 +4,7 @@ import React from "react";
 import {Avatar, Badge, Button} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type NotificationType = "default" | "request" | "file";
 
@@ -51,7 +51,7 @@ const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>
     return (
       <div
         ref={ref}
-        className={cn(
+        className={cl(
           "flex gap-3 border-b border-divider px-6 py-4",
           {
             "bg-primary-50/50": !isRead,

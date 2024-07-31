@@ -4,8 +4,6 @@ import React from "react";
 import {Avatar, Badge, Button} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
-
 export type NotificationType = "default" | "request" | "file";
 
 export type NotificationItem = {
@@ -22,9 +20,6 @@ export type NotificationItemProps = React.HTMLAttributes<HTMLDivElement> & Notif
 
 const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>(
   ({children, avatar, name, description, type, time, isRead, className, ...props}, ref) => {
-    /**
-     * Defines the content for different types of notifications.
-     */
     const contentByType: Record<NotificationType, React.ReactNode> = {
       default: null,
       request: (
@@ -51,7 +46,7 @@ const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>
     return (
       <div
         ref={ref}
-        className={cn(
+        className={cl(
           "flex gap-3 border-b border-divider px-6 py-4",
           {
             "bg-primary-50/50": !isRead,

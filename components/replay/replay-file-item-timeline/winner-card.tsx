@@ -1,39 +1,48 @@
-import { cn } from '@nextui-org/system';
 import { TimelineWinnerCardProps } from './types'
 import  { DefaultLogoOnlyIconForecolor } from '@/components/logo/logo-default-only-icon';
 import { logo } from '@/components/primitives';
+import { cl } from '../../cl';
  
+
+export const getColor = (round: any) => {
+  if (round.winner === "ct") {
+    return "rgba(155, 210, 255, 1)"
+  }
+
+  return "rgba(255, 210, 155, 1)"
+}
+
 export default function TimelineWinnerCard({ roundData }: TimelineWinnerCardProps) {
   const radiusTarget = roundData.winner === "ct" ? "Top" : "Bottom"
-  const winnerLabel = roundData.winner?.toUpperCase()
+  const gradientString = roundData.winner === "ct" ? "linear-gradient(to top, rgba(155, 210, 255, 0.33), transparent)" : "linear-gradient(to bottom, rgba(255, 210, 155, 0.33), transparent)"
 
-  const borderColor = `hsl(var(--nextui-${roundData.winner === "ct" ? "primary" : "warning"}))`
-  const contentColor = roundData.winner === "ct" ? "blue" : "yellow"
+  const contentColor = getColor(roundData)
 
   // from-[#00b7fa] to-[#01cfea]
-  const iconColor = roundData.winner === "ct" ? "hsl(var(--nextui-primary))" : "hsl(var(--nextui-warning))"
+  const iconColor = roundData.winner === "ct" ? "rgba(165, 220, 255, 1)" : "hsl(var(--nextui-warning-600))"
 
   const RoundIcon = () => {
     if (roundData.keyEvents.some(e => e.includes('Clutch'))) {
+      // return <></>
       return (<DefaultLogoOnlyIconForecolor fill={iconColor} />)
     }
 
-    return (<div className={logo({ color: contentColor})}>{roundData.roundNumber}</div>)
+    return (<div style={{color: contentColor, width: "24px" }}></div>)
   }
 
   return (
     <div 
-    className={cn(
+    className={cl(
       "flex items-center justify-center",
-      roundData.winner === "ct" ? "bg-primary-100" :"bg-warning-100" 
     )}
 
       style={{
-        [`border${radiusTarget}RightRadius`]: "12px",
-        [`border${radiusTarget}LeftRadius`]: "12px",
+        // [`border${radiusTarget}RightRadius`]: "12px",
+        // [`border${radiusTarget}LeftRadius`]: "12px",
         [`border${radiusTarget}Style`]: "solid",
-        [`border${radiusTarget}Width`]: "1px",
-        [`border${radiusTarget}Color`]: borderColor,
+        [`border${radiusTarget}Width`]: "0px",
+        [`border${radiusTarget}Color`]: "#ccc",
+        background: gradientString,
       }}
   >
      <span className="h-6 text-small">

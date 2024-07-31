@@ -3,14 +3,10 @@
 import type {IconProps} from "@iconify/react";
 
 import React from "react";
-import {Avatar, Chip, Divider, Link, Spacer} from "@nextui-org/react";
+import {Divider, Link} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {AcmeIcon} from "./social";
 import ThemeSwitch from "./theme-switch";
-import DefaultLogo from '../logo/logo-default';
-import { logo } from "../primitives";
-import FullLogo from "../logo/logo-full";
 import LogoGrayscale from "../logo/logo-grayscale";
 
 type SocialIconProps = Omit<IconProps, "icon">;

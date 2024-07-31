@@ -6,7 +6,7 @@ import React from "react";
 import {Icon} from "@iconify/react";
 import {Input} from "@nextui-org/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type PaymentFormProps = React.HTMLAttributes<HTMLDivElement> & {
   variant?: InputProps["variant"];
@@ -25,7 +25,7 @@ const PaymentForm = React.forwardRef<HTMLDivElement, PaymentFormProps>(
     );
 
     return (
-      <div ref={ref} className={cn("flex flex-col gap-4", className)} {...props}>
+      <div ref={ref} className={cl("flex flex-col gap-4", className)} {...props}>
         <Input
           label="Email address"
           labelPlacement="outside"

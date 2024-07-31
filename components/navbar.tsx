@@ -37,12 +37,10 @@ import SearchInput from "./search/search-modal/search-modal";
 import DefaultLogo from './logo/logo-default';
 import { useTheme } from "next-themes";
 import NavBarSection from "./navbar_section";
-import { GameIconsArrowScope, GameIconsCamera, GameIconsChest, GameIconsCloud, GameIconsMouse } from "./logo/icons/arrow-scope";
+import { GameIconsArrowScope } from "./logo/icons/arrow-scope";
 import { GameIconsLaurelCrown } from "./logo/icons/laurel-crown";
-import { GameIconsPerpendicularRings } from "./logo/icons/perpendicular-rings";
-import { GameIconsFireDash } from "./logo/icons/fire-dash";
-import { GameIconsAerodynamicHarpoon } from "./logo/icons/aerodynamic-harpoon";
 import { Kbd } from "@nextui-org/kbd";
+import { electrolize } from "@/config/fonts";
 
 export const Navbar = () => {
 
@@ -66,7 +64,7 @@ export const Navbar = () => {
   const searchInput = SearchInput();
 
   return (
-    <NextUINavbar maxWidth="full" height={62} position="sticky" isBordered={true} isBlurred={true}       style={{
+    <NextUINavbar maxWidth="full" height={26} position="sticky" isBordered={true} isBlurred={true} style={{
       // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
       // backgroundSize: "cover",
     }}>
@@ -97,31 +95,22 @@ export const Navbar = () => {
             <NavbarItem key={item.href}
             style={{
               height: "100%",
-              backgroundColor: item.href === "/match-making" ? "#DCFF37" : (item.href === "/supply" ? "#34445C" : ""),
+              backgroundColor: item.href === "/match-making" ? "#DCFF37" : (item.href === "/cloud" ? "#34445C" : ""),
               minWidth: "105px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              
+              fontSize: "12px",
+              color: item.href === "/match-making" ? "rgb(52, 68, 92)" : (item.href === "/cloud" ? "#F5F5F5" : ""),
             }}
             >
               <NextLink
                 className={clsx(
-                  "data-[active=true]:text-primary data-[active=true]:font-medium justify-center align-items align-center w-full text-center"
+                  "data-[active=true]:text-primary data-[active=true]:font-medium justify-center align-items align-center w-full text-center " + electrolize.className
                 )}
                 href={item.href}
               >
-                { item.href === "/match-making" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#34445C"}}><GameIconsArrowScope className="flex w-full "/> {item.label} <small> <Kbd>w</Kbd></small></span>}
-                { item.href === "/replays" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}><GameIconsCamera className="flex w-full"/> {item.label} <small> <Kbd>q</Kbd></small></span>}
-                { item.href === "/blog" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}> <GameIconsLaurelCrown className="flex w-full"/> <span className="ml-2">{item.label}</span><small> <Kbd>d</Kbd></small></span>}
-                { item.href === "/cloud" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}><GameIconsCloud className="flex w-full"/> {item.label} <small> <Kbd>s</Kbd></small></span>}
-                { item.href === "/supply" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#f5f0e1"}}><GameIconsChest className="flex w-full"/> {item.label} <small> <Kbd>b</Kbd></small></span>}
-                { item.href === "/stats" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#f5f0e1"}}><GameIconsChest className="flex w-full"/> {item.label}</span>}
-                { item.href === "/news" && <span className="text-center w-full" style={{justifyContent: "center", fontWeight: "bold", color: "#f5f0e1"}}><GameIconsPerpendicularRings width={"1.8em"} height={"1.8em"} className="flex w-full"/> {item.label}</span>}
-                
-
-                { !["/replays", "/match-making", "/blog", "/cloud", "/supply", "/news" ].includes(item.href) && item.label}
-                
+                {item.label}
               </NextLink>
             </NavbarItem>
           ))}
@@ -179,9 +168,9 @@ export const Navbar = () => {
 
       <NavbarMenu>
         {searchInput}
-        <div className="mx-4 mt-2 flex flex-col gap-2">
+        <div className="mx-4 mt-2 flex flex-col">
           {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`} className="h-full">
+            <NavbarMenuItem key={`${item}-${index}`} className="h-4">
               <Link
                 color={
                   index === 2
@@ -191,7 +180,7 @@ export const Navbar = () => {
                       : "foreground"
                 }
                 href="#"
-                size="lg"
+                size="sm"
               >
                 {item.label}
               </Link>

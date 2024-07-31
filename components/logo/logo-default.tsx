@@ -9,8 +9,8 @@ export default function DefaultLogo(props: any) {
       <DefaultLogoNoIcon tag={true}  /> */}
       <Image
         src="/logo-red-only-text.png"
-        alt="Gameplay Screenshot"
-        style={{ objectFit: "contain", maxWidth: "250px", marginTop: "4px", marginBottom: "4px" }}
+        alt="LeetGaming Logo"
+        style={{ objectFit: "contain", maxWidth: "128px", marginTop: "4px", marginBottom: "4px" }}
 
         {...props} />
       {/* <Chip

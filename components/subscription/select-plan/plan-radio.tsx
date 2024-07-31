@@ -5,7 +5,7 @@ import type {RadioProps} from "@nextui-org/react";
 import React from "react";
 import {Radio} from "@nextui-org/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type PlanRadioProps = RadioProps & {
   icon?: React.ReactNode;
@@ -20,15 +20,15 @@ const PlanRadio = React.forwardRef<HTMLInputElement, PlanRadioProps>(
       ref={ref}
       classNames={{
         ...classNames,
-        base: cn(
+        base: cl(
           "inline-flex m-0 px-3 py-4 max-w-[100%] items-center justify-between",
           "flex-row-reverse w-full cursor-pointer rounded-lg 3 border-medium border-default-100",
           "data-[selected=true]:border-secondary data-[selected=true]:bg-secondary-50",
           classNames?.base,
           className,
         ),
-        wrapper: cn("group-data-[focus-visible=true]:ring-secondary", classNames?.wrapper),
-        labelWrapper: cn("ml-0", classNames?.labelWrapper),
+        wrapper: cl("group-data-[focus-visible=true]:ring-secondary", classNames?.wrapper),
+        labelWrapper: cl("ml-0", classNames?.labelWrapper),
       }}
       color="secondary"
     >

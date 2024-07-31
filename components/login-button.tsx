@@ -5,11 +5,10 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger 
 import { MailIcon, SteamIcon } from './icons'
 import { logo } from './primitives'
 import { signIn } from 'next-auth/react'
-import { Kbd } from '@nextui-org/kbd'
 import { GoogleIcon } from './signup/social'
 import { Link, Spacer } from '@nextui-org/react'
 import { DefaultLogoOnlyIcon } from './logo/logo-default-only-icon'
-import BattleButton from './filters/ctas/material-button/battle-orange';
+import BattleButton from './filters/ctas/material-button/battle-button';
 import { useTheme } from 'next-themes'
 
 export const LoginButton = () => {
@@ -20,7 +19,7 @@ export const LoginButton = () => {
       <Spacer x={4} />
       <Dropdown>
         <DropdownTrigger>
-          <BattleButton style={{ height: "64px", width: "100px", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: "#F2F2F2", marginRight: "-25px"}}>
+          <BattleButton style={{ height: "64px", width: "100px", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: "#F5F5F5", marginRight: "-25px"}}>
             / sign-in
           </BattleButton>
         </DropdownTrigger>

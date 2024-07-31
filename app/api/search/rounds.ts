@@ -1,0 +1,96 @@
+import { RouteBuilder } from "@/types/replay-api/replay-api.route-builder";
+import { EmptyFilter, CSFilters } from "@/types/replay-api/searchable";
+import { ReplayApiResourceType, ReplayApiSettingsMock } from "@/types/replay-api/settings";
+import { GetServerSideProps } from "next";
+
+
+export const getContextValue = (context: any, key: string): any[] | undefined | null => {
+    const parameterValue = context.params[key] || context.query[key] || context.body[key] || context[key];
+
+    if (parameterValue === null || parameterValue === undefined) {
+        return null;
+    }
+
+    if (Array.isArray(parameterValue)) {
+        return parameterValue;
+    }
+
+    return [parameterValue];
+}
+
+export const getServerSideProps: GetServerSideProps<FilterProps> = async (context) => {
+    const filterPropsKeys = Object.keys(EmptyFilter)
+
+    const queryFilter = filterPropsKeys.reduce((acc, curr) => {
+        const inputValue = getContextValue(context, curr);
+
+        if (inputValue !== null && inputValue !== undefined && inputValue.length) {
+            acc[curr] = inputValue;
+        }
+
+        return acc
+    }, {} as any);
+
+    if (!queryFilter || !Object.keys(queryFilter).length) {
+        console.log('No parameters provided');
+        return { notFound: true };
+    }
+
+    const roundDataResult = await fetchRoundData(queryFilter);
+
+    if (roundDataResult.error) {
+        console.error('Error fetching round data:', roundDataResult.error);
+        return { notFound: true };
+    }
+
+    return { props: { roundData: roundDataResult.data } };
+};
+
+
+interface RoundData {
+
+}
+
+const fetchRoundData: RoundData[] = async ({ gameIds, matchIds, roundNumbers, playerIds }: CSFilters) => {
+  const r: RouteBuilder = new RouteBuilder(ReplayApiSettingsMock)
+
+  const endpoint = r.forGame(gameIds![0])
+    .forMatch(matchIds![0])
+    .forRound(roundNumbers![0])
+    .forPlayer(playerIds![0])
+    
+
+  // const battleStats = endpoint.get(ReplayApiResourceType.BattleStats)
+  // const economy = endpoint.get(ReplayApiResourceType.Economy)
+  // const events = endpoint.get(ReplayApiResourceType.Event)
+  // const highlights = endpoint.get(ReplayApiResourceType.Highlight)
+  // const mapRegionStats = endpoint.get(ReplayApiResourceType.MapRegionStats)
+  // const positioning = endpoint.get(ReplayApiResourceType.Positioning)
+  // const strategy = endpoint.get(ReplayApiResourceType.Strategy)
+  // const utility = endpoint.get(ReplayApiResourceType.Utility)
+
+
+
+
+
+  // const ctoken = await fetch(accountsApiRoute + '/onboard/steam', {
+  //   method: 'POST',
+  //   body: JSON.stringify({
+  //     v_hash: req.body.v_hash,
+  //     steam: {
+  //       id: req.body.steam_id,
+  //     },
+  //   }),
+  // });
+
+  // if (!ctoken.ok) {
+  //   return res.status(ctoken.status).json(await ctoken.json());
+  // }
+
+  // const { user_id: uid, resource_owner: rid } = await ctoken.json().then((data) => {
+  //   return res.json(data);
+  // })
+
+
+  // res.json({ uid, rid });
+}

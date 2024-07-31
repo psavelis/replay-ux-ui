@@ -4,7 +4,7 @@ import React from "react";
 import {Button, Image, Link, Tooltip} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type OrderSummaryItemType = {
   id: string;
@@ -23,7 +23,7 @@ const OrderSummaryItem = React.forwardRef<HTMLLIElement, OrderSummaryItemProps>(
   ({children, name, href, price, color, size, quantity, imageSrc, className, ...props}, ref) => (
     <li
       ref={ref}
-      className={cn("flex items-center gap-x-4 border-b-small border-divider py-4", className)}
+      className={cl("flex items-center gap-x-4 border-b-small border-divider py-4", className)}
       {...props}
     >
       <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center">

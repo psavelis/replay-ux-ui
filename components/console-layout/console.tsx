@@ -7,7 +7,6 @@ import { useMediaQuery } from "usehooks-ts";
 
 import { AcmeLogo } from "./acme";
 import { sectionItemsWithTeams } from "./sidebar-items";
-import { cn } from "./cn";
 import { LoginButton } from '../login-button';
 import Sidebar from "./sidebar";
 
@@ -23,6 +22,7 @@ import { useTheme } from 'next-themes';
 
 import { DefaultLogoOnlyIcon } from '../logo/logo-default-only-icon';
 import DefaultLogoNoIcon from '../logo/logo-default-no-icon';
+import { cl } from "../cl";
 
 export const metadata: Metadata = {
   title: {
@@ -47,7 +47,6 @@ const viewport: Viewport = {
   initialScale: 1,
 };
 
-// Exporting this way to avoid NextJs 14 type error
 export { viewport };
 
 export default function ConsoleLayout({
@@ -98,11 +97,10 @@ export default function ConsoleLayout({
               zIndex: -1,
               opacity: (theme === "light" ? "10%" : "100%")
             }}
-          > {/* Move background div here and set z-index */}
-            {/* ... your background style here ... */}
+          >
           </div>
           <div
-            className={cn(
+            className={cl(
               "relative flex h-full w-72 flex-col !border-r-small border-divider p-6 transition-width",
               {
                 "w-16 items-center px-2 py-6": isCompact,
@@ -110,7 +108,7 @@ export default function ConsoleLayout({
             )}
           >
             <div
-              className={cn(
+              className={cl(
                 "flex items-center gap-3 px-3",
 
                 {
@@ -123,7 +121,6 @@ export default function ConsoleLayout({
                   transform: "scale(1.2)",
                   transformOrigin: "right",
                 }}>
-
                   <DefaultLogoOnlyIcon />
                 </div>
 
@@ -133,7 +130,7 @@ export default function ConsoleLayout({
                   transform: "scale(1.8)",
                   transformOrigin: "left",
                 }}
-                className={cn("text-small font-bold opacity-100", {
+                className={cl("text-small font-bold opacity-100", {
                   "w-0 opacity-0": isCompact,
                   "transform -scale": !isCompact,
                 })}
@@ -144,7 +141,7 @@ export default function ConsoleLayout({
             <Spacer y={8} />
             <div className="flex items-center gap-3 px-3">
               {sessionAvatar()}
-              <div className={cn("flex max-w-full flex-col", { hidden: isCompact })}>
+              <div className={cl("flex max-w-full flex-col", { hidden: isCompact })}>
                 <p className="truncate text-small font-medium text-default-600">{session?.user?.name || LoginButton()}</p>
                 <p className="truncate text-tiny text-default-400">{session?.user?.email || ""}</p>
               </div>
@@ -154,14 +151,14 @@ export default function ConsoleLayout({
             </ScrollShadow>
             <Spacer y={2} />
             <div
-              className={cn("mt-auto flex flex-col", {
+              className={cl("mt-auto flex flex-col", {
                 "items-center": isCompact,
               })}
             >
               <Tooltip content="Help & Feedback" isDisabled={!isCompact} placement="right">
                 <Button
                   fullWidth
-                  className={cn(
+                  className={cl(
                     "justify-start truncate text-default-500 data-[hover=true]:text-foreground",
                     {
                       "justify-center": isCompact,
@@ -192,7 +189,7 @@ export default function ConsoleLayout({
               </Tooltip>
               <Tooltip content="Log Out" isDisabled={!isCompact} placement="right">
                 <Button
-                  className={cn("justify-start text-default-500 data-[hover=true]:text-foreground", {
+                  className={cl("justify-start text-default-500 data-[hover=true]:text-foreground", {
                     "justify-center": isCompact,
                   })}
                   isIconOnly={isCompact}

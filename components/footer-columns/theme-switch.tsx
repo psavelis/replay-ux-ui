@@ -6,7 +6,7 @@ import React from "react";
 import {RadioGroup, VisuallyHidden, useRadio, useRadioGroupContext} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 const ThemeRadioItem = ({icon, ...props}: RadioProps & {icon: string}) => {
   const {
@@ -31,7 +31,7 @@ const ThemeRadioItem = ({icon, ...props}: RadioProps & {icon: string}) => {
       </VisuallyHidden>
       <div
         {...wrapperProps}
-        className={cn(
+        className={cl(
           wrapperProps?.["className"],
           "pointer-events-none h-8 w-8 rounded-full border-black border-opacity-10 ring-0 transition-transform group-data-[pressed=true]:scale-90",
           {
@@ -52,7 +52,7 @@ const ThemeSwitch = React.forwardRef<HTMLDivElement, Omit<RadioGroupProps, "chil
       aria-label="Select a theme"
       classNames={{
         ...classNames,
-        wrapper: cn("gap-0 items-center", classNames?.wrapper),
+        wrapper: cl("gap-0 items-center", classNames?.wrapper),
       }}
       defaultValue="dark"
       orientation="horizontal"

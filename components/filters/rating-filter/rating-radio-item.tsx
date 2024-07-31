@@ -6,7 +6,7 @@ import React from "react";
 import {VisuallyHidden, useRadio, useRadioGroupContext} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 const RatingRadioItem = React.forwardRef<HTMLInputElement, RadioProps>((props, ref) => {
   const {
@@ -59,7 +59,7 @@ const RatingRadioItem = React.forwardRef<HTMLInputElement, RadioProps>((props, r
     <Component
       {...baseProps}
       ref={ref}
-      className={cn(baseProps["className"], {
+      className={cl(baseProps["className"], {
         "cursor-default": isReadOnly,
       })}
     >
@@ -67,7 +67,7 @@ const RatingRadioItem = React.forwardRef<HTMLInputElement, RadioProps>((props, r
         <input {...getInputProps()} />
       </VisuallyHidden>
       <Icon
-        className={cn(
+        className={cl(
           "pointer-events-none transition-transform-colors",
           isSelected ? starColor : "text-default-200",
           {

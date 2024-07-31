@@ -1,13 +1,13 @@
 import React from "react";
-import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip, Spacer, Badge, CheckboxIcon, Code, Switch, LinkIcon, Snippet } from "@nextui-org/react";
-import VerifiedBadge from "@/components/badges/verified-badge/app";
-import { AcmeIcon } from "@/components/footer-columns/social";
-import { AddStarIcon, HeartFilledIcon, HeartIcon, MoonFilledIcon, SearchIcon, StarredIcon, SteamIcon } from "@/components/icons";
+import { Avatar, Button, Card, CardBody, CardFooter, CardHeader, Chip, Spacer, Badge,   BreadcrumbItem,
+  Breadcrumbs, CheckboxIcon, Code, Switch, LinkIcon, Snippet } from "@nextui-org/react";
+import { UserIcon } from "@/components/icons";
 import { GameIconsLaurelCrown } from "@/components/logo/icons/laurel-crown";
-import { GameIconsPerpendicularRings } from "@/components/logo/icons/perpendicular-rings";
-import { GameIconsCamera } from "@/components/logo/icons/arrow-scope";
 import { useTheme } from "next-themes";
-import { GoogleIcon } from "@/components/footer-services-status/social";
+import LogTable from "./action-log-table";
+import MatchHeader from "../matchcard/mini-match-summary-table";
+
+import { PlayerRoundStats } from "./mockdata";
 
 export const ViewPayerInfoCard = () => {
   const [isWatching, setIsWatching] = React.useState(false);
@@ -21,7 +21,12 @@ export const ViewPayerInfoCard = () => {
     return "success";
   };
 
-
+  // TODO: colocar HP, utilities, wpn, kit/etc
+  // TODO: overlay de "clutch" ou "eco" ou "fullbuy" etc
+  // TODO: overlay de "1v3" ou "1v4" etc
+  // TODO: overlay de dmg recebido / crimson transparent cover
+  // TODO: colocar overlay de role (conforme contexto atual)**** (ie: lurking, entry, support, etc)
+  // TODO: colocar overlay de redes, comunidades e opts (add, invite, etc)
   return (
     <Card shadow="none" className="max-w-[400px] border-none bg-transparent relative">
       <CardHeader className="justify-between" style={{
@@ -29,11 +34,13 @@ export const ViewPayerInfoCard = () => {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        backgroundColor: theme === 'dark' ? "#444" : "#F2F2F2",
+        backgroundColor: theme === 'dark' ? "#333" : "#F2F2F2",
         backgroundBlendMode: "overlay",
+        overflow: "clip",
       }}>
+        
         <div className={theme === "dark" ? "profileBackdropContentDark flex gap-3 pl-2" : "profileBackdropContent flex gap-3 pl-2"}>
-          <Badge content={"MIBR"} style={{ border: "1px solid #DCFF37", borderRadius: "5px", color: "#DCFF37", backgroundColor: "#34445C", fontSize: "10px", fontWeight: "bold" }} size="sm" placement="top-left">
+          <Badge content={"LXG"} style={{ border: "1px solid #DCFF37", borderRadius: "5px", color: "#DCFF37", backgroundColor: "#34445C", fontSize: "10px", fontWeight: "bold" }} size="sm" placement="bottom-right">
             <Avatar isBordered radius="sm" src="https://avatars.githubusercontent.com/u/29843116?v=4" />
           </Badge>
           <div className="flex flex-col items-start justify-center w-32">
@@ -42,13 +49,12 @@ export const ViewPayerInfoCard = () => {
           </div>
         </div>
         <div className="grid pl-6">
-      
-          <Button startContent={<GameIconsLaurelCrown className="sm" width={24} height={24} />} radius="sm" size="sm" variant="solid" className={theme === 'dark' ? "viewProfileHighlightsButtonDark" : "viewProfileHighlightsButton"}>Highlights<span className="text-small tracking-tight text-default-500" style={{ fontFamily: "Courier New", fontSize: "11px" }}>(1.5K)</span></Button>
-          <Spacer x={1} />
-          <Button startContent={<GameIconsCamera className="sm" width={24} height={24} />} radius="sm" size="sm" variant="solid" className={theme === 'dark' ? "viewProfileHighlightsButtonDark" : "viewProfileHighlightsButton"}>Demos<span className="text-small tracking-tight text-default-500" style={{ fontFamily: "Courier New", fontSize: "11px" }}>(229)</span></Button>
+          {/* <Button radius="sm" size="sm" variant="solid" className={theme === 'dark' ? "viewProfileHighlightsButtonDark" : "viewProfileHighlightsButton"}>Highlights<span className="text-small tracking-tight text-default-500" style={{ fontFamily: "Courier New", fontSize: "11px" }}>(1.5K)</span></Button>
+          <Spacer x={1} /> */}
+          <Button startContent={<GameIconsLaurelCrown className="sm" width={24} height={24} />} radius="sm" size="sm" variant="solid" className={theme === 'dark' ? "viewProfileHighlightsButtonDark" : "viewProfileHighlightsButton"}>View Highlight</Button>
           <Spacer x={1} />
           {/* <Button
-            className={!isWatching ? "bg-transparent text-foreground border-default-200" : "bg-gradient-to-tr from-pink-500 via-orange-500 to-yellow-500 text-white"}
+            className={!isWatching ? "bg-transparent text-foreground border-default-200" : "bg-gradient-to-tr from-amber-500 via-orange-500 to-yellow-500 text-white"}
             startContent={!isWatching ? <AddStarIcon className="sm" width={18} height={18} /> : <StarredIcon className="sm" width={18} height={18} />}
             radius="sm"
             size="sm"
@@ -59,27 +65,48 @@ export const ViewPayerInfoCard = () => {
             {!isWatching ? "Star" : "Starred"}<span style={{ fontFamily: "Courier New", fontSize: "11px" }}>(3)</span>
           </Button>
           <Spacer x={1} /> */}
-          <Button color="danger" radius="sm" size="sm" variant="ghost" >Sponsor<span className="text-small tracking-tight text-default-500" style={{ fontFamily: "Courier New", fontSize: "11px" }}>(0)</span></Button>
-          <Spacer x={1} />
+          <Button style={{
+            color: theme === 'dark' ? "#DCFF37" : "#34445C",
+          }} radius="sm" size="sm" variant="faded" startContent={<UserIcon size={20} width={20} height={20}/>}>View Profile</Button>
+          <Spacer x={1} /> 
+          {/* <Button color="danger" radius="sm" size="sm" variant="light" startContent={<HeartIcon />}>Sponsor<span className="text-small tracking-tight text-default-500" style={{ fontFamily: "Courier New", fontSize: "11px" }}>(0)</span></Button>
+          <Spacer x={1} /> */}
         </div>
       </CardHeader>
       
-      <CardBody className="px-3 py-0">
-
-      </CardBody>
-      <CardFooter className="gap-3">
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-600 text-small">1</p>
-          <p className=" text-default-500 text-small">Teams</p>
+      <CardBody className="px-0 py-0 flex w-full">
+      {/* <div className="flex gap-1">
+          <p className="font-semibold text-default-600 text-small">2</p>
+          <p className="text-default-500 text-small">Networks</p>
         </div>
         <div className="flex gap-1">
-          <p className="font-semibold text-default-600 text-small">7</p>
+          <p className="font-semibold text-default-600 text-small">512</p>
+          <p className=" text-default-500 text-small">Demos</p>
+        </div>
+      <div className="flex gap-1">
+          <p className="font-semibold text-default-600 text-small">119</p>
           <p className="text-default-500 text-small">Clutches</p>
         </div>
         <div className="flex gap-1">
-          <p className="font-semibold text-default-600 text-small">3</p>
+          <p className="font-semibold text-default-600 text-small">37</p>
           <p className="text-default-500 text-small">Aces</p>
-        </div>
+        </div> */}
+        <MatchHeader showScores={false} />
+      </CardBody>
+      <CardFooter className="gap-3">
+      <Breadcrumbs className="pt-0">
+            {/* <BreadcrumbItem>Match</BreadcrumbItem> */}
+            <BreadcrumbItem><small>CT</small></BreadcrumbItem>
+            <BreadcrumbItem><small>Round 5</small></BreadcrumbItem>
+            {/* <BreadcrumbItem>@sound</BreadcrumbItem> */}
+            <BreadcrumbItem>
+            <Chip variant="faded"><small>Clutch Situation</small></Chip>
+            </BreadcrumbItem>
+            <BreadcrumbItem className="text-small sm"><Chip variant="dot" className="sm" color="danger"><small>1 vs 3</small></Chip></BreadcrumbItem>
+            <BreadcrumbItem>
+              <LogTable />
+            </BreadcrumbItem>
+          </Breadcrumbs>
 
          {/* Triangular Button */}
          <Button 

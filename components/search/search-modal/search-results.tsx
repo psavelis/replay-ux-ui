@@ -10,7 +10,7 @@ const resultsJson = {
         typeDescription: "Highlights",
         results: [
             {
-                href: "/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won&player=sound",
+                href: "/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won&player=sound",
                 breadcrumb: () => (
                     <Breadcrumbs
                         itemClasses={{
@@ -18,15 +18,15 @@ const resultsJson = {
                             separator: "px-0",
                         }}
                     >
-                        <BreadcrumbItem href="/matches/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5"><Chip variant="faded">#5</Chip> Round <TeamAvatar
+                        <BreadcrumbItem href="/match/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5"><Chip variant="faded">#5</Chip> Round <TeamAvatar
                             classNames={{
                                 base: "border-1 border-primary-foreground/20",
                                 name: "text-primary-foreground/80",
                             }}
                             name="C T" /></BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]"><Chip variant="faded">1v5</Chip> Clutch Situation</BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won">Status: <code>clutch_won</code></BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]"><Chip variant="faded">1v5</Chip> Clutch Situation</BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won">Status: <code>clutch_won</code></BreadcrumbItem>
                         <BreadcrumbItem
                             classNames={{
                                 item: "px-0",
@@ -38,7 +38,7 @@ const resultsJson = {
                 ),
             },
             {
-                href: "/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won&player=sound",
+                href: "/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won&player=sound",
                 breadcrumb: () => (
                     <Breadcrumbs
                         itemClasses={{
@@ -46,15 +46,15 @@ const resultsJson = {
                             separator: "px-0",
                         }}
                     >
-                        <BreadcrumbItem href="/matches/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5"><Chip variant="faded">#5</Chip> Round <TeamAvatar
+                        <BreadcrumbItem href="/match/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5"><Chip variant="faded">#5</Chip> Round <TeamAvatar
                             classNames={{
                                 base: "border-1 border-primary-foreground/20",
                                 name: "text-primary-foreground/80",
                             }}
                             name="C T" /></BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]"><Chip variant="faded">1v5</Chip> Clutch Situation</BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won">Status: <code>clutch_won</code></BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]"><Chip variant="faded">1v5</Chip> Clutch Situation</BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won">Status: <code>clutch_won</code></BreadcrumbItem>
                         <BreadcrumbItem
                             classNames={{
                                 item: "px-0",
@@ -71,7 +71,7 @@ const resultsJson = {
         typeDescription: "Match",
         results: [
             {
-                href: "/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won&player=sound",
+                href: "/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won&player=sound",
                 breadcrumb: () => (
                     <Breadcrumbs
                         itemClasses={{
@@ -79,15 +79,15 @@ const resultsJson = {
                             separator: "px-0",
                         }}
                     >
-                        <BreadcrumbItem href="/matches/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5"><Chip variant="faded">#5</Chip> Round <TeamAvatar
+                        <BreadcrumbItem href="/match/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5"><Chip variant="faded">#5</Chip> Round <TeamAvatar
                             classNames={{
                                 base: "border-1 border-primary-foreground/20",
                                 name: "text-primary-foreground/80",
                             }}
                             name="C T" /></BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]"><Chip variant="faded">1v5</Chip> Clutch Situation</BreadcrumbItem>
-                        <BreadcrumbItem href="/matches/73098213018002179/rounds/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won">Status: <Chip variant="faded" color="success"><code>clutch_won</code></Chip></BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]"><Chip variant="faded">1v5</Chip> Clutch Situation</BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179/round/5/highlights/ClutchSituation?types=[1v5]&status=clutch_won">Status: <Chip variant="faded" color="success"><code>clutch_won</code></Chip></BreadcrumbItem>
                         <BreadcrumbItem
                             classNames={{
                                 item: "px-0",
@@ -99,7 +99,7 @@ const resultsJson = {
                 ),
             },
             {
-                href: "/matches/73098213018002179&player=sound",
+                href: "/match/73098213018002179&player=sound",
                 breadcrumb: () => (
                     <Breadcrumbs
                         itemClasses={{
@@ -107,7 +107,7 @@ const resultsJson = {
                             separator: "px-0",
                         }}
                     >
-                        <BreadcrumbItem href="/matches/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
+                        <BreadcrumbItem href="/match/73098213018002179"><Chip variant="dot" color="danger">730...2179</Chip> Match</BreadcrumbItem>
                         <BreadcrumbItem
                             classNames={{
                                 item: "px-0",

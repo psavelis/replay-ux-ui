@@ -5,7 +5,7 @@ import type {InputProps} from "@nextui-org/react";
 import React from "react";
 import {Autocomplete, AutocompleteItem, Avatar, Input} from "@nextui-org/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 import countries from "./countries";
 
 export type ShippingFormProps = React.HTMLAttributes<HTMLDivElement> & {
@@ -16,7 +16,7 @@ export type ShippingFormProps = React.HTMLAttributes<HTMLDivElement> & {
 const ShippingForm = React.forwardRef<HTMLDivElement, ShippingFormProps>(
   ({variant = "flat", className, hideTitle}, ref) => {
     return (
-      <div ref={ref} className={cn("flex flex-col gap-4", className)}>
+      <div ref={ref} className={cl("flex flex-col gap-4", className)}>
         {!hideTitle && <span className="relative text-foreground-500">Shipping Information</span>}
         <Input
           isRequired

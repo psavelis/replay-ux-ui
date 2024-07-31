@@ -7,7 +7,7 @@ export default function Component() {
   return (
     <div className="flex h-full  w-full items-start justify-center overflow-scroll">
       <Card className="my-10 w-[400px]">
-        <CardHeader className="relative flex h-[100px] flex-col justify-end overflow-visible bg-gradient-to-br from-pink-300 via-purple-300 to-indigo-400">
+        <CardHeader className="relative flex h-[100px] flex-col justify-end overflow-visible bg-gradient-to-br from-amber-300 via-purple-300 to-indigo-400">
           <Avatar
             className="h-20 w-20 translate-y-12"
             src="https://i.pravatar.cc/150?u=a04258114e29026708c"

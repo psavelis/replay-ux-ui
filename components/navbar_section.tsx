@@ -3,9 +3,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { Dropdown, DropdownTrigger, DropdownMenu, Button, Avatar, Spacer } from "@nextui-org/react";
 import { styled, keyframes } from '@stitches/react';
 import { usePathname } from "next/navigation";
-import { Kbd } from '@nextui-org/kbd'
+import { Kbd } from "@nextui-org/kbd"
 
-// Valorant-Inspired Styles
 const TestButton = styled(Button, {
   position: 'relative',
   overflow: 'hidden',
@@ -13,7 +12,6 @@ const TestButton = styled(Button, {
   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.15)',
   borderRadius: "0px 0px 0 0",
   clipPath: "polygon(0% 100%, 90% 100%, 100% 50%, 100% 0, 10% 0, 0% 50%)",
-  // ... (your existing Valorant button styles)
 });
 
 const fadeIn = keyframes({

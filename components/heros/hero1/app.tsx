@@ -1,7 +1,7 @@
 "use client"
-import BattleButton from '@/components/filters/ctas/material-button/battle-orange'; 
+import BattleButton from '@/components/filters/ctas/material-button/battle-button'; 
 import { SteamIcon } from '@/components/icons';
-import { GameIconsArrowScope, GameIconsMouse } from '@/components/logo/icons/arrow-scope';
+import { GameIconsArrowScope } from '@/components/logo/icons/arrow-scope';
 import { GameIconsSupersonicBullet } from '@/components/logo/icons/supersonic-bullet';
 import { logo } from '@/components/primitives';
 import { Chip, Kbd, Spacer } from '@nextui-org/react';
@@ -12,10 +12,7 @@ const HeroBanner: React.FC = () => {
   const videoRefs = useRef<HTMLVideoElement[]>([]);
 
   const videos = [
-    // '/heros/video1.mp4',
-    // '/heros/video2.mp4',
-    // '/heros/video3.mp4',
-    '/heros/video4.mp4'
+    '/cs2/test-imgbanner.png'
   ];
 
   useEffect(() => {
@@ -82,25 +79,11 @@ const HeroBanner: React.FC = () => {
         <p className="hero-description">Get to know what means to <span className={logo({color: "battleOrange"})}>clutch</span> in the international stage.</p>
         <Spacer y={4} />
         <div className="flex align-items justify-center items-center">
-        <BattleButton onClick={handlePlayClick} style={
-            {
-              border: "1px solid transparent",
-              color: "#F2F2F2",
-              boxShadow: '1px 1px 1px #34445C',
-              fontWeight: "bold",
-            }
-            }>
+        <BattleButton onClick={handlePlayClick}>
                 Register Team
             </BattleButton>
             <Spacer x={4} />
-            <BattleButton  onClick={handlePlayClick} style={
-            {
-              border: "1px solid transparent",
-              color: "#F2F2F2",
-              boxShadow: '1px 1px 1px #34445C',
-              fontWeight: "bold",
-            }
-            }> 
+            <BattleButton  onClick={handlePlayClick}> 
                 Battle Now <Kbd>w</Kbd>
             </BattleButton>
             {/* <Spacer x={4} />

@@ -1,7 +1,7 @@
 'use client'; // Make sure to enable Client Components for next/link
 
 import DemoFilters from './filter';
-import MatchTimeline from '@/components/replay/replay-file-item-timeline/app';
+import MatchTimeline from '@/components/replay/replay-file-item-timeline/match-h-timeline-sm';
 
 
 

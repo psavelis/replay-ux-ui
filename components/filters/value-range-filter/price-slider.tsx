@@ -6,7 +6,7 @@ import type {RangeFilter, RangeValue} from "./filters-types";
 import React from "react";
 import {Divider, Input, Slider} from "@nextui-org/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type PriceSliderAnimation = "opacity" | "height";
 
@@ -129,7 +129,7 @@ const PriceSlider = React.forwardRef<HTMLDivElement, PriceSliderProps>(
     );
 
     return (
-      <div className={cn("flex flex-col gap-3", className)}>
+      <div className={cl("flex flex-col gap-3", className)}>
         <div className="flex flex-col gap-1">
           <div className="flex h-12 w-full items-end justify-between px-2">{rangePips}</div>
           <Slider

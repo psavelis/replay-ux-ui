@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 import products from "./products";
 
 import ProductListItem from "./product-list-item";
@@ -16,7 +16,7 @@ const ProductsGrid = React.forwardRef<HTMLDivElement, ProductGridProps>(
     return (
       <div
         ref={ref}
-        className={cn(
+        className={cl(
           "grid w-full grid-cols-1 gap-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
           className,
         )}
@@ -27,7 +27,7 @@ const ProductsGrid = React.forwardRef<HTMLDivElement, ProductGridProps>(
             key={product.id}
             removeWrapper
             {...product}
-            className={cn("w-full snap-start", itemClassName)}
+            className={cl("w-full snap-start", itemClassName)}
           />
         ))}
       </div>

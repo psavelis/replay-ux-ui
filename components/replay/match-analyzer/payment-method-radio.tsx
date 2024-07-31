@@ -5,7 +5,7 @@ import type {RadioProps} from "@nextui-org/react";
 import React from "react";
 import {Chip, Radio} from "@nextui-org/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type PaymentMethodRadioProps = RadioProps & {
   icon?: React.ReactNode;
@@ -34,14 +34,14 @@ const PaymentMethodRadio = React.forwardRef<HTMLInputElement, PaymentMethodRadio
       {...props}
       classNames={{
         ...classNames,
-        base: cn(
+        base: cl(
           "inline-flex m-0 px-3 py-4 max-w-[100%] items-center justify-between",
           "flex-row-reverse w-full cursor-pointer rounded-lg 3 !border-medium border-default-100",
           "data-[selected=true]:border-primary",
           classNames?.base,
           className,
         ),
-        labelWrapper: cn("ml-0", classNames?.labelWrapper),
+        labelWrapper: cl("ml-0", classNames?.labelWrapper),
       }}
       color="primary"
     >

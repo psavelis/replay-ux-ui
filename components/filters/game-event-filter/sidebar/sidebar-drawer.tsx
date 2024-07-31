@@ -63,11 +63,11 @@ const SidebarDrawer = React.forwardRef<
           {...props}
           classNames={{
             ...classNames,
-            wrapper: cn("!w-[var(--sidebar-width)]", classNames?.wrapper, {
+            wrapper: cl("!w-[var(--sidebar-width)]", classNames?.wrapper, {
               "!items-start !justify-start ": sidebarPlacement === "left",
               "!items-end !justify-end": sidebarPlacement === "right",
             }),
-            base: cn(
+            base: cl(
               "w-[var(--sidebar-width)] !m-0 p-0 h-full max-h-full",
               classNames?.base,
               className,
@@ -78,8 +78,8 @@ const SidebarDrawer = React.forwardRef<
                   sidebarPlacement === "right",
               },
             ),
-            body: cn("p-0", classNames?.body),
-            closeButton: cn("z-50", classNames?.closeButton),
+            body: cl("p-0", classNames?.body),
+            closeButton: cl("z-50", classNames?.closeButton),
           }}
           isOpen={isOpen}
           motionProps={motionProps}
@@ -96,7 +96,7 @@ const SidebarDrawer = React.forwardRef<
           </ModalContent>
         </Modal>
         <div
-          className={cn(
+          className={cl(
             "hidden h-full max-w-[var(--sidebar-width)] overflow-x-hidden overflow-y-scroll sm:flex",
             className,
           )}

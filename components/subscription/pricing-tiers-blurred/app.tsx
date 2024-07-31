@@ -18,7 +18,7 @@ import {
 
 import {FrequencyEnum} from "./pricing-types";
 import {frequencies, tiers} from "./pricing-tiers";
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export default function Component() {
   const [selectedFrequency, setSelectedFrequency] = React.useState(frequencies[0]);
@@ -82,7 +82,7 @@ export default function Component() {
           <Card
             key={tier.key}
             isBlurred
-            className={cn("bg-background/60 p-3 dark:bg-default-100/50", {
+            className={cl("bg-background/60 p-3 dark:bg-default-100/50", {
               "!border-small border-secondary/50": tier.mostPopular,
             })}
             shadow="md"

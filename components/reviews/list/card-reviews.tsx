@@ -2,7 +2,7 @@ import type {ReviewType} from "./review";
 
 import React from "react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 import Review from "./review";
 
@@ -10,7 +10,7 @@ export type CardReviewProps = React.HTMLAttributes<HTMLDivElement> & ReviewType;
 
 const CardReview = React.forwardRef<HTMLDivElement, CardReviewProps>(
   ({className, ...review}, ref) => (
-    <div ref={ref} className={cn("rounded-medium bg-content1 p-5 shadow-small", className)}>
+    <div ref={ref} className={cl("rounded-medium bg-content1 p-5 shadow-small", className)}>
       <Review {...review} />
     </div>
   ),

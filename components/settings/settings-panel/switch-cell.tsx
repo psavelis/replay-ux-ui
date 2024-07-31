@@ -5,7 +5,7 @@ import type {SwitchProps} from "@nextui-org/react";
 import React from "react";
 import {extendVariants, Switch} from "@nextui-org/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 const CustomSwitch = extendVariants(Switch, {
   variants: {
@@ -35,7 +35,7 @@ const SwitchCell = React.forwardRef<HTMLInputElement, SwitchCellProps>(
       ref={ref}
       classNames={{
         ...classNames,
-        base: cn(
+        base: cl(
           "inline-flex bg-content2 flex-row-reverse w-full max-w-full items-center",
           "justify-between cursor-pointer rounded-medium gap-2 p-4",
           classNames?.base,
@@ -44,8 +44,8 @@ const SwitchCell = React.forwardRef<HTMLInputElement, SwitchCellProps>(
       {...props}
     >
       <div className="flex flex-col">
-        <p className={cn("text-medium", classNames?.label)}>{label}</p>
-        <p className={cn("text-small text-default-500", classNames?.description)}>{description}</p>
+        <p className={cl("text-medium", classNames?.label)}>{label}</p>
+        <p className={cl("text-small text-default-500", classNames?.description)}>{description}</p>
       </div>
     </CustomSwitch>
   ),

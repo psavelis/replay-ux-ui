@@ -11,7 +11,7 @@ import React from "react";
 import {Listbox, Tooltip, ListboxItem, ListboxSection} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export enum SidebarItemType {
   Nest = "nest",
@@ -61,20 +61,20 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
 
     const sectionClasses = {
       ...sectionClassesProp,
-      base: cn(sectionClassesProp?.base, "w-full", {
+      base: cl(sectionClassesProp?.base, "w-full", {
         "p-0 max-w-[44px]": isCompact,
       }),
-      group: cn(sectionClassesProp?.group, {
+      group: cl(sectionClassesProp?.group, {
         "flex flex-col gap-1": isCompact,
       }),
-      heading: cn(sectionClassesProp?.heading, {
+      heading: cl(sectionClassesProp?.heading, {
         hidden: isCompact,
       }),
     };
 
     const itemClasses = {
       ...itemClassesProp,
-      base: cn(itemClassesProp?.base, {
+      base: cl(itemClassesProp?.base, {
         "w-11 h-11 gap-0 p-0": isCompact,
       }),
     };
@@ -94,7 +94,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
             {...item}
             key={item.key}
             classNames={{
-              base: cn(
+              base: cl(
                 {
                   "h-auto p-0": !isCompact && isNestType,
                 },
@@ -107,7 +107,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
             startContent={
               isCompact || isNestType ? null : item.icon ? (
                 <Icon
-                  className={cn(
+                  className={cl(
                     "text-default-500 group-data-[selected=true]:text-foreground",
                     iconClassName,
                   )}
@@ -125,7 +125,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                 <div className="flex w-full items-center justify-center">
                   {item.icon ? (
                     <Icon
-                      className={cn(
+                      className={cl(
                         "text-default-500 group-data-[selected=true]:text-foreground",
                         iconClassName,
                       )}
@@ -152,7 +152,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                     item.icon ? (
                       <div className={"flex h-11 items-center gap-2 px-2 py-1.5"}>
                         <Icon
-                          className={cn(
+                          className={cl(
                             "text-default-500 group-data-[selected=true]:text-foreground",
                             iconClassName,
                           )}
@@ -172,7 +172,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                     <Listbox
                       className={"mt-0.5"}
                       classNames={{
-                        list: cn("border-l border-default-200 pl-4"),
+                        list: cl("border-l border-default-200 pl-4"),
                       }}
                       items={item.items}
                       variant="flat"
@@ -208,7 +208,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
             startContent={
               isCompact ? null : item.icon ? (
                 <Icon
-                  className={cn(
+                  className={cl(
                     "text-default-500 group-data-[selected=true]:text-foreground",
                     iconClassName,
                   )}
@@ -227,7 +227,7 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
                 <div className="flex w-full items-center justify-center">
                   {item.icon ? (
                     <Icon
-                      className={cn(
+                      className={cl(
                         "text-default-500 group-data-[selected=true]:text-foreground",
                         iconClassName,
                       )}
@@ -252,19 +252,19 @@ const Sidebar = React.forwardRef<HTMLElement, SidebarProps>(
         ref={ref}
         hideSelectedIcon
         as="nav"
-        className={cn("list-none", className)}
+        className={cl("list-none", className)}
         classNames={{
           ...classNames,
-          list: cn("items-center", classNames?.list),
+          list: cl("items-center", classNames?.list),
         }}
         color="default"
         itemClasses={{
           ...itemClasses,
-          base: cn(
+          base: cl(
             "px-3 min-h-11 rounded-large h-[44px] data-[selected=true]:bg-default-100",
             itemClasses?.base,
           ),
-          title: cn(
+          title: cl(
             "text-small font-medium text-default-500 group-data-[selected=true]:text-foreground",
             itemClasses?.title,
           ),

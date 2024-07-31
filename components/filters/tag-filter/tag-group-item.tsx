@@ -6,7 +6,7 @@ import React from "react";
 import {Chip, VisuallyHidden, useCheckbox} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type TagGroupItemProps = Omit<CheckboxProps, "icon"> & {
   icon?: string;
@@ -26,11 +26,11 @@ const TagGroupItem = React.forwardRef<HTMLLabelElement, TagGroupItemProps>(
         </VisuallyHidden>
         <Chip
           classNames={{
-            base: cn({
+            base: cl({
               "outline-none ring-2 ring-focus ring-offset-2 ring-offset-background": isFocusVisible,
               "bg-primary": isSelected,
             }),
-            content: cn("!text-small text-default-400", {
+            content: cl("!text-small text-default-400", {
               "text-primary-foreground": isSelected,
               "pr-1": !!icon,
             }),
@@ -40,7 +40,7 @@ const TagGroupItem = React.forwardRef<HTMLLabelElement, TagGroupItemProps>(
           startContent={
             icon ? (
               <Icon
-                className={cn("text-default-400", {
+                className={cl("text-default-400", {
                   "text-primary-foreground": isSelected,
                 })}
                 icon={icon}

@@ -1,12 +1,12 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-	logoName: "TeamPRO",
-	name: "TeamPRO",
+	logoName: "LeetGaming.PRO",
+	name: "LeetGaming PRO",
 	description: "Generate insights and exclusive badges from your matches!",
 	navItems: [
 		{
-			label: "[ news ]",
+			label: "NEWS",
 			href: "/news",
 		},
 		// {
@@ -19,11 +19,11 @@ export const siteConfig = {
 		// 	// sections com cada produto, para landing individuais
 		// },
 		{
-			label: " /  start",
+			label: "START",
 			href: "/match-making",
 		  },
 		{
-			label: " /  highlights",
+			label: "HIGHLIGHTS",
 			href: "/blog",
 			// sections, Cloud=[Replays, Config, Spray/Partn], Stats=[Highlights, Matches, Teams, Players], Supply=[Competition Items, Pass, Esports Events, Esports products]
 		},
@@ -40,15 +40,15 @@ export const siteConfig = {
 		// 	href: "/players", // Search page (option: new player, player settings, player stats, player matches, player replays, player vault, player calendar, player blog, player about, player help-feedback, player logout)
 		// },
 		{
-			label: " /  demos",
+			label: "REPLAYS",
 			href: "/replays",
 		},
 		{
-			label: " / upload",
+			label: "UPLOAD",
 			href: "/cloud", // ProductLanding (if not logged in) / Dashboard (if logged in) (option: storage, private, privately shared, public, upgrade to pro)
 		},
 		{
-		  label: "/ vault",
+		  label: "VAULT",
 		  href: "/supply", // Product Landing (Promos, Pass etc, Landing before display product offers, only if logged in)
 		},
 	],
@@ -62,20 +62,12 @@ export const siteConfig = {
 			href: "/dashboard",
 		},
 		{
-			label: "Projects",
-			href: "/projects",
-		},
-		{
-			label: "Team",
-			href: "/team",
-		},
-		{
-			label: "Calendar",
-			href: "/calendar",
-		},
-		{
 			label: "Settings",
 			href: "/settings",
+		},
+		{
+			label: "Game Update Catchup",
+			href: "/changelog"
 		},
 		{
 			label: "Help & Feedback",

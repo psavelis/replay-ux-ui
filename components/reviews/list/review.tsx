@@ -4,7 +4,7 @@ import React from "react";
 import {User} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type ReviewType = {
   user: {
@@ -47,7 +47,7 @@ const Review = React.forwardRef<HTMLDivElement, ReviewProps>(
             return (
               <Icon
                 key={i}
-                className={cn(
+                className={cl(
                   "text-lg sm:text-xl",
                   isSelected ? "text-warning" : "text-default-200",
                 )}

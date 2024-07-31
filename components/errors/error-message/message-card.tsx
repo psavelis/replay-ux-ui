@@ -5,7 +5,7 @@ import {Avatar, Badge, Button, Link, Tooltip} from "@nextui-org/react";
 import {useClipboard} from "@nextui-org/use-clipboard";
 import {Icon} from "@iconify/react";
 
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export type MessageCardProps = React.HTMLAttributes<HTMLDivElement> & {
   avatar?: string;
@@ -104,7 +104,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
     );
 
     return (
-      <div {...props} ref={ref} className={cn("flex gap-3", className)}>
+      <div {...props} ref={ref} className={cl("flex gap-3", className)}>
         <div className="relative flex-none">
           <Badge
             isOneChar
@@ -119,7 +119,7 @@ const MessageCard = React.forwardRef<HTMLDivElement, MessageCardProps>(
         </div>
         <div className="flex w-full flex-col gap-4">
           <div
-            className={cn(
+            className={cl(
               "relative w-full rounded-medium bg-content2 px-4 py-3 text-default-600",
               failedMessageClassName,
               messageClassName,

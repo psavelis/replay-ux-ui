@@ -18,7 +18,7 @@ import {
 
 import {FrequencyEnum} from "./pricing-types";
 import {frequencies, tiers} from "./pricing-tiers";
-import {cn} from "./cn";
+import {cl} from "../cl";
 
 export default function Component() {
   const [selectedFrequency, setSelectedFrequency] = React.useState(frequencies[0]);
@@ -68,7 +68,7 @@ export default function Component() {
         {tiers.map((tier) => (
           <Card
             key={tier.key}
-            className={cn("relative p-3", {
+            className={cl("relative p-3", {
               "border-2 border-primary": tier.mostPopular,
               "!border-medium border-divider bg-transparent": !tier.mostPopular,
               "bg-default-900 text-default-50": tier.featured,
@@ -89,7 +89,7 @@ export default function Component() {
             <CardHeader className="flex flex-col items-start gap-2 pb-6">
               <h2 className="text-large font-medium">{tier.title}</h2>
               <p
-                className={cn("text-medium text-default-500", {
+                className={cl("text-medium text-default-500", {
                   "text-default-400": tier.featured,
                 })}
               >
@@ -100,7 +100,7 @@ export default function Component() {
             <CardBody className="gap-8">
               <p className="flex items-baseline gap-1 pt-2">
                 <span
-                  className={cn(
+                  className={cl(
                     "inline bg-gradient-to-br from-foreground to-foreground-600 bg-clip-text text-4xl font-semibold leading-7 tracking-tight text-transparent",
                     {
                       "text-background": tier.featured,
@@ -111,7 +111,7 @@ export default function Component() {
                 </span>
                 {typeof tier.price !== "string" ? (
                   <span
-                    className={cn("text-sm font-medium text-default-400", {
+                    className={cl("text-sm font-medium text-default-400", {
                       "text-default-300": tier.featured,
                     })}
                   >
@@ -126,7 +126,7 @@ export default function Component() {
                   <li key={feature} className="flex items-center gap-2">
                     <Icon className="text-primary" icon="ci:check" width={24} />
                     <p
-                      className={cn("text-default-500", {
+                      className={cl("text-default-500", {
                         "text-default-400": tier.featured,
                       })}
                     >
@@ -140,7 +140,7 @@ export default function Component() {
               <Button
                 fullWidth
                 as={Link}
-                className={cn({
+                className={cl({
                   "bg-default-50": tier.featured,
                 })}
                 color={tier.buttonColor}

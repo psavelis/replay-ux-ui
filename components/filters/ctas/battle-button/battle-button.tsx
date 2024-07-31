@@ -1,6 +1,5 @@
 "use client"
-import { logo } from '@/components/primitives';
-import { Button, Kbd } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { styled } from '@stitches/react';
 import { useTheme } from 'next-themes';
 
@@ -36,18 +35,15 @@ const BattleButton = styled(Button, {
 // AltairOrgange: #FF4654, AltairYellow: #FFC700
 // linear-gradient(rgb(255, 199, 0) 0%, rgb(255, 70, 84) 100%)
 
+// LightNavy -> rgb(74, 144, 226);
+
 const App = (props: any) => { 
   const { theme, setTheme } = useTheme();
 
   return (
   
   <div>
-    <BattleButton className="px-4 h-12 font-medium"
-      style={{
-        borderColor: theme === 'dark' ? "#FFC700" : "#34445C", // offwhite: '#F2F2F2', neon-lime: '#DCFF37', neon-cyan: '#00B3FF', yellow-orange: 'FFC700', pink-orange: 'FF4654', navy-blue: "#34445C"
-        backgroundColor: theme === 'dark' ? '#34445C' : '#F2F2F2',
-      }}
-      {...props} />
+    <BattleButton className="px-4 h-12 font-medium" {...props} />
   </div>
 );}
 

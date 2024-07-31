@@ -88,7 +88,7 @@ export default function Component(props: CardProps) {
         </h2>
       </CardBody>
       <CardFooter
-        className={cn(
+        className={cl(
           "absolute bottom-0 h-[120px] overflow-visible bg-content1 px-6 duration-300 ease-in-out transition-height",
           {
             "h-full": isOpen,

@@ -1,9 +1,5 @@
-import { useSession } from 'next-auth/react';
-
-const accountsApiRoute = 'https://accounts-api.dev.dash.net.br/v1';
 
 export const POST = async (req: any, res: any) => {
-  const { data: session } = useSession();
 
   const ctoken = await fetch(accountsApiRoute + '/onboard/steam', {
     method: 'POST',
