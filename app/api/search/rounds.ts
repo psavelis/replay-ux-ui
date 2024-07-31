@@ -1,7 +1,8 @@
-import { logger } from "@/lib/logger";
+import { Loggable, logger } from "@/lib/logger";
 import { ResultOptions, RouteBuilder } from "@/types/replay-api/replay-api.route-builder";
 import { EmptyFilter, CSFilters, RoundData } from "@/types/replay-api/searchable";
 import { ReplayApiResourceType, ReplayApiSettingsMock } from "@/types/replay-api/settings";
+
 
 export const getContextValue = (context: any, key: string): any[] | undefined | null => {
     const parameterValue = context.params[key] || context.query[key] || context.body[key] || context[key];
@@ -52,8 +53,11 @@ export const fetchRoundData = async (filter: CSFilters, resultOptions?: ResultOp
   const builder = new RouteBuilder(ReplayApiSettingsMock, logger)
 
   const roundData = await builder.withFilter(filter)
-      // TODO: error handling
     .get<RoundData>(ReplayApiResourceType.Round, resultOptions)
+    .catch((e) => {
+      (logger as Loggable).error(e, 'error fetching ', JSON.stringify(filter))
+      return {} as RoundData
+    })
 
   return roundData
 

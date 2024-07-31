@@ -8,6 +8,9 @@ export default function HomeLayout({
   return (
     <RootLayout>
       <div>
+        {/* 
+          TODO: add filter sidebar / drawer
+        */}
         {children}
       </div>
     </RootLayout>

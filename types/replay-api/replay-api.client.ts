@@ -4,11 +4,12 @@ import { Loggable } from "@/lib/logger";
 
 export interface ApiResponse<T> {
   data?: T;
+  error?: any;
   nextOffset?: number | string
 }
 
 export class ReplayApiClient {
-  private routeBuilder: RouteBuilder<any>;
+  private routeBuilder: RouteBuilder;
 
   constructor(private settings: ReplayApiSettings, private logger: Loggable) {
     this.routeBuilder = new RouteBuilder(settings, logger);

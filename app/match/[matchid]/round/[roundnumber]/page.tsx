@@ -17,12 +17,19 @@ import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card';
 import { Button, ButtonGroup, Switch, Tab, Tabs } from '@nextui-org/react';
 import React, { useState } from 'react';
 import MatchTimelineHorizontalFull from '@/components/replay/replay-file-item-timeline/match-h-timeline-full';
-import { ReplayPageProps, CSFilters, MapViewModeType } from '@/types/replay-api/searchable';
+import { CSFilters, MapViewModeType } from '@/types/replay-api/searchable';
 
+export type SizeOption = 'sm' | 'md' | 'lg'
+
+export interface ReplayPageProps {
+  filter: CSFilters
+  size: SizeOption
+}
 
 const RoundPage: React.FC<ReplayPageProps> = (props: ReplayPageProps) => {
-  const [viewMode, setViewMode] = useState<MapViewModeType>(MapViewModeType.MapTrajectoriesLayer)
-  const { filter, size, mapViewModes } = props
+  const { filter, size } = props
+
+  const [mapViewModes, setMapViewModes] = useState<MapViewModeType[]>([MapViewModeType.MapTrajectoriesLayer])
 
   return (
     <div className="round-page">
@@ -66,6 +73,7 @@ const RoundPage: React.FC<ReplayPageProps> = (props: ReplayPageProps) => {
                   defaultSelected
                   size="sm"
                   color="secondary"
+                  
                   // thumbIcon={({ isSelected, className }) =>
                   //   isSelected ? (
                   //     <AdjustmentsIcon className={className} />
@@ -74,7 +82,7 @@ const RoundPage: React.FC<ReplayPageProps> = (props: ReplayPageProps) => {
                   //   )
                   // }
                 >
-                  Toggle All/Global vs. Filtered-Only
+                  Toggle Filter
                 </Switch>
 
                 <ButtonGroup isDisabled>

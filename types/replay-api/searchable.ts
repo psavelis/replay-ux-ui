@@ -134,9 +134,3 @@ export const EmptyFilter: CSFilters = {
     playerCfgProps: null,
     errors: null,
 }
-
-export interface ReplayPageProps {
-    filter: CSFilters,
-    size: number,
-    mapViewModes: MapViewModeType[],
-}
