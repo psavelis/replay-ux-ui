@@ -5,9 +5,8 @@ import type {RadioGroupProps} from "@nextui-org/react";
 import React from "react";
 import {RadioGroup} from "@nextui-org/react";
 
-import {cl} from "../cl";
-
 import RatingRadioItem from "./rating-radio-item";
+import { cl } from "@/components/cl";
 
 export type RatingRadioGroupProps = RadioGroupProps & {
   hideStarsText?: boolean;

@@ -11,7 +11,7 @@ import {
 } from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
-import FiltersWrapper from "./filters-wrapper";
+import FiltersWrapper from "./filters-wrapper.tsx_todo";
 import ecommerceItems from "./ecommerce-items";
 import SidebarDrawer from "./sidebar-drawer";
 import ProductsGrid from "./products-grid";

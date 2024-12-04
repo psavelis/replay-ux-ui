@@ -1,4 +1,4 @@
-import type {OrderSummaryItemType} from "./order-summary-item";
+import type {OrderSummaryItemType} from "./order-summary-item.tsx_todo";
 
 const cartItems: OrderSummaryItemType[] = [
   {

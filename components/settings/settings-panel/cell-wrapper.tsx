@@ -1,6 +1,5 @@
+import { cl } from "@/components/cl";
 import React from "react";
-
-import {cl} from "../cl";
 
 const CellWrapper = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({children, className, ...props}, ref) => (

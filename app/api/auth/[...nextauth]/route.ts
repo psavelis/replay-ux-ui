@@ -6,7 +6,6 @@ import type { NextRequest } from 'next/server'
 
 const mockSalt = process.env.STEAM_VHASH_SOURCE!
 
-// const accountsApiRoute = 'https://accounts-api.dev.dash.net.br/v1';
 const steamOnboardingApiRoute = 'http://localhost:4991/onboarding/steam';
 
 async function handler(

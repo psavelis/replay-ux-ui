@@ -3,9 +3,9 @@
 import React from "react";
 import {Button, Link, ResizablePanel, Spacer} from "@nextui-org/react";
 import {LazyMotion, domAnimation, AnimatePresence, m} from "framer-motion";
-
-import {cl} from "../cl";
+;
 import SwitchCell from "./switch-cell";
+import { cl } from "@/components/cl";
 
 const variants = {
   visible: {opacity: 1},
