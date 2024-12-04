@@ -3,8 +3,7 @@
 import React from "react";
 import {User} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
-
-import {cl} from "../cl";
+import { cl } from "@/components/cl";
 
 export type ReviewType = {
   user: {

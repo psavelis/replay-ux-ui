@@ -5,8 +5,7 @@ import type {CheckboxProps} from "@nextui-org/react";
 import React from "react";
 import {Chip, VisuallyHidden, useCheckbox} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
-
-import {cl} from "../cl";
+import { cl } from "@/components/cl";
 
 export type TagGroupItemProps = Omit<CheckboxProps, "icon"> & {
   icon?: string;
