@@ -12,15 +12,15 @@ export default function SignIn() {
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   return (
-    <div className="relative flex h-screen w-screen">
-      {/* Brand Logo */}
-      <div className="absolute left-2 top-5 lg:left-5">
-        <div className="flex items-center">
-          <AcmeIcon size={40} />
-          <p className="font-medium">ACME</p>
-        </div>
-      </div>
-
+    <div
+      className="flex h-screen w-screen items-center justify-center overflow-hidden rounded-small bg-content1 p-2 sm:p-4 lg:p-8"
+      style={{
+        backgroundImage:
+          "url('/dark_bg_tailwind.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       {/* Login Form */}
       <div className="flex w-full items-center justify-center bg-background lg:w-1/2">
         <div className="flex w-full max-w-sm flex-col items-center gap-4 p-4">
