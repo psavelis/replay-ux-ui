@@ -135,7 +135,7 @@ export default function ConsoleLayout({
                   "transform -scale": !isCompact,
                 })}
               >
-                <DefaultLogoNoIcon tag={false}></DefaultLogoNoIcon>
+                <DefaultLogo tag={false}></DefaultLogo>
               </span>
             </div>
             <Spacer y={8} />

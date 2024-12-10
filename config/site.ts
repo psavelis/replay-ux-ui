@@ -48,7 +48,7 @@ export const siteConfig = {
 			href: "/cloud", // ProductLanding (if not logged in) / Dashboard (if logged in) (option: storage, private, privately shared, public, upgrade to pro)
 		},
 		{
-		  label: "VAULT",
+		  label: "SUPPLY",
 		  href: "/supply", // Product Landing (Promos, Pass etc, Landing before display product offers, only if logged in)
 		},
 	],
