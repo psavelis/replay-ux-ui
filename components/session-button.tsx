@@ -5,7 +5,7 @@ import { DeleteDocumentIcon, LogOutIcon, Logo, PlusIcon, PowerButtonIcon, UserIc
 import { logo } from './primitives';
 import { button as buttonStyles } from "@nextui-org/theme";
 import { useSession, signIn, signOut } from "next-auth/react"
-import { VerticalDotsIcon } from '@/app/replays/VerticalDotsIcon';
+import { VerticalDotsIcon } from "@/components/files/replays-table/VerticalDotsIcon";
 import BattleButton from './filters/ctas/battle-button/battle-button';
 import { useTheme } from 'next-themes';
 

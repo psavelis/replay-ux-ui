@@ -2,7 +2,7 @@ import React from "react";
 import {Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link, LinkIcon} from "@nextui-org/react";
 import UploadContent from './upload-content';
 import { CopyDocumentIcon, DeleteDocumentIcon, EditDocumentIcon, Logo, PlusIcon, ServerIcon } from '@/components/icons';
-import { ChevronDownIcon } from '@/app/replays/ChevronDownIcon';
+import { ChevronDownIcon } from "@/components/files/replays-table/ChevronDownIcon"
 
 export default function App() {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();

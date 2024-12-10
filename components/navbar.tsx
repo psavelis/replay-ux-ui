@@ -67,6 +67,7 @@ export const Navbar = () => {
     <NextUINavbar maxWidth="full" height={26} position="sticky" isBordered={true} isBlurred={true} style={{
       // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
       // backgroundSize: "cover",
+      // backgroundColor: "rgba(0, 0, 0, 0.5)",
     }}>
       <NavbarContent className="basis-1/5 sm:basis-full">
         <NavbarBrand as="li" className=" max-w-fit">

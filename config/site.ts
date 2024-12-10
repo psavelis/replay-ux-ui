@@ -7,7 +7,7 @@ export const siteConfig = {
 	navItems: [
 		{
 			label: "NEWS",
-			href: "/news",
+			href: "/blog",
 		},
 		// {
 		// 	label: "Uploads",
@@ -24,7 +24,7 @@ export const siteConfig = {
 		  },
 		{
 			label: "HIGHLIGHTS",
-			href: "/blog",
+			href: "/highlights",
 			// sections, Cloud=[Replays, Config, Spray/Partn], Stats=[Highlights, Matches, Teams, Players], Supply=[Competition Items, Pass, Esports Events, Esports products]
 		},
 		// {

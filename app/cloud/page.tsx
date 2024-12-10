@@ -46,11 +46,21 @@ import {
     Card,
     CardHeader,
     CardFooter,
+    Breadcrumbs,
+    BreadcrumbItem,
 } from "@nextui-org/react";
+
+import ReplaysTable from "@/components/files/replays-table/app"
 
 export default function Component() {
     return (
         <div className="w-full">
+            {/* <nav className="my-4 px-2 py-2">
+                <Breadcrumbs>
+                    <BreadcrumbItem>News</BreadcrumbItem>
+                    <BreadcrumbItem>Cloud</BreadcrumbItem>
+                </Breadcrumbs>
+            </nav> */}
             <main className="flex w-full justify-center">
                 <ScrollShadow
                     hideScrollBar
@@ -68,12 +78,33 @@ export default function Component() {
                         radius="full"
                         variant="underlined"
                     >
+
+                        <Tab
+                            key="uploads"
+                            title={
+                                <div className="flex items-center gap-2">
+                                    <p>Uploads</p>
+                                    <Chip size="sm">9</Chip>
+                                </div>
+                            }
+                        >
+                            <div className="pt-14">
+                                <ReplaysTable />
+                            </div>
+
+                        </Tab>
                         <Tab key="dashboard" title="Dashboard">
-                        <div className="pt-14 flex flex-col md:flex-row md:space-x-4">
+                            <div className="pt-14 flex flex-col md:flex-row md:space-x-4">
+                                <Card>
+                                    <CardHeader>Replays</CardHeader>
+                                    <CardBody> Body: <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p>
+                                    </CardBody>
+                                    <CardFooter> 5 (1 Public, 2 Shared, 2 Private) </CardFooter>
+                                </Card>
                                 <Card className="mb-4 md:mb-0">
                                     <CardHeader>Storage</CardHeader>
-                                    <CardBody> 
-                                    <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p>
+                                    <CardBody>
+                                        <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p>
                                     </CardBody>
                                     <CardFooter> 50% used (809.7MB/1TB) </CardFooter>
                                 </Card>
@@ -82,20 +113,14 @@ export default function Component() {
                                     <CardBody> Body:
                                         <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p>
                                     </CardBody>
-                                    <CardFooter> 25  </CardFooter>
-                                </Card>
-                                <Card>
-                                    <CardHeader>Replays</CardHeader>
-                                    <CardBody> Body: <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p>
-                                    </CardBody>
-                                    <CardFooter> 12 (3 Public) </CardFooter>
+                                    <CardFooter> 25 (5 Public, 5 Shared, 15 Private)  </CardFooter>
                                 </Card>
                             </div>
                             <div className="pt-2">
                                 <Card>
-                                    <CardHeader>Header</CardHeader>
+                                    <CardHeader>Usage / History</CardHeader>
                                     <CardBody>
-                                        Body:
+                                        Line Chart:
                                         <p>
                                             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
                                             ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
@@ -109,9 +134,9 @@ export default function Component() {
                             </div>
                             <div className="pt-2">
                                 <Card>
-                                    <CardHeader>Header</CardHeader>
+                                    <CardHeader>Upgrade</CardHeader>
                                     <CardBody>
-                                        Body:
+                                        Plans:
                                         <p>
                                             Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
                                             ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
@@ -124,15 +149,7 @@ export default function Component() {
                                 </Card>
                             </div>
                         </Tab>
-                        <Tab
-                            key="uploads"
-                            title={
-                                <div className="flex items-center gap-2">
-                                    <p>Uploads</p>
-                                    <Chip size="sm">9</Chip>
-                                </div>
-                            }
-                        />
+
                         <Tab key="analytics" title="Analytics" />
                         <Tab key="shared" title="Shared" />
                         <Tab key="settings" title="Settings" />
