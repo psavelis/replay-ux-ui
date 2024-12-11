@@ -3,8 +3,8 @@ import React from "react";
 import {Button} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 import {AnimatePresence, LazyMotion, domAnimation, m} from "framer-motion";
-import FadeInImage from "./fade-in-image";
-import AppScreenshotSkewed from "./app-screenshot-skewed";
+import FadeInImage from "./landing/fade-in-image";
+import AppScreenshotSkewed from "./landing/app-screenshot-skewed";
 import { useTheme } from "next-themes";
 import { logo, title } from "@/components/primitives";
 
@@ -84,11 +84,11 @@ export default function Component() {
 
                 <blockquote>
                   <div>
-                  “Spread the <span className={logo({ color: theme === 'dark' ? "foreground" : "battleNavy"})}>professional e-sports culture</span> and embrace the power of teamwork: Unleash the art of expressing your mind through the progression of <span className={logo({ color: theme === 'dark' ? "foreground" : "battleNavy"})}>building a talented, creative play.</span>”
+                  <span style={{ fontSize: "18px"}}>“</span>Spread the <span className={logo({ color: theme === 'dark' ? "foreground" : "battleNavy"})}>professional e-sports culture</span> and embrace the power of teamwork: Unleash the art of expressing your mind through the progression of <span className={logo({ color: theme === 'dark' ? "foreground" : "battleNavy"})}>building a talented, creative play.</span><span style={{ fontSize: "18px"}}>”</span>
                   <p>
                   </p>
                   </div>
-                  <footer className="text-right text-sm font-medium text-gray-600">— <strong>@psavelis</strong> - FPS Player, Passionate Developer, CTO & Founder</footer>
+                  <footer className="text-right text-sm font-medium text-gray-600 pt-4">— <strong>@psavelis</strong> - Former FPS Player, Software Developer, CTO & Founder</footer>
                   </blockquote>
                 </m.div>
 
