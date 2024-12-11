@@ -65,6 +65,11 @@ const footerNavigation = {
       href: "#",
       icon: (props: SocialIconProps) => <Icon {...props} icon="fontisto:youtube-play" />,
     },
+    {
+      name: "LinkedIn",
+      href: "#",
+      icon: (props: SocialIconProps) => <Icon {...props} icon="fontisto:linkedin" />,
+    },
   ],
 };
 
@@ -89,7 +94,7 @@ export default function FooterColumns() {
   );
 
   return (
-    <div className="basis-1/5 sm:basis-full justify-center align-items align-center">
+    <div className="basis-1/5 sm:basis-full justify-center align-items align-center ">
     <footer className="flex w-full justify-center">
       <div className="gap-3 max-w-fit px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">

@@ -4,9 +4,9 @@ import type {RadioGroupProps} from "@nextui-org/react";
 
 import React from "react";
 import {RadioGroup} from "@nextui-org/react";
+import {cn} from "@nextui-org/react";
 
 import RatingRadioItem from "./rating-radio-item";
-import { cl } from "@/components/cl";
 
 export type RatingRadioGroupProps = RadioGroupProps & {
   hideStarsText?: boolean;
@@ -26,7 +26,7 @@ const RatingRadioGroup = React.forwardRef<HTMLDivElement, RatingRadioGroupProps>
     }, [value]);
 
     return (
-      <div className={cl("flex items-center gap-3", className)}>
+      <div className={cn("flex items-center gap-3", className)}>
         <RadioGroup
           ref={ref}
           value={value}

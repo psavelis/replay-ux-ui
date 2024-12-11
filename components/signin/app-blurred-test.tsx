@@ -5,6 +5,9 @@ import type {InputProps} from "@nextui-org/react";
 import React from "react";
 import {Button, Input, Checkbox, Link, Divider} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
+import { signIn } from "next-auth/react";
+import { SteamIcon } from "../icons";
+import { GoogleIcon } from "./social";
 
 export default function SignInBlurreds() {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -19,7 +22,15 @@ export default function SignInBlurreds() {
   const buttonClasses = "bg-foreground/10 dark:bg-foreground/20";
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-green-300 via-cyan-400 to-blue-4500 p-2 sm:p-4 lg:p-8">
+    <div
+    className="flex h-screen w-screen items-center justify-center overflow-hidden bg-content1 p-2 sm:p-4 lg:p-8"
+    style={{
+      backgroundImage:
+        "url('/dark_bg_tailwind.jpg')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+  >
       <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
         <p className="pb-2 text-xl font-medium">Log In</p>
         <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
@@ -78,16 +89,19 @@ export default function SignInBlurreds() {
           <Divider className="flex-1" />
         </div>
         <div className="flex flex-col gap-2">
-          <Button className={buttonClasses} startContent={<Icon icon="fe:google" width={24} />}>
+
+          {/* shortcut="⌘G" */}
+          <Button className={buttonClasses} startContent={<SteamIcon />} onClick={() => signIn(["steam"] as any)}>
+            Continue with Steam
+          </Button>
+          <Button onClick={() => signIn(["google"] as any)} className={buttonClasses} startContent={<GoogleIcon width={24} />}>
             Continue with Google
           </Button>
-          <Button className={buttonClasses} startContent={<Icon icon="fe:github" width={24} />}>
-            Continue with Github
-          </Button>
+
         </div>
         <p className="text-center text-small text-foreground/50">
           Need to create an account?&nbsp;
-          <Link color="foreground" href="#" size="sm">
+          <Link color="foreground" href="/signup" size="sm">
             Sign Up
           </Link>
         </p>

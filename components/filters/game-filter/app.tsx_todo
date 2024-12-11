@@ -10,18 +10,18 @@ const games = [
     label: "CS2",
     src: "/cs2/cs2-logo-icon.png"
   },
-  // {
-  //   name: "Counter-Strike: Global Offensive",
-  //   game_id: "csgo",
-  //   label: "CS:GO",
-  //   src: "/csgo/csgologo.jpeg"
-  // },
-  // {
-  //   name: "Valorant",
-  //   game_id: "valorant",
-  //   label: "VAL",
-  //   src: "/vlrntlogo.png"
-  // },
+  {
+    name: "Counter-Strike: Global Offensive",
+    game_id: "csgo",
+    label: "CS:GO",
+    src: "/csgo/csgologo.jpeg"
+  },
+  {
+    name: "Valorant",
+    game_id: "valorant",
+    label: "VLRNT",
+    src: "/vlrntlogo.png"
+  },
 ]
 
 export default function App(params:any) {

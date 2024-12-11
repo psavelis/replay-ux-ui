@@ -6,7 +6,7 @@ import type { NextRequest } from 'next/server'
 
 const mockSalt = process.env.STEAM_VHASH_SOURCE!
 
-const steamOnboardingApiRoute = 'http://localhost:4991/onboarding/steam';
+const steamOnboardingApiRoute = `${process.env.REPLAY_API_URL}/onboarding/steam`;
 
 async function handler(
   req: NextRequest,
@@ -16,7 +16,7 @@ async function handler(
     providers: [
       SteamProvider(req, {
         clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback/'
+        callbackUrl: `${process.env.LEET_GAMING_PRO_URL}/api/auth/callback/`
       })
     ],
     callbacks: {
@@ -26,28 +26,47 @@ async function handler(
 
           const steamId = (param.profile as any).steamid!
 
-          if (!steamId) { 
+          if (!steamId) {
             const p = JSON.stringify(param)
             throw new Error(`No steam_id found in profile ${p}`)
           }
+
+          const steamProfile = param.profile as SteamUserProfile
+          delete steamProfile.steamid
 
           const verificationHash = crypto
             .createHash('sha256')
             .update(`${steamId}${mockSalt}`)
             .digest('hex')
 
+          const jsonBody = JSON.stringify({
+            v_hash: verificationHash,
+            steam: {
+              id: steamId,
+              communityvisibilitystate: steamProfile.communityvisibilitystate,
+              profilestate: steamProfile.profilestate,
+              personaname: steamProfile.personaname,
+              profileurl: steamProfile.profileurl,
+              avatar: steamProfile.avatar,
+              avatarmedium: steamProfile.avatarmedium,
+              avatarfull: steamProfile.avatarfull,
+              avatarhash: steamProfile.avatarhash,
+              personastate: steamProfile.personastate,
+              realname: steamProfile.realname,
+              primaryclanid: steamProfile.primaryclanid,
+              personastateflags: steamProfile.personastateflags,
+              timecreated: new Date(steamProfile.timecreated * 1000).toISOString()
+            },
+          })
+
+          console.log("jsonBody =>", jsonBody)
 
           const ctoken = await fetch(steamOnboardingApiRoute, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-              v_hash: verificationHash,
-              steam: {
-                id: steamId,
-              },
-            }),
+            body: jsonBody,
           });
 
           if (!ctoken.ok) {

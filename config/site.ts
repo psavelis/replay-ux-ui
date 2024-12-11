@@ -7,7 +7,7 @@ export const siteConfig = {
 	navItems: [
 		{
 			label: "NEWS",
-			href: "/news",
+			href: "/blog",
 		},
 		// {
 		// 	label: "Uploads",
@@ -20,11 +20,11 @@ export const siteConfig = {
 		// },
 		{
 			label: "START",
-			href: "/match-making",
+			href: "/landing",
 		  },
 		{
 			label: "HIGHLIGHTS",
-			href: "/blog",
+			href: "/highlights",
 			// sections, Cloud=[Replays, Config, Spray/Partn], Stats=[Highlights, Matches, Teams, Players], Supply=[Competition Items, Pass, Esports Events, Esports products]
 		},
 		// {
@@ -48,7 +48,7 @@ export const siteConfig = {
 			href: "/cloud", // ProductLanding (if not logged in) / Dashboard (if logged in) (option: storage, private, privately shared, public, upgrade to pro)
 		},
 		{
-		  label: "VAULT",
+		  label: "SUPPLY",
 		  href: "/supply", // Product Landing (Promos, Pass etc, Landing before display product offers, only if logged in)
 		},
 	],

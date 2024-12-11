@@ -1,13 +1,16 @@
-export default function ReplaysLayout({
-	children,
+"use client";
+import RootLayout from '@/components/default-layout/default-layout';
+
+export default function HomeLayout({
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-	return (
-		// <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-			<div>
-				{children}
-			</div>
-		// </section>
-	);
+  return (
+    <RootLayout>
+      <div>
+        {children}
+      </div>
+    </RootLayout>
+  );
 }

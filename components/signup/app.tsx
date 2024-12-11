@@ -17,7 +17,7 @@ export default function SignUp() {
 
   return (
     <div
-      className="flex h-screen w-screen items-center justify-start overflow-hidden rounded-small bg-content1 p-2 sm:p-4 lg:p-8"
+      className="flex h-screen w-screen items-center justify-center overflow-hidden bg-content1 p-2 sm:p-4 lg:p-8"
       style={{
         backgroundImage:
           "url('/dark_bg_tailwind.jpg')",
@@ -135,7 +135,7 @@ export default function SignUp() {
         </div>
         <p className="text-center text-small">
           Already have an account?&nbsp;
-          <Link href="#" size="sm">
+          <Link href="/signin" size="sm">
             Log In
           </Link>
         </p>
