@@ -16,6 +16,12 @@ export default function SessionButton() {
 
   return (
     <div className='flex relative' >
+      <Link href="/home5" style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}>
+      <BattleButton endContent={<VerticalDotsIcon width={undefined} height={undefined} />} style={{ height: "64px", width: "128px", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: "#F5F5F5"}}>
+          <strong style={{ fontSize: "18px", letterSpacing: "-3px"}} className={logo({ color: "battleOrange" })}><b><u>&gt;<strong>_</strong></u></b></strong><span style={{color: theme === "dark" ? "#f5f0e1" : "#34445C"}}>PRO</span>
+      </BattleButton>
+      </Link>
+
       {/* <Link href="/home5" style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold" }}>
         <BattleButton variant="light" disableRipple endContent={<VerticalDotsIcon width={undefined} height={undefined} />}>PRO</BattleButton>
       </Link>
@@ -25,12 +31,8 @@ export default function SessionButton() {
 {/* <Link style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}} href="/home5">[ console ]</Link>
       <Spacer x={4} /> */}
 
-      <div style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold"}}>
-      <BattleButton onClick={() => signOut()} style={{ height: "64px", width: "100px", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: "#F5F5F5", marginRight: "-25px"}}>
-       / sign-out
-       {/* <strong className={logo({ color: "battleLime" })}><b>&gt;_</b></strong> */}
-      </BattleButton>
-      </div>
+<Spacer x={4} />
+      <Link style={{ cursor: "pointer", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}} onClick={() => signOut()}>/ sign-out</Link>
     </div>
   );
 }

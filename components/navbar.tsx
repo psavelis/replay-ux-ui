@@ -74,7 +74,7 @@ export const Navbar = () => {
           <NextLink className="lg:flex flex justify-left items-left align-left" href="/">
             {/* <Logo /> */}
 
-            <DefaultLogo />
+            <DefaultLogo href="/landing" />
             {/* <Chip
               variant="shadow"
               classNames={{
@@ -96,13 +96,13 @@ export const Navbar = () => {
             <NavbarItem key={item.href}
             style={{
               height: "100%",
-              backgroundColor: item.href === "/start" ? "#DCFF37" : (item.href === "/cloud" ? "#34445C" : ""),
+              backgroundColor: item.href === "/landing" ? "#DCFF37" : (item.href === "/cloud" ? "#34445C" : ""),
               minWidth: "105px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               fontSize: "12px",
-              color: item.href === "/start" ? "rgb(52, 68, 92)" : (item.href === "/cloud" ? "#F5F5F5" : ""),
+              color: item.href === "/landing" ? "rgb(52, 68, 92)" : (item.href === "/cloud" ? "#F5F5F5" : ""),
             }}
             >
               <NextLink

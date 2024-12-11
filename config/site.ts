@@ -20,7 +20,7 @@ export const siteConfig = {
 		// },
 		{
 			label: "START",
-			href: "/start",
+			href: "/landing",
 		  },
 		{
 			label: "HIGHLIGHTS",
