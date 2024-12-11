@@ -51,6 +51,8 @@ import {
 } from "@nextui-org/react";
 
 import ReplaysTable from "@/components/files/replays-table/app"
+import { logo } from "@/components/primitives";
+import { Icon } from "@iconify/react";
 
 export default function Component() {
     return (
@@ -70,7 +72,7 @@ export default function Component() {
                     <Tabs
                         aria-label="Navigation Tabs"
                         classNames={{
-                            tabList: "w-full max-w-lg absolute rounded-none p-0 gap-4 lg:gap-6",
+                            tabList: "w-full max-w-[44%] absolute rounded-none p-0 gap-4 lg:gap-6",
                             tab: "w-full px-0 h-12",
                             cursor: "w-full",
                             tabContent: "text-default-400",
@@ -152,10 +154,14 @@ export default function Component() {
 
                         <Tab key="analytics" title="Analytics" />
                         <Tab key="shared" title="Shared" />
+                        
                         <Tab key="settings" title="Settings" />
+
                         <Tab key="upgrade-to-pro" title={
                             <div className="flex items-center gap-2">
-                                <p>Teams</p>
+                                <Icon className="text-default-500" icon="solar:users-group-two-rounded-outline" width={18} />
+                                {/* <span className={`${logo({color: "battleOrange"})}`}>Team</span> */}
+                                Team
                                 <Chip size="sm">PRO</Chip>
                             </div>
                         } />

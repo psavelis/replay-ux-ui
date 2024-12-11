@@ -20,7 +20,7 @@ export const siteConfig = {
 		// },
 		{
 			label: "START",
-			href: "/match-making",
+			href: "/start",
 		  },
 		{
 			label: "HIGHLIGHTS",

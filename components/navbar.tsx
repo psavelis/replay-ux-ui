@@ -54,7 +54,7 @@ export const Navbar = () => {
 
   const { data: session } = useSession()
 
-  console.log('##session##', JSON.stringify(session))
+  // console.log('##session##', JSON.stringify(session))
   if (session) {
     SessionArea = SessionButton;
   } else {
@@ -96,13 +96,13 @@ export const Navbar = () => {
             <NavbarItem key={item.href}
             style={{
               height: "100%",
-              backgroundColor: item.href === "/match-making" ? "#DCFF37" : (item.href === "/cloud" ? "#34445C" : ""),
+              backgroundColor: item.href === "/start" ? "#DCFF37" : (item.href === "/cloud" ? "#34445C" : ""),
               minWidth: "105px",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               fontSize: "12px",
-              color: item.href === "/match-making" ? "rgb(52, 68, 92)" : (item.href === "/cloud" ? "#F5F5F5" : ""),
+              color: item.href === "/start" ? "rgb(52, 68, 92)" : (item.href === "/cloud" ? "#F5F5F5" : ""),
             }}
             >
               <NextLink

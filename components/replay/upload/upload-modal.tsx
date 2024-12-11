@@ -9,7 +9,7 @@ export default function App() {
 
   return (
     <div className='w-full'>
-      <Button onPress={onOpen} color="secondary"  className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50" endContent={<PlusIcon />}>
+      <Button onPress={onOpen} color="secondary"  className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 shadow-lg shadow-lime-500/50" endContent={<PlusIcon />}>
               Upload
             </Button>
       <Modal 
