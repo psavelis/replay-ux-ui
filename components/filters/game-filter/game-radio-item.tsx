@@ -4,11 +4,11 @@ import type {RadioProps} from "@nextui-org/react";
 
 import React from "react";
 import {Tooltip, VisuallyHidden, useRadio} from "@nextui-org/react";
-import { cl } from "@/components/cl";
+import {cn} from "@nextui-org/react";
 
-export type ColorRadioItemProps = Omit<RadioProps, "color"> & {color?: string; tooltip?: string};
+export type GameRadioItemProps = Omit<RadioProps, "color"> & {color?: string; tooltip?: string};
 
-const ColorRadioItem = React.forwardRef<HTMLInputElement, ColorRadioItemProps>(
+const GameRadioItem = React.forwardRef<HTMLInputElement, GameRadioItemProps>(
   ({color, tooltip, ...props}, ref) => {
     const {Component, isSelected, isFocusVisible, getBaseProps, getInputProps} = useRadio(props);
 
@@ -19,7 +19,7 @@ const ColorRadioItem = React.forwardRef<HTMLInputElement, ColorRadioItemProps>(
             <input {...getInputProps()} />
           </VisuallyHidden>
           <span
-            className={cl(
+            className={cn(
               "pointer-events-none h-8 w-8 rounded-full border border-black border-opacity-10 transition-transform group-data-[pressed=true]:scale-90",
               {
                 "ring-2 ring-offset-2 ring-offset-content1": isSelected,
@@ -38,6 +38,6 @@ const ColorRadioItem = React.forwardRef<HTMLInputElement, ColorRadioItemProps>(
   },
 );
 
-ColorRadioItem.displayName = "ColorRadioItem";
+GameRadioItem.displayName = "GameRadioItem";
 
-export default ColorRadioItem;
+export default GameRadioItem;

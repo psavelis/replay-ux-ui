@@ -45,21 +45,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning={true}>
       
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background bg-scroll dark_bg_tailwind antialiased",
+          "min-h-screen bg-background bg-scroll dark_bg_tailwind antialiased w-full",
           pressStart2P.className
         )}
       >
         <Box>
           <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-            <div className="relative flex flex-col h-screen">
+            <div className="relative flex flex-col h-screen w-full">
               <Navbar  />
               {/* <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow"> */}
-              <main className="flex max-w-fit" style={{
+              <main className="flex w-full" style={{
                 width: '100%',
               }}>
                 {children}
