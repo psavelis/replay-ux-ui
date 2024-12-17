@@ -1,12 +1,13 @@
 "use client";
 
-import type {ComponentProps} from "react";
-import type {ButtonProps} from "@nextui-org/react";
+import type { ComponentProps } from "react";
+import type { ButtonProps } from "@nextui-org/react";
 
 import React from "react";
-import {useControlledState} from "@react-stately/utils";
-import {m, LazyMotion, domAnimation} from "framer-motion";
-import {cn} from "@nextui-org/react";
+import { useControlledState } from "@react-stately/utils";
+import { m, LazyMotion, domAnimation } from "framer-motion";
+import { Card, cn } from "@nextui-org/react";
+import { useTheme } from "next-themes";
 
 export type VerticalStepProps = {
   className?: string;
@@ -61,9 +62,9 @@ function CheckIcon(props: ComponentProps<"svg">) {
   return (
     <svg {...props} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
       <m.path
-        animate={{pathLength: 1}}
+        animate={{ pathLength: 1 }}
         d="M5 13l4 4L19 7"
-        initial={{pathLength: 0}}
+        initial={{ pathLength: 0 }}
         strokeLinecap="round"
         strokeLinejoin="round"
         transition={{
@@ -76,6 +77,9 @@ function CheckIcon(props: ComponentProps<"svg">) {
     </svg>
   );
 }
+
+
+
 
 const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
   (
@@ -97,6 +101,12 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
       defaultStep,
       onStepChange,
     );
+
+    let { theme, setTheme } = useTheme();
+
+    if (theme === null || theme === undefined) {
+      theme = "dark";
+    }
 
     const colors = React.useMemo(() => {
       let userColor;
@@ -160,6 +170,15 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
 
             return (
               <li key={stepIdx} className="relative">
+                <Card
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.2)', // Semi-transparent background
+                        backdropFilter: 'blur(10px)', // Glossy effect
+                        borderRadius: '10px',
+                        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                      }}
+                                   
+                >
                 <div className="flex w-full max-w-full items-center">
                   <button
                     key={stepIdx}
@@ -185,7 +204,7 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                             )}
                             data-status={status}
                             initial={false}
-                            transition={{duration: 0.25}}
+                            transition={{ duration: 0.25 }}
                             variants={{
                               inactive: {
                                 backgroundColor: "transparent",
@@ -214,6 +233,7 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                         </div>
                       </LazyMotion>
                     </div>
+                    
                     <div className="flex-1 text-left">
                       <div>
                         <div
@@ -238,8 +258,10 @@ const VerticalSteps = React.forwardRef<HTMLButtonElement, VerticalStepsProps>(
                         </div>
                       </div>
                     </div>
+                   
                   </button>
                 </div>
+                </Card>
                 {stepIdx < steps.length - 1 && !hideProgressBars && (
                   <div
                     aria-hidden="true"

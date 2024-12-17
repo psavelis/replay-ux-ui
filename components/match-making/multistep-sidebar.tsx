@@ -42,7 +42,7 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
         className={cn("flex h-[calc(100vh_-_40px)] w-full gap-x-2", className)}
         {...props}
       >
-        <div className="flex hidden h-full w-[344px] flex-shrink-0 flex-col items-start gap-y-8 rounded-large bg-gradient-to-b from-lime-300 via-green-500 to-black-500 px-8 py-6 shadow-small lg:flex">
+        <div className="flex hidden h-full w-[344px] flex-shrink-0 flex-col items-start gap-y-8 rounded-large bg-gradient-to-b from-yellow-300 via-orange-400 to-red-500 px-8 py-6 shadow-small lg:flex">
           <Button
             className="bg-default-50 text-small font-medium text-default-500 shadow-lg"
             isDisabled={currentPage === 0}
@@ -85,7 +85,7 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
               },
               {
                 title: "Lock and Load",
-                description: "Your match is ready! Prepare for battle and claim victory.",
+                description: "Your match is almost ready! Prepare for battle and level up your team play.",
               },
             ]}
             onStepChange={onChangePage}
@@ -101,16 +101,19 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
                 currentStep={currentPage}
                 steps={[
                   {
-                    title: "Account",
+                    title: "Squad",
                   },
                   {
-                    title: "Information",
+                    title: "Schedule",
                   },
                   {
-                    title: "Address",
+                    title: "Region",
                   },
                   {
-                    title: "Payment",
+                    title: "Modes",
+                  },
+                  {
+                    title: "Match",
                   },
                 ]}
                 onStepChange={onChangePage}
@@ -126,8 +129,8 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
                 children:
                   currentPage === 0
                     ? "Sign Up for Free"
-                    : currentPage === 3
-                      ? "Go to Payment"
+                    : currentPage === 4
+                      ? "Go to Battle"
                       : "Continue",
               }}
               onBack={onBack}
