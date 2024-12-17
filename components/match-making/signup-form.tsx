@@ -1,15 +1,17 @@
 "use client";
 
-import type {InputProps} from "@nextui-org/react";
+import type { InputProps } from "@nextui-org/react";
 
 import React from "react";
-import {Input, Checkbox, Link} from "@nextui-org/react";
-import {cn} from "@nextui-org/react";
+import { Input, Checkbox, Link, Spacer, Card } from "@nextui-org/react";
+import { cn } from "@nextui-org/react";
+import { Icon } from "@iconify/react";
+import { SearchIcon } from "../icons";
 
 export type SignUpFormProps = React.HTMLAttributes<HTMLFormElement>;
 
 const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
-  ({className, ...props}, ref) => {
+  ({ className, ...props }, ref) => {
     const inputProps: Pick<InputProps, "labelPlacement" | "classNames"> = {
       labelPlacement: "outside",
       classNames: {
@@ -20,14 +22,12 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
 
     return (
       <>
-        <div className="text-3xl font-bold leading-9 text-default-foreground">
-          Welcome to Acme 👋
+        <div className="w-full text-3xl font-bold leading-9 text-default-foreground flex items-center justify-center">
+          Setup your Squad
         </div>
         <div className="py-2 text-medium text-default-500">
-          Already have an account?
-          <Link className="ml-2 text-secondary underline" href="#" size="md">
-            Sign In
-          </Link>
+          Choose a team or pick your friends to play with.
+
         </div>
         <form
           ref={ref}
@@ -35,56 +35,33 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
           className={cn("flex grid grid-cols-12 flex-col gap-4 py-8", className)}
         >
           <Input
-            className="col-span-12  md:col-span-6"
-            label="First Name"
-            name="first-name"
-            placeholder="Type your first name here"
+            startContent={
+              <div>
+                <Icon className="text-default-500" icon="solar:users-group-two-rounded-outline" width={32} />
+                <Spacer x={5} />
+              </div>
+            }
+            endContent={
+              <SearchIcon />
+            }
+            className="col-span-12"
+            // label="Nickname"
+            name="nickname"
+            placeholder="Type to search for your friends or team"
             {...inputProps}
           />
+                    <Card className="col-span-12 m-0 p-2 text-center">
+            <div className="col-span-12 m-0 p-2 text-center">
+              Don't have a team yet?
+              <Link className="ml-2 text-secondary underline" href="#" size="md">
+                Create a new team
+              </Link>
+            </div>
+          </Card>
 
-          <Input
-            className="col-span-12 md:col-span-6"
-            label="Last Name"
-            name="last-name"
-            placeholder="Type your last name here"
-            {...inputProps}
-          />
+          <Spacer y={32} />
 
-          <Input
-            className="col-span-12 md:col-span-6"
-            label="Email"
-            name="email"
-            placeholder="john.doe@gmail.com"
-            type="email"
-            {...inputProps}
-          />
 
-          <Input
-            className="col-span-12 md:col-span-6"
-            label="Confirm Email"
-            name="confirm-email"
-            placeholder="john.doe@gmail.com"
-            type="email"
-            {...inputProps}
-          />
-
-          <Input
-            className="col-span-12 md:col-span-6"
-            label="Password"
-            name="password"
-            placeholder="*********"
-            type="password"
-            {...inputProps}
-          />
-
-          <Input
-            className="col-span-12 md:col-span-6"
-            label="Confirm Password"
-            name="confirm-password"
-            placeholder="*********"
-            type="password"
-            {...inputProps}
-          />
 
           <Checkbox
             defaultSelected
