@@ -52,7 +52,7 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
           />
                     <Card className="col-span-12 m-0 p-2 text-center">
             <div className="col-span-12 m-0 p-2 text-center">
-              Don't have a team yet?
+              Don&lsquo;t have a team yet?
               <Link className="ml-2 text-secondary underline" href="#" size="md">
                 Create a new team
               </Link>

@@ -4,7 +4,7 @@ import React from "react";
 import {domAnimation, LazyMotion, m} from "framer-motion";
 
 import MultistepSidebar from "./multistep-sidebar";
-import SignUpForm from "./signup-form";
+import SignUpForm from "./squad-form";
 import CompanyInformationForm from "./company-information-form";
 import ChooseRegionForm from "./choose-region-form";
 import ReviewAndPaymentForm from "./review-and-payment-form";
