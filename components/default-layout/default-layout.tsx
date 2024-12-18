@@ -50,7 +50,7 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background bg-scroll dark_bg_tailwind antialiased w-full",
+          "min-h-screen bg-background bg-scroll blur-glow-pry-gh antialiased w-full",
           pressStart2P.className
         )}
       >

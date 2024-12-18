@@ -87,7 +87,7 @@ export default function ConsoleLayout({
 
         style={{
           // backgroundImage: `url('/1337gg/crowd_arena.png')`,
-          // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
+          backgroundImage: `url('/blur-glow-pry-gh.svg')`,
           backgroundSize: "cover",
           filter: backfilter,
           content: '',

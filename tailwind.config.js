@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     extend: {
       backgroundImage: {
-        'dark_bg_tailwind' : "url('./dark_bg_tailwind.png')",
+        'blur-glow-pry-gh' : "url('./blur-glow-pry-gh.svg')",
       }
     },
   },
@@ -41,7 +41,8 @@ module.exports = {
           colors: {
             // background: "#000000", // or DEFAULT
             // foreground: "#ECEDEE", // or 50 to 900 DEFAULT
-            secondary: "#FFC700",
+            // secondary: "#FFC700",
+            secondary: "#DCFF37",
             primary: "#DCFF37",
             // primary: {
               //... 50 to 900

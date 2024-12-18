@@ -20,15 +20,15 @@ export default function SignUpApp() {
       // Show a loading message
       // console.log('Authenticated successfully. Redirecting...');
       // Redirect to /home4 after authentication
-      router.push('/landing');
+      router.push('/');
     }
   }, [isMounted, status, router]);
 
   if (status === 'loading') {
     return <div className="flex flex-col relative justify-center items-center w-full h-full py-44" style={{
-      // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
-      // backgroundSize: "cover",
-      // backgroundColor: "rgba(0, 0, 0, 0.5)",
+      backgroundImage: `url('/blur-glow-pry-gh.svg')`,
+      backgroundSize: "cover",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
     }}>
       <span style={{ fontSize: "24px"}} className={`${logo({color: "battleOrange"})}`}><span className="shadow-lg">Loading...</span></span>
       <Progress color="warning" isIndeterminate aria-label="Your request is being processed..." className="max-w-md" size="lg" />
@@ -38,9 +38,9 @@ export default function SignUpApp() {
 
   if (status === 'authenticated') {
     <div style={{
-      // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
-      // backgroundSize: "cover",
-      // backgroundColor: "rgba(0, 0, 0, 0.5)",
+      backgroundImage: `url('/blur-glow-pry-gh.svg')`,
+      backgroundSize: "cover",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
     }} className="flex relative justify-center items-center w-full h-full py-44" >
     <span>Authenticated successfully. Redirecting...</span>
     <Progress color="success" isIndeterminate aria-label="Authenticated successfully. Redirecting..." className="max-w-md" size="lg" />

@@ -20,7 +20,7 @@ export default function SignUp() {
       className="flex h-screen w-screen items-center justify-center overflow-hidden bg-content1 p-2 sm:p-4 lg:p-8"
       style={{
         backgroundImage:
-          "url('/dark_bg_tailwind.jpg')",
+          "url('/blur-glow-pry-gh.svg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
