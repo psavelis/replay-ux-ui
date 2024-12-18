@@ -47,7 +47,7 @@ export default function Component() {
   }
 
   return (
-    <div className="mx-auto flex max-w-7xl flex-col items-center py-24"
+    <div className="mx-auto flex max-w-7xl flex-col items-center py-24 px-16"
     // style={{
     //   backgroundImage: `url('/blur-glow-pry-gh.svg')`,
     //   backgroundSize: "cover",
