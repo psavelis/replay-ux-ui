@@ -74,7 +74,7 @@ export const Navbar = () => {
           <NextLink className="lg:flex flex justify-left items-left align-left" href="/">
             {/* <Logo /> */}
 
-            <DefaultLogo href="/" />
+            <DefaultLogo  onClick={ () => window.location.href = "/" } />
             {/* <Chip
               variant="shadow"
               classNames={{
