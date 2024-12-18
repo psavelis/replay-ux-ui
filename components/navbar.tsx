@@ -65,7 +65,7 @@ export const Navbar = () => {
 
   return (
     <NextUINavbar maxWidth="full" height={26} position="sticky" isBordered={true} isBlurred={true} style={{
-      // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
+      backgroundImage: `url('/blur-glow-pry-gh.svg')`,
       // backgroundSize: "cover",
       // backgroundColor: "rgba(0, 0, 0, 0.5)",
     }}>
@@ -74,7 +74,7 @@ export const Navbar = () => {
           <NextLink className="lg:flex flex justify-left items-left align-left" href="/">
             {/* <Logo /> */}
 
-            <DefaultLogo href="/landing" />
+            <DefaultLogo href="/" />
             {/* <Chip
               variant="shadow"
               classNames={{
