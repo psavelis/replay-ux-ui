@@ -5,7 +5,7 @@ import {domAnimation, LazyMotion, m} from "framer-motion";
 
 import MultistepSidebar from "./multistep-sidebar";
 import SignUpForm from "./squad-form";
-import CompanyInformationForm from "./company-information-form";
+import CompanyInformationForm from "./schedule-information-form";
 import ChooseRegionForm from "./choose-region-form";
 import ReviewAndPaymentForm from "./review-and-payment-form";
 import MultistepNavigationButtons from "./multistep-navigation-buttons";

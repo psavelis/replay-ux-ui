@@ -28,7 +28,7 @@ const ChooseRegionForm = React.forwardRef<HTMLFormElement, ChooseRegionFormProps
 
     let { theme } = useTheme();
 
-    if (!theme || theme === "system") {
+    if (!theme) {
       theme = "light";
     }
 
