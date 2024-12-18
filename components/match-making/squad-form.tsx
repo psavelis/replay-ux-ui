@@ -59,12 +59,13 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
             <form
               ref={ref}
               {...props}
-              className={cn("flex grid grid-cols-12 flex-col gap-4 py-8", className)}
+              className={cn("flex grid grid-cols-12 flex-col gap-4 py-8 w-[500px]", className)}
             >
               <Input
+             
                 startContent={
                   <div>
-                    <Icon className="text-default-500" icon="solar:users-group-two-rounded-outline" width={32} />
+                    <Icon className="text-default-500" icon="solar:users-group-two-rounded-outline" width={20} />
                     <Spacer x={5} />
                   </div>
                 }
@@ -149,7 +150,7 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
           </Tab>
 
           <Tab key="your-teams" title="Your Teams">
-            <Card>
+            <Card className="w-[580px]">
               <CardBody>
 
                 <Accordion selectionMode="multiple">

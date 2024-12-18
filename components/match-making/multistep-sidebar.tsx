@@ -68,20 +68,20 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
             currentStep={currentPage}
             steps={[
               {
-                title: "Assemble Your Squad",
-                description: "Gather your gaming buddies and form your dream team.",
-              },
-              {
-                title: "Flex Your Schedule",
-                description: "Tell us when you're ready to dominate. We'll find matches that fit your schedule.",
-              },
-              {
                 title: "Choose Your Battleground",
                 description: "Select your region and let the competition begin.",
               },
               {
                 title: "Pick Your Poison",
                 description: "Select your preferred game mode and rank to find worthy opponents.",
+              },
+              {
+                title: "Assemble Your Squad",
+                description: "Gather your gaming buddies and form your dream team.",
+              },
+              {
+                title: "Flex Your Schedule",
+                description: "Tell us when you're ready to dominate. We'll find matches that fit your schedule.",
               },
               {
                 title: "Lock and Load",
@@ -101,16 +101,16 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
                 currentStep={currentPage}
                 steps={[
                   {
-                    title: "Squad",
-                  },
-                  {
-                    title: "Schedule",
-                  },
-                  {
                     title: "Region",
                   },
                   {
                     title: "Modes",
+                  },
+                  {
+                    title: "Squad",
+                  },
+                  {
+                    title: "Schedule",
                   },
                   {
                     title: "Match",
