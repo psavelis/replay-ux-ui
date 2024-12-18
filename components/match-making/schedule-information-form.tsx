@@ -3,7 +3,7 @@
 import type { InputProps, SelectProps } from "@nextui-org/react";
 
 import React from "react";
-import { Input, Radio, RadioGroup, Select, SelectItem, Spacer } from "@nextui-org/react";
+import { Accordion, AccordionItem, Avatar, Card, CardBody, CardHeader, Checkbox, CheckboxGroup, Input, Radio, RadioGroup, Select, SelectItem, Spacer, Tab, Tabs } from "@nextui-org/react";
 import { cn } from "@nextui-org/react";
 
 import companyTypes from "./company-types";
@@ -14,10 +14,14 @@ import { title } from "../primitives";
 import { useTheme } from "next-themes";
 
 import { DateRangePicker } from "@nextui-org/react";
-import { parseAbsoluteToLocal } from "@internationalized/date";
+import { parseAbsoluteToLocal, Time, ZonedDateTime } from "@internationalized/date";
 import { I18nProvider } from "@react-aria/i18n";
 import BattleButton from "../filters/ctas/material-button/battle-button";
 import { PlusIcon } from "../icons";
+
+import { TimeInput } from "@nextui-org/react";
+import { useDateFormatter } from "@react-aria/i18n";
+
 
 export type ScheduleInformationFormProps = React.HTMLAttributes<HTMLFormElement>;
 
@@ -40,6 +44,10 @@ export const CustomRadio = (props: any) => {
   );
 };
 
+const defaultContent =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+
+function formatDateToTimezone(date: Date, timeZone: string): string { const options: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', timeZone, timeZoneName: 'short', }; return new Intl.DateTimeFormat('en-US', options).format(date); }
 const ScheduleInformationForm = React.forwardRef<HTMLFormElement, ScheduleInformationFormProps>(
   ({ className, ...props }, ref) => {
     const inputProps: Pick<InputProps, "labelPlacement" | "classNames"> = {
@@ -55,6 +63,12 @@ const ScheduleInformationForm = React.forwardRef<HTMLFormElement, ScheduleInform
       theme = "light";
     }
 
+    const [selected, setSelected] = React.useState<string[]>([]);
+    let [value, setValue] = React.useState(parseAbsoluteToLocal("2024-04-08T18:45:22Z"));
+
+    let formatter = useDateFormatter({ dateStyle: "short", timeStyle: "long" });
+
+
     const now = new Date()
 
     let [date, setDate] = React.useState({
@@ -69,30 +83,32 @@ const ScheduleInformationForm = React.forwardRef<HTMLFormElement, ScheduleInform
       },
     };
 
+
+
     return (
       <>
         <h1 className={title({ color: theme === "dark" ? "foreground" : "battleNavy" })}>Schedule Preferences</h1>
         <div className="py-4 text-default-500">
           Please provide your available time slots and preferred schedule
         </div>
-        <div className="w-full  h-[200px]  font-bold flex flex-col items-center justify-center text-center">
 
-          {/* <form
-            ref={ref}
-            className={cn("w-full  h-[200px]   font-bold  flex items-center justify-center text-center", className)}
-            {...props}
-          > */}
+        <Tabs aria-label="Options" className="w-full" variant="underlined">
 
-            <div className="w-full h-full  font-bold  flex-col items-center justify-center text-center">
-              <I18nProvider locale="ja-JP">
-                <DateRangePicker label="Available Time Window" value={date} onChange={setDate} />
-              </I18nProvider>
+          <Tab key="time-frames" title="Time Window">
+            <Card>
+              <CardBody>
+                <div className="w-full  h-[200px]  font-bold flex flex-col items-center justify-center text-center">
 
-              <Spacer y={2} />
+                  <div className="w-full h-full  font-bold  flex-col items-center justify-center text-center">
+                    <I18nProvider locale="ja-JP">
+                      <DateRangePicker label="Available Time Window" value={date} onChange={setDate} />
+                    </I18nProvider>
 
-              <BattleButton>Add more...</BattleButton>
+                    <Spacer y={2} />
 
-              {/* <Spacer y={2} />
+                    <BattleButton>Add more...</BattleButton>
+
+                    {/* <Spacer y={2} />
 
               <I18nProvider locale="ja-JP">
                 <DateRangePicker label="Available Time Window" value={date} onChange={setDate} />
@@ -104,11 +120,58 @@ const ScheduleInformationForm = React.forwardRef<HTMLFormElement, ScheduleInform
                 <DateRangePicker label="Available Time Window" value={date} onChange={setDate} />
               </I18nProvider> */}
 
-            
-            </div>
 
-          {/* </form> */}
-        </div>
+                  </div>
+
+                  {/* </form> */}
+                </div>
+              </CardBody>
+            </Card>
+          </Tab>
+
+          <Tab key="recurrence" title="Weekly Routine">
+            <Card>
+              <CardHeader className="flex flex-col gap-4">
+                <TimeInput label="Time" value={value} onChange={setValue} />
+                <p className="text-default-500 text-sm">
+                  {value instanceof ZonedDateTime
+                    ? formatDateToTimezone(value.toDate(), 'America/Sao_Paulo') ||
+                    "--"
+                    : ""}
+                </p>
+
+              </CardHeader>
+              <CardBody>
+
+
+                <div className="flex flex-col gap-3">
+                  <CheckboxGroup
+                    color="warning"
+                    label="Select Weekdays"
+                    value={selected}
+                    onValueChange={setSelected}
+                  >
+                    <Checkbox value="sunday">Sunday</Checkbox>
+                    <Checkbox value="monday">Monday</Checkbox>
+                    <Checkbox value="tuesday">Tuesday</Checkbox>
+                    <Checkbox value="wednesday">Wednesday</Checkbox>
+                    <Checkbox value="thursday">Thursday</Checkbox>
+                    <Checkbox value="friday">Friday</Checkbox>
+                    <Checkbox value="saturday">Saturday</Checkbox>
+
+                  </CheckboxGroup>
+                  <p className="text-default-500 text-small">Selected: {selected.join(", ")}</p>
+                </div>
+
+                <div className="w-full flex flex-row gap-2">
+                  <div className="w-full flex flex-col gap-y-2">
+                  </div>
+                </div>
+
+              </CardBody>
+            </Card>
+          </Tab>
+        </Tabs>
       </>
     );
   },
