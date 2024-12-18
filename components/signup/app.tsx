@@ -27,19 +27,19 @@ export default function SignUp() {
     >
       {/* Brand Logo */}
       <div className="absolute right-10 top-10">
-        <div className="flex items-center">
-          <DefaultLogo />
-        </div>
+        {/* <div className="flex items-center">
+          <DefaultLogo size={24}/>
+        </div> */}
       </div>
 
       {/* Testimonial */}
       <div className="absolute bottom-10 right-10 hidden md:block">
         <p className="max-w-xl text-right text-white/60">
           <span className="font-medium">“</span>
-        Get fast and reliable servers to your favorite games, metrics, and more.
+        Get quick and quality matches to your favorite games, and more.
           <span className="font-medium">”</span>
         </p>
-        - PRO Dev Team
+        - LeetGaming.PRO Team
       </div>
 
       {/* Sign Up Form */}
