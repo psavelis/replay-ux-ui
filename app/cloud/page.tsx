@@ -80,7 +80,6 @@ export default function Component() {
                         radius="full"
                         variant="underlined"
                     >
-
                         <Tab
                             key="uploads"
                             title={

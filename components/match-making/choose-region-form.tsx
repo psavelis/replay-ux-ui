@@ -52,7 +52,7 @@ const ChooseRegionForm = React.forwardRef<HTMLFormElement, ChooseRegionFormProps
       name="region"
     >
       <div className="flex w-full flex-col">
-        <Tabs aria-label="Options" className="w-full">
+        <Tabs aria-label="Options" className="w-full"  variant="solid">
           <Tab key="south-america" title="S.America">
             <Card>
               <CardBody>
