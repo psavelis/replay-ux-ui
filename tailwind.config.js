@@ -26,8 +26,15 @@ module.exports = {
             secondary: "#FF4654",
             // primary: "#34445C",
 
-            primary: "#34445C",
-            foreground: "#34445C",
+            // primary: "#34445C",
+            // foreground: "#34445C",
+
+            primary: {
+              // ... 50 to 900
+              foreground: "#F2F2F2",
+              DEFAULT: "#34445C",
+            },
+            
             // foreground: "rgb(33, 62, 105)",
             // primary: {
               //... 50 to 900
@@ -43,12 +50,12 @@ module.exports = {
             // foreground: "#ECEDEE", // or 50 to 900 DEFAULT
             // secondary: "#FFC700",
             secondary: "#DCFF37",
-            primary: "#DCFF37",
-            // primary: {
-              //... 50 to 900
-              // foreground: "#DCFF37",
-              // DEFAULT: "#006FEE",
-            // },
+            // primary: "#DCFF37",
+            primary: {
+              // ... 50 to 900
+              foreground: "#333",
+              DEFAULT: "#DCFF37",
+            },
           },
           // ... rest of the colors
         },
