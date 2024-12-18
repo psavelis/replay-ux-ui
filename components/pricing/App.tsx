@@ -48,11 +48,11 @@ export default function Component() {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center py-24"
-    style={{
-      backgroundImage: `url('/blur-glow-pry-gh.svg')`,
-      backgroundSize: "cover",
-      backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.5)" : "",
-    }}
+    // style={{
+    //   backgroundImage: `url('/blur-glow-pry-gh.svg')`,
+    //   backgroundSize: "cover",
+    //   backgroundColor: theme === "dark" ? "rgba(0, 0, 0, 0.5)" : "",
+    // }}
     >
       <div className="flex max-w-xl flex-col text-center">
         <h2 className="font-medium leading-7 text-primary">Pricing</h2>

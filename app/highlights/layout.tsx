@@ -1,4 +1,4 @@
-import RootLayout from '@/components/default-layout/default-layout';
+"use client";
 
 export default function HomeLayout({
   children,
@@ -6,10 +6,8 @@ export default function HomeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <RootLayout>
       <div>
         {children}
       </div>
-    </RootLayout>
   );
 }

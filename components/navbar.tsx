@@ -109,7 +109,10 @@ export const Navbar = () => {
                 className={clsx(
                   "data-[active=true]:text-primary data-[active=true]:font-medium justify-center align-items align-center w-full text-center " + electrolize.className
                 )}
+
                 href={item.href}
+
+                onClick={ () => window.location.href = item.href }
               >
                 {item.label}
               </NextLink>

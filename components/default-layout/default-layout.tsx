@@ -9,6 +9,7 @@ import { Navbar } from "@/components/navbar";
 import clsx from "clsx";
 import Box from './box';
 import FooterColumns from '../footer-columns/app';
+import { useEffect, useState } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +42,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+  const [domLoaded, setDomLoaded] = useState(false);
+
+  useEffect(() => {
+    setDomLoaded(true);
+  }, []);
+
   return (
+    
     <html lang="en" suppressHydrationWarning={true}>
       
       <head />
@@ -50,8 +59,7 @@ export default function RootLayout({
           "min-h-screen bg-background bg-scroll blur-glow-pry-gh antialiased w-full",
           pressStart2P.className
         )}
-      >
-        <Box>
+      >{ domLoaded && <Box>
           <Providers themeProps={{ attribute: "class", defaultTheme: "dark"}} >
             <div className="relative flex flex-col h-screen w-full">
               <Navbar  />
@@ -65,7 +73,9 @@ export default function RootLayout({
             </div>
           </Providers>
         </Box>
+}
       </body>
     </html>
+    
   );
 }
