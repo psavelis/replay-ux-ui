@@ -14,7 +14,7 @@ const features: PricingFeatures = [
           [TiersEnum.Team]: true,
         },
         helpText:
-          "Enjoy over 1,000+ screens uploaded every week. Get notified via email whenever new screens are added.",
+          "Enjoy updates launched almost every week. Get notified whenever new screens are added.",
       },
       {
         title: "Access to latest versions",
@@ -106,7 +106,7 @@ const features: PricingFeatures = [
           [TiersEnum.Pro]: "Just you",
           [TiersEnum.Team]: "Unlimited",
         },
-        helpText: "Collaborate with other users in a team.",
+        helpText: "Play with other players in a team.",
       },
       {
         title: "Team collections",
@@ -135,7 +135,7 @@ const features: PricingFeatures = [
           [TiersEnum.Team]: true,
         },
         helpText:
-          "Membership licenses are purchased by seats, which can be provisioned to or removed from users.",
+          "Membership licenses are purchased by seats, which can be provisioned to or removed from other players.",
       },
     ],
   },
@@ -150,7 +150,7 @@ const features: PricingFeatures = [
           [TiersEnum.Team]: true,
         },
         helpText:
-          "Access through Okta, ADFS, Azure, Onelogin, or your own SAML identity provider (IdP).",
+          "Access through Steam, Google, or your own SAML identity provider (IdP).",
       },
       {
         title: "SCIM user provisioning",
@@ -160,7 +160,7 @@ const features: PricingFeatures = [
           [TiersEnum.Team]: true,
         },
         helpText:
-          "Sync user directories with Okta, Azure AD, Onelogin, or your own SCIM identity provider (IdP).",
+          "Sync user directories with IAM, Azure AD, Onelogin, or your own SCIM identity provider (IdP).",
       },
     ],
   },
@@ -185,7 +185,7 @@ const features: PricingFeatures = [
           [TiersEnum.Team]: true,
         },
         helpText:
-          "Our team will help answer security assessments or questionnaires for your organization. Available upon request.",
+          "Our team will help answer security assessments or questionnaires for your team. Available upon request.",
       },
       {
         title: "Custom agreement",
@@ -195,7 +195,7 @@ const features: PricingFeatures = [
           [TiersEnum.Team]: true,
         },
         helpText:
-          "Standardized SaaS agreement for your organization’s legal requirement. Available upon request.",
+          "Standardized SaaS agreement for your squad organization’s legal requirement. Available upon request.",
       },
     ],
   },

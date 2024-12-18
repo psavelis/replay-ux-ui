@@ -4,10 +4,10 @@ import React from "react";
 import {domAnimation, LazyMotion, m} from "framer-motion";
 
 import MultistepSidebar from "./multistep-sidebar";
-import SignUpForm from "./squad-form";
-import CompanyInformationForm from "./schedule-information-form";
+import SquadForm from "./squad-form";
+import ScheduleInformationForm from "./schedule-information-form";
 import ChooseRegionForm from "./choose-region-form";
-import ReviewAndPaymentForm from "./review-and-payment-form";
+import GameModeForm from "./game-mode-form";
 import MultistepNavigationButtons from "./multistep-navigation-buttons";
 
 const variants = {
@@ -58,17 +58,17 @@ export default function Component() {
   }, [paginate]);
 
   const content = React.useMemo(() => {
-    let component = <SignUpForm />;
+    let component = <ChooseRegionForm />;
 
     switch (page) {
       case 1:
-        component = <CompanyInformationForm />;
+        component = <GameModeForm />;
         break;
       case 2:
-        component = <ChooseRegionForm />;
+        component = <SquadForm />;
         break;
       case 3:
-        component = <ReviewAndPaymentForm />;
+        component = <ScheduleInformationForm />;
         break;
     }
 
@@ -109,7 +109,7 @@ export default function Component() {
           backButtonProps={{isDisabled: page === 0}}
           className="hidden justify-start lg:flex"
           nextButtonProps={{
-            children: page === 0 ? "Sign Up for Free" : page === 3 ? "Go to Payment" : "Continue",
+            children: page === 0 ? "Next" : page === 3 ? "Find Match" : "Next",
           }}
           onBack={onBack}
           onNext={onNext}
