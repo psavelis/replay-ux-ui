@@ -38,14 +38,20 @@ export default function SessionConsoleLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Box>
-    <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-      <ConsoleLayout>
-        <div>
-          {children}
-        </div>
-      </ConsoleLayout>
-    </Providers>
-    </Box>
+    <html lang="en" suppressHydrationWarning>
+
+      <head />
+      <body>
+        <Box>
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+            <ConsoleLayout>
+              <div>
+                {children}
+              </div>
+            </ConsoleLayout>
+          </Providers>
+        </Box>
+      </body>
+    </html>
   );
 }

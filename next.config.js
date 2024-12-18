@@ -5,6 +5,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "avatars.steamstatic.com"
+      },
+      {
+        protocol: "https",
+        hostname: "nextuipro.nyc3.cdn.digitaloceanspaces.com"
       }
     ]
   }
