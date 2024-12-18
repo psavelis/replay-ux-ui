@@ -105,8 +105,15 @@ const ScheduleInformationForm = React.forwardRef<HTMLFormElement, ScheduleInform
                     </I18nProvider>
 
                     <Spacer y={2} />
-
-                    <BattleButton>Add more...</BattleButton>
+                      <BattleButton
+                                className="col-span-12 mx-0 my-2 px-2 items-center justify-center text-center"
+                                color="primary"
+                                name="add-more-schedule"
+                                size="md"
+                                startContent={<PlusIcon  />}
+                              >
+                               Add more ...
+                              </BattleButton>
 
                     {/* <Spacer y={2} />
 
