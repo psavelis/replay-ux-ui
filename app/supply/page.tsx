@@ -1,21 +1,10 @@
 "use client"
-// import Hero from '@/components/landing/hero';
-// import Timeline from '@/components/landing/timeline';
-// import Accordion from '@/components/landing/accordion';
-// import News from '@/components/landing/news';
+import { title } from "@/components/primitives";
 
-import HeroBanner from "@/components/heros/hero1/app";
-
-const HomePage: React.FC = () => {
-  return (
-    <div>
-        <HeroBanner />
-      {/* <Hero />
-      <News />
-      <SupplyPromo /> 
-      <Timeline /> */}
-    </div>
-  );
-};
-
-export default HomePage;
+export default function App() {
+	return (
+		<div>
+			<h1 className={title()}>Supply</h1>
+		</div>
+	);
+}
