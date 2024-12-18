@@ -89,20 +89,28 @@ const GameModeForm = React.forwardRef<HTMLFormElement, GameModeFormProps>(
         >
      
       <RadioGroup className="w-[500px] justify-center items-center">
-        <CustomRadio className="justify-center text-center items-center" description="Single victory game decides the challenge." value="single">
-          <SingleEliminationMatchIcon size={24} /> 
-          <Spacer y={2} />
-          Single
+      <CustomRadio className="justify-center text-center items-center" description="Free or unlimited gameplay. Recommended for training or just player networking." value="free">
+          <div className="flex flex-col items-center gap-2">
+          Casual
+          </div>
+        </CustomRadio>
+        <CustomRadio className="justify-center text-center items-center" description="Single game won decides the challenge." value="single">
+          <div className="flex flex-col items-center gap-2">
+          <SingleEliminationMatchIcon size={32} /> 
+          Elimination
+          </div>
         </CustomRadio>
         <CustomRadio className="justify-center text-center items-center" description="Best of 3 games wins the challenge." value="bo3">
-          <BestOfThreeMatchIcon size={24} />
-          <Spacer y={2} />
+        <div className="flex flex-col items-center gap-2">
+          <BestOfThreeMatchIcon size={32} />
           Best Of Three
+          </div>
         </CustomRadio>
         <CustomRadio className="justify-center text-center items-center" description="Best of 5 games wins the challenge." value="bo5">
-         <BestOfFiveMatchIcon size={24} />
-         <Spacer y={2} />
+        <div className="flex flex-col items-center gap-2">
+         <BestOfFiveMatchIcon size={32} />
          Best Of Five
+         </div>
         </CustomRadio>
       </RadioGroup>
         </form>
