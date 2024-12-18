@@ -7,6 +7,7 @@ import FadeInImage from "./landing/fade-in-image";
 import AppScreenshotSkewed from "./landing/app-screenshot-skewed";
 import { useTheme } from "next-themes";
 import { logo, title } from "@/components/primitives";
+import router from "next/router";
 
 export default function Component() {
   const { theme } = useTheme()
@@ -116,11 +117,16 @@ export default function Component() {
                       <span className="pointer-events-none flex h-[22px] w-[22px] items-center justify-center rounded-full bg-default-100">
                         <Icon
                           className="text-default-500 [&>path]:stroke-[1.5]"
-                          icon="solar:arrow-right-linear"
+                          icon="solar:arrow-right-linear" 
                           width={16}
                         />
                       </span>
                     }
+                    onClick={() => { 
+                      // href to /pricing without router.push
+                      window.location.href = "/pricing"
+
+                     }}
                     radius="full"
                     variant="bordered"
                   >

@@ -6,11 +6,8 @@ import { siteConfig } from "@/config/site";
 import { fontSans, pressStart2P } from "@/config/fonts";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/navbar";
-import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 import Box from './box';
-import { logo } from '@/components/primitives';
-import { Chip, Divider, LinkIcon, Spacer } from '@nextui-org/react';
 import FooterColumns from '../footer-columns/app';
 
 export const metadata: Metadata = {
@@ -27,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 const viewport: Viewport = {
-  colorScheme: 'light',
+  colorScheme: 'dark',
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
