@@ -36,11 +36,8 @@ import SearchInput from "./search/search-modal/search-modal";
 
 import DefaultLogo from './logo/logo-default';
 import { useTheme } from "next-themes";
-import NavBarSection from "./navbar_section";
-import { GameIconsArrowScope } from "./logo/icons/arrow-scope";
-import { GameIconsLaurelCrown } from "./logo/icons/laurel-crown";
-import { Kbd } from "@nextui-org/kbd";
 import { electrolize } from "@/config/fonts";
+import { Chip } from "@nextui-org/react";
 
 export const Navbar = () => {
 

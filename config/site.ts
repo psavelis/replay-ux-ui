@@ -22,6 +22,11 @@ export const siteConfig = {
 			label: "START",
 			href: "/match-making",
 		  },
+		  {
+			label: "TEAMS",
+			href: "/teams",
+			// sections, Cloud=[Replays, Config, Spray/Partn], Stats=[Highlights, Matches, Teams, Players], Supply=[Competition Items, Pass, Esports Events, Esports products]
+		},
 		{
 			label: "HIGHLIGHTS",
 			href: "/highlights",
@@ -44,7 +49,7 @@ export const siteConfig = {
 			href: "/replays",
 		},
 		{
-			label: "UPLOAD",
+			label: "CLOUD",
 			href: "/cloud", // ProductLanding (if not logged in) / Dashboard (if logged in) (option: storage, private, privately shared, public, upgrade to pro)
 		},
 		{
