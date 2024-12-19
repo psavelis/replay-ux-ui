@@ -51,7 +51,6 @@ import {
 } from "@nextui-org/react";
 
 import ReplaysTable from "@/components/files/replays-table/app"
-import { logo } from "@/components/primitives";
 import { Icon } from "@iconify/react";
 
 export default function Component() {
