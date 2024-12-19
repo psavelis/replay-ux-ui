@@ -1,7 +1,7 @@
 
 export const POST = async (req: any, res: any) => {
 
-  const ctoken = await fetch(accountsApiRoute + '/onboard/steam', {
+  const ctoken = await fetch(process.env.REPLAY_API_URL + '/onboard/steam', {
     method: 'POST',
     body: JSON.stringify({
       v_hash: req.body.v_hash,

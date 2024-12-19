@@ -4,8 +4,7 @@ import type {RadioProps} from "@nextui-org/react";
 
 import React from "react";
 import {Radio} from "@nextui-org/react";
-
-import {cl} from "../cl";
+import { cl } from "@/components/cl";
 
 export type PlanRadioProps = RadioProps & {
   icon?: React.ReactNode;

@@ -20,14 +20,20 @@ export interface DateRange {
 }
 
 // common aggregate types
-// common aggregate types
-// common aggregate types
 export interface RoundData {
-  roundNumber: number;
-  winner: "ct" | "t" | null; // Add winner information
-  keyEvents: string[]; // Array to store key events in the round
-  current?: boolean | null | undefined; // Add current round information
-  currentTeam?: "ct" | "t" | null | undefined;
+    id: string
+    game_id: string
+    match_id: string
+    number: string
+    winner_team_id: string
+    most_valuable_player_id: string
+    events: any[]       // REVIEW: tipar GameEvent 
+    type: string
+    reason: string
+    description: string
+    highlights: any[]   // REVIEW: (former "keyEvents") tipar GameEvent
+    tick_range: TickRange
+    created_at: string
 }
 
 export interface MapRegionData {
@@ -89,48 +95,5 @@ export interface CSFilters {
 
 // TODO: mover p/ common (persistir)
 export const EmptyFilter: CSFilters = {
-    replayFiles: null,
-    matchIds: null,
-    roundNumbers: null,
-    playerIds: null,
-    teamIds: null,
-    sideIds: null,
-    groups: null,
-    tickRanges: null,
-    events: null,
-    items: null,
-    itemTypes: null,
-    projectiles: null,
-    projectileTypes: null,
-    maps: null,
-    areas: null,
-    networks: null,
-    objectives: null,
-    frags: null,
-    fragTypes: null,
-    textSearch: null,
-    strategyType: null,
-    countries: null,
-    regions: null,
-    cities: null,
-    languages: null,
-    playerRoles: null,
-    hitBoxLocations: null,
-    hitTypes: null,
-    penetrationLevels: null,
-    hitStageTypes: null,
-    angleTypes: null,
-    conVars: null,
-    gameModes: null,
-    gameRules: null,
-    economicStatus: null,
-    roundEndReasons: null,
-    mVPReasons: null,
-    resourceTypes: null,
-    resourceStatus: null,
-    resourceVisibilities: null,
-    resourceOwners: null,
-    dateRanges: null,
-    playerCfgProps: null,
-    errors: null,
+    
 }

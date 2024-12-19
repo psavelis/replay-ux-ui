@@ -92,6 +92,10 @@
   top: 0;
 }
 
+/* li aria-[label="active"]::after {
+  color: #34445C;
+} */
+
 .hero-subtitle::after {
   bottom: 0;
 }
@@ -291,7 +295,6 @@
   border-top-left-radius: 50px;
   border-bottom-left-radius: 50px;
 }
-
 
 
 /* Scoreboard Table */

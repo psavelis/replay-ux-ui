@@ -4,8 +4,7 @@ import type {RadioGroupProps} from "@nextui-org/react";
 
 import React from "react";
 import {RadioGroup} from "@nextui-org/react";
-
-import {cl} from "../cl";
+import {cn} from "@nextui-org/react";
 
 import RatingRadioItem from "./rating-radio-item";
 
@@ -27,7 +26,7 @@ const RatingRadioGroup = React.forwardRef<HTMLDivElement, RatingRadioGroupProps>
     }, [value]);
 
     return (
-      <div className={cl("flex items-center gap-3", className)}>
+      <div className={cn("flex items-center gap-3", className)}>
         <RadioGroup
           ref={ref}
           value={value}

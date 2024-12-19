@@ -65,3 +65,7 @@ const UploadArea = () => {
 };
 
 export default UploadArea;
+
+function setProgress(arg0: number) {
+  throw new Error("Function not implemented.");
+}
