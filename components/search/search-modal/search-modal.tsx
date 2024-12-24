@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link, LinkIcon, Kbd } from "@nextui-org/react";
 import { CopyDocumentIcon, DeleteDocumentIcon, EditDocumentIcon, Logo, PlusIcon, SearchIcon, ServerIcon } from '@/components/icons';
-import { ChevronDownIcon } from '@/app/replays/ChevronDownIcon';
+import { ChevronDownIcon } from '@/components/files/replays-table/ChevronDownIcon';
 import SearchResults from "./search-results";
 
 export default function SearchInput() {

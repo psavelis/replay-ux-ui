@@ -36,11 +36,8 @@ import SearchInput from "./search/search-modal/search-modal";
 
 import DefaultLogo from './logo/logo-default';
 import { useTheme } from "next-themes";
-import NavBarSection from "./navbar_section";
-import { GameIconsArrowScope } from "./logo/icons/arrow-scope";
-import { GameIconsLaurelCrown } from "./logo/icons/laurel-crown";
-import { Kbd } from "@nextui-org/kbd";
 import { electrolize } from "@/config/fonts";
+import { Chip } from "@nextui-org/react";
 
 export const Navbar = () => {
 
@@ -54,7 +51,7 @@ export const Navbar = () => {
 
   const { data: session } = useSession()
 
-  console.log('##session##', JSON.stringify(session))
+  // console.log('##session##', JSON.stringify(session))
   if (session) {
     SessionArea = SessionButton;
   } else {
@@ -65,15 +62,16 @@ export const Navbar = () => {
 
   return (
     <NextUINavbar maxWidth="full" height={26} position="sticky" isBordered={true} isBlurred={true} style={{
-      // backgroundImage: `url('/dark_bg_tailwind.jpg')`,
+      backgroundImage: `url('/blur-glow-pry-gh.svg')`,
       // backgroundSize: "cover",
+      // backgroundColor: "rgba(0, 0, 0, 0.5)",
     }}>
       <NavbarContent className="basis-1/5 sm:basis-full">
         <NavbarBrand as="li" className=" max-w-fit">
           <NextLink className="lg:flex flex justify-left items-left align-left" href="/">
             {/* <Logo /> */}
 
-            <DefaultLogo />
+            <DefaultLogo  onClick={ () => window.location.href = "/" } />
             {/* <Chip
               variant="shadow"
               classNames={{
@@ -108,7 +106,10 @@ export const Navbar = () => {
                 className={clsx(
                   "data-[active=true]:text-primary data-[active=true]:font-medium justify-center align-items align-center w-full text-center " + electrolize.className
                 )}
+
                 href={item.href}
+
+                onClick={ () => window.location.href = item.href }
               >
                 {item.label}
               </NextLink>

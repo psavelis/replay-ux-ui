@@ -1,0 +1,10 @@
+integrate:
+--> instagram (@leetgaming.pro, @replay-api)
+--> jira
+--> github (@replay-api)
+
+---
+external: --> @hltv
+
+----
+brainstorm: shop etc

@@ -2,9 +2,8 @@ import type {ReviewType} from "./review";
 
 import React from "react";
 
-import {cl} from "../cl";
-
 import Review from "./review";
+import { cl } from "@/components/cl";
 
 export type CardReviewProps = React.HTMLAttributes<HTMLDivElement> & ReviewType;
 

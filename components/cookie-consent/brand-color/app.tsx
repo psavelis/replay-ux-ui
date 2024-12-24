@@ -13,7 +13,7 @@ export default function CookieConsentBrandColors(params: any) {
     <div className="pointer-events-none fixed inset-x-0 bottom-0" {...params}>
       <div className="pointer-events-auto flex w-full items-center justify-between gap-x-20 border border-divider px-6 py-4 shadow-small"
       style={{
-        backgroundImage: `url('/dark_bg_tailwind.jpg')`,
+        backgroundImage: `url('/blur-glow-pry-gh.svg')`,
         backgroundSize: "cover",
         width: "100%",
         height: "100%",

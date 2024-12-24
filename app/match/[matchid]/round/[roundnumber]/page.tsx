@@ -26,7 +26,7 @@ export interface ReplayPageProps {
   size: SizeOption
 }
 
-const RoundPage: React.FC<ReplayPageProps> = (props: ReplayPageProps) => {
+const RoundPage: React.FC = (props: any) => {
   const { filter, size } = props
 
   const [mapViewModes, setMapViewModes] = useState<MapViewModeType[]>([MapViewModeType.MapTrajectoriesLayer])
@@ -36,8 +36,8 @@ const RoundPage: React.FC<ReplayPageProps> = (props: ReplayPageProps) => {
       <Card>
         <CardHeader className="backdrop-blur">
           <div className="flex">
-            {/*  Overall Timeline [partial results?user config?]  */}
-            <MatchTimelineHorizontalFull mapViewModes={mapViewModes} filter={filter} size={size} />
+            {/*  Overall Timeline [partial results?user config?]  mapViewModes={mapViewModes}  */}
+            <MatchTimelineHorizontalFull filter={filter} size={size} /> 
           </div>
           <div className="flex">
             <div>

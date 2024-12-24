@@ -4,6 +4,7 @@ import React from "react";
 import {Avatar, cn} from "@nextui-org/react";
 
 import CellWrapper from "./cell-wrapper";
+import { cl } from "@/components/cl";
 
 export type UserCellProps = React.HTMLAttributes<HTMLDivElement> & {
   avatar: string;

@@ -4,8 +4,7 @@ import type {SwitchProps} from "@nextui-org/react";
 
 import React from "react";
 import {extendVariants, Switch} from "@nextui-org/react";
-
-import {cl} from "../cl";
+import { cl } from "@/components/cl";
 
 const CustomSwitch = extendVariants(Switch, {
   variants: {

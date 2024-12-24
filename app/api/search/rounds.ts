@@ -52,7 +52,7 @@ export const getServerSideProps = async (context: any) => {
 export const fetchRoundData = async (filter: CSFilters, resultOptions?: ResultOptions): Promise<RoundData | undefined> => {
   const builder = new RouteBuilder(ReplayApiSettingsMock, logger)
 
-  const roundData = await builder.withFilter(filter)
+  const roundData: RoundData | undefined = await builder.withFilter(filter)
     .get<RoundData>(ReplayApiResourceType.Round, resultOptions)
     .catch((e) => {
       (logger as Loggable).error(e, 'error fetching ', JSON.stringify(filter))

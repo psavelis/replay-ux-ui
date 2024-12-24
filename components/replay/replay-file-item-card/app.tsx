@@ -1,7 +1,7 @@
 import { Card, CardBody, CardFooter, CardHeader, Tab, Tabs } from '@nextui-org/react';
 
 
-export function ReplayFileCard(params: any) {
+export default function ReplayFileCard(params: any) {
   
   return (
     <Card>
@@ -15,18 +15,19 @@ export function ReplayFileCard(params: any) {
         <FileFavorite />
         <FileMapTypeDefuse />
         <FileToggleDetailsFlipCard /> */}
-        
-        
+        de_dust
       </CardHeader>
       <CardBody>
             {/* <FileTopEventBadgesWCounter />
 
             <FileDurationLabel /> */}
+            content
         </CardBody>
         <CardFooter>
         {/* <FileVisibilityDropdown />
         <FileDetails />
         <FileViewsCounter /> */}
+        foot
         </CardFooter>
       
     </Card>
