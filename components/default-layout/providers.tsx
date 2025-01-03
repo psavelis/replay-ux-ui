@@ -15,12 +15,13 @@ export interface ProvidersProps {
 
 export function Providers({ children, themeProps }: ProvidersProps) {
 	const router = useRouter();
+	// const session = useSession();
 
 	return (
 		<>
 			<NextUIProvider navigate={router.push}>
 				<NextThemesProvider {...themeProps}>
-					<SessionProvider>{children}</SessionProvider>
+					<SessionProvider basePath='/api/auth' >{children}</SessionProvider>
 				</NextThemesProvider>
 			</NextUIProvider>
 		</>
