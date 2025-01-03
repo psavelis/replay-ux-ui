@@ -18,7 +18,7 @@ export const POST = async (req: any, res: any) => {
   try {
     await writeFile(
       path.join(process.cwd(), "public/assets/" + filename),
-      buffer
+      new Uint8Array(buffer)
     );
     // return NextResponse.json({ Message: "Success", status: 201 });
   } catch (error) {
