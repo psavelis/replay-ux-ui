@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth'
 import SteamProvider from 'next-auth-steam'
+import GoogleProvider from 'next-auth/providers/google'
 import crypto from 'crypto'
 
 import type { NextRequest } from 'next/server'
@@ -7,6 +8,8 @@ import type { NextRequest } from 'next/server'
 const mockSalt = process.env.STEAM_VHASH_SOURCE!
 
 const steamOnboardingApiRoute = `${process.env.REPLAY_API_URL}/onboarding/steam`;
+
+const googleOnboardingApiRoute = `${process.env.REPLAY_API_URL}/onboarding/google`;
 
 async function handler(
   req: NextRequest,
@@ -17,7 +20,11 @@ async function handler(
       SteamProvider(req, {
         clientSecret: process.env.STEAM_SECRET!,
         callbackUrl: `${process.env.LEET_GAMING_PRO_URL}/api/auth/callback/`
-      })
+      }),
+      GoogleProvider({
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      }),
     ],
     callbacks: {
       async jwt(param) {
@@ -59,9 +66,35 @@ async function handler(
             },
           })
 
-          console.log("jsonBody =>", jsonBody)
-
           const ctoken = await fetch(steamOnboardingApiRoute, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonBody,
+          });
+
+          if (!ctoken.ok) {
+            throw new Error(await ctoken.text())
+          }
+
+          const { uid, rid } = await ctoken.json()
+
+          param.token.rid = rid
+          param.token.uid = uid
+        }
+
+        if (param?.account?.provider === 'google') {
+          param.token.google = param.profile as GoogleProfile
+
+          const googleProfile = param.profile as GoogleProfile
+          delete googleProfile.sub
+
+          const jsonBody = JSON.stringify({
+            google: googleProfile,
+          })
+
+          const ctoken = await fetch(googleOnboardingApiRoute, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -87,6 +120,11 @@ async function handler(
           session.user.steam = token.steam
         }
 
+        if ('google' in token) {
+          // @ts-expect-error
+          session.user.google = token.google
+        }
+
         return session
       }
     }
@@ -97,3 +135,4 @@ export {
   handler as GET,
   handler as POST
 }
+
