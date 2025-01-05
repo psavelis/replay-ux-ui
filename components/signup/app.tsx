@@ -17,29 +17,29 @@ export default function SignUp() {
 
   return (
     <div
-      className="flex h-screen w-screen items-center justify-start overflow-hidden rounded-small bg-content1 p-2 sm:p-4 lg:p-8"
+      className="flex h-screen w-screen items-center justify-center overflow-hidden bg-content1 p-2 sm:p-4 lg:p-8"
       style={{
         backgroundImage:
-          "url('/dark_bg_tailwind.jpg')",
+          "url('/blur-glow-pry-gh.svg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
       {/* Brand Logo */}
       <div className="absolute right-10 top-10">
-        <div className="flex items-center">
-          <DefaultLogo />
-        </div>
+        {/* <div className="flex items-center">
+          <DefaultLogo size={24}/>
+        </div> */}
       </div>
 
       {/* Testimonial */}
       <div className="absolute bottom-10 right-10 hidden md:block">
         <p className="max-w-xl text-right text-white/60">
           <span className="font-medium">“</span>
-        Get fast and reliable servers to your favorite games, metrics, and more.
+        Get quick and quality matches to your favorite games, and more.
           <span className="font-medium">”</span>
         </p>
-        - PRO Dev Team
+        - LeetGaming.PRO Team
       </div>
 
       {/* Sign Up Form */}
@@ -135,7 +135,7 @@ export default function SignUp() {
         </div>
         <p className="text-center text-small">
           Already have an account?&nbsp;
-          <Link href="#" size="sm">
+          <Link href="/signin" size="sm">
             Log In
           </Link>
         </p>

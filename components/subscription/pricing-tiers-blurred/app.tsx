@@ -18,7 +18,7 @@ import {
 
 import {FrequencyEnum} from "./pricing-types";
 import {frequencies, tiers} from "./pricing-tiers";
-import {cl} from "../cl";
+import { cl } from "@/components/cl";
 
 export default function Component() {
   const [selectedFrequency, setSelectedFrequency] = React.useState(frequencies[0]);

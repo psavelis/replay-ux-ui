@@ -6,12 +6,10 @@ import { siteConfig } from "@/config/site";
 import { fontSans, pressStart2P } from "@/config/fonts";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/navbar";
-import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 import Box from './box';
-import { logo } from '@/components/primitives';
-import { Chip, Divider, LinkIcon, Spacer } from '@nextui-org/react';
 import FooterColumns from '../footer-columns/app';
+import { useEffect, useState } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -27,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 const viewport: Viewport = {
-  colorScheme: 'light',
+  colorScheme: 'dark',
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "white" },
     { media: "(prefers-color-scheme: dark)", color: "black" },
@@ -44,22 +42,29 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
+  const [domLoaded, setDomLoaded] = useState(false);
+
+  useEffect(() => {
+    setDomLoaded(true);
+  }, []);
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    
+    <html lang="en" suppressHydrationWarning={true}>
       
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background bg-scroll dark_bg_tailwind antialiased",
+          "min-h-screen bg-background bg-scroll blur-glow-pry-gh antialiased w-full",
           pressStart2P.className
         )}
-      >
-        <Box>
-          <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-            <div className="relative flex flex-col h-screen">
+      >{ domLoaded && <Box>
+          <Providers themeProps={{ attribute: "class", defaultTheme: "dark"}} >
+            <div className="relative flex flex-col h-screen w-full">
               <Navbar  />
               {/* <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow"> */}
-              <main className="flex max-w-fit" style={{
+              <main className="flex w-full" style={{
                 width: '100%',
               }}>
                 {children}
@@ -68,7 +73,9 @@ export default function RootLayout({
             </div>
           </Providers>
         </Box>
+}
       </body>
     </html>
+    
   );
 }

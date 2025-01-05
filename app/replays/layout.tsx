@@ -1,21 +1,13 @@
-"use client"
-import SessionConsoleLayout from '@/components/console-layout/session-console-layout';
+"use client";
 
-export default function ReplaysLayout({
+export default function HomeLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning >
-      <head />
-      <body>
-        <SessionConsoleLayout>
-          <div>
-            {children}
-          </div>
-        </SessionConsoleLayout>
-      </body>
-    </html>
+      <div>
+        {children}
+      </div>
   );
 }

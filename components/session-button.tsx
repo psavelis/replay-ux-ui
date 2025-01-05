@@ -1,122 +1,39 @@
 "use client"
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/dropdown';
-import { Button, Link, User } from '@nextui-org/react';
+import { Button, Link, Spacer, User } from '@nextui-org/react';
 import { DeleteDocumentIcon, LogOutIcon, Logo, PlusIcon, PowerButtonIcon, UserIcon } from './icons';
 import { logo } from './primitives';
 import { button as buttonStyles } from "@nextui-org/theme";
 import { useSession, signIn, signOut } from "next-auth/react"
-import { VerticalDotsIcon } from '@/app/replays/VerticalDotsIcon';
+import { VerticalDotsIcon } from "@/components/files/replays-table/VerticalDotsIcon";
 import BattleButton from './filters/ctas/battle-button/battle-button';
+import { useTheme } from 'next-themes';
+import { Icon } from '@iconify/react';
 
 export default function SessionButton() {
   const { data: session } = useSession();
+  const { theme } = useTheme()
 
   return (
-    <Dropdown
-      showArrow
-      radius="sm"
-      classNames={{
-        base: "before:bg-default-200",
-        content: "p-0 border-small border-divider bg-background",
-      }}
-    >
-      <DropdownTrigger>
-        <BattleButton variant="light" disableRipple endContent={<VerticalDotsIcon width={undefined} height={undefined} />}>Console</BattleButton>
-      </DropdownTrigger>
-      <DropdownMenu
-        aria-label="Custom item styles"
-        disabledKeys={["profile"]}
-        className="p-3"
-        itemClasses={{
-          base: [
-            "rounded-md",
-            "text-default-500",
-            "transition-opacity",
-            "data-[hover=true]:text-foreground",
-            "data-[hover=true]:bg-default-100",
-            "dark:data-[hover=true]:bg-default-50",
-            "data-[selectable=true]:focus:bg-default-50",
-            "data-[pressed=true]:opacity-70",
-            "data-[focus-visible=true]:ring-default-500",
-          ],
-        }}
-      >
-        <DropdownSection aria-label="Profile & Actions" showDivider>
-          <DropdownItem
-            isReadOnly
-            key="profile"
-            className="h-14 gap-2 opacity-100"
-          >
-            <User
-              name={session?.user?.name || "Guest"}
-              description={session?.user?.email || ""}
-              classNames={{
-                name: "text-default-600",
-                description: "text-default-500",
-              }}
-              avatarProps={{
-                size: "sm",
-                src: session?.user?.image || "",
-              }}
-            />
-          </DropdownItem>
-          <DropdownItem key="dashboard">
-            Dashboard
-          </DropdownItem>
-          <DropdownItem key="settings">Settings</DropdownItem>
-          <DropdownItem
-            key="new_project"
-            endContent={<PlusIcon className="text-large" />}
-          >
-            New Project
-          </DropdownItem>
-        </DropdownSection>
+    <div className='flex relative' >
+      <Link href="/home5" style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}>
+      <BattleButton endContent={<VerticalDotsIcon width={undefined} height={undefined} />} style={{ height: "64px", width: "128px", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: "#F5F5F5"}}>
+          <strong style={{ fontSize: "18px", letterSpacing: "-3px"}} className={logo({ color: "battleOrange" })}><b><u>&gt;<strong>_</strong></u></b></strong><span style={{color: theme === "dark" ? "#f5f0e1" : "#34445C"}}>PRO</span>
+      </BattleButton>
+      </Link>
 
-        <DropdownSection aria-label="Preferences" showDivider>
-          <DropdownItem key="quick_search" shortcut="⌘K">
-            Quick search
-          </DropdownItem>
-          <DropdownItem
-            isReadOnly
-            key="theme"
-            className="cursor-default"
-            endContent={
-              <select
-                className="z-10 outline-none w-16 py-0.5 rounded-md text-tiny group-data-[hover=true]:border-default-500 border-small border-default-300 dark:border-default-200 bg-transparent text-default-500"
-                id="theme"
-                name="theme"
-              >
-                <option>System</option>
-                <option>Dark</option>
-                <option>Light</option>
-              </select>
-            }
-          >
-            Theme
-          </DropdownItem>
-        </DropdownSection>  
+      {/* <Link href="/home5" style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold" }}>
+        <BattleButton variant="light" disableRipple endContent={<VerticalDotsIcon width={undefined} height={undefined} />}>PRO</BattleButton>
+      </Link>
+      <Spacer x={4} />
+      <BattleButton variant="light" disableRipple endContent={<PowerButtonIcon />} onClick={() => signOut()}>Logout</BattleButton> */}
 
-        <DropdownSection aria-label="Help & Feedback" showDivider>
-          <DropdownItem key="help_and_feedback">
-            Help & Feedback
-          </DropdownItem>
-          {/* <DropdownItem key="logout" onClick={()=>ssignOut()}>Log Out</DropdownItem> */}
-        </DropdownSection> 
-        <DropdownSection>
-        <DropdownItem
-          key="logout"
-          // className="text-danger"
-          color="danger"
-          // shortcut="⌘L"
-          description="Disconnect from your account"
-          onClick={() => signOut()}
-          startContent={<PowerButtonIcon />}
-        >
-          Sign-out
-        </DropdownItem>
-      </DropdownSection>
-      </DropdownMenu>
-    </Dropdown>
+{/* <Link style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}} href="/home5">[ console ]</Link>
+      <Spacer x={4} /> */}
+
+<Spacer x={4} />
+      <Link style={{ cursor: "pointer", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}} onClick={() => signOut()}>/ sign-out</Link>
+    </div>
   );
 }
 

@@ -5,6 +5,7 @@ import type {CardProps} from "@nextui-org/react";
 import React from "react";
 import {Button, Card, CardBody, CardFooter, Divider, Input, Link, cn} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
+import { cl } from "@/components/cl";
 
 export default function Component(props: CardProps) {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);

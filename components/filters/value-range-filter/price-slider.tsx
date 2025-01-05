@@ -5,8 +5,7 @@ import type {RangeFilter, RangeValue} from "./filters-types";
 
 import React from "react";
 import {Divider, Input, Slider} from "@nextui-org/react";
-
-import {cl} from "../cl";
+import { cl } from "@/components/cl";
 
 export type PriceSliderAnimation = "opacity" | "height";
 
