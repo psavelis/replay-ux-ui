@@ -16,6 +16,7 @@ async function handler(
   ctx: { params: { nextauth: string[] } }
 ) {
   return NextAuth(req, ctx, {
+    secret: process.env.NEXTAUTH_SECRET!,
     providers: [
       SteamProvider(req, {
         clientSecret: process.env.STEAM_SECRET!,
@@ -24,6 +25,13 @@ async function handler(
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID!,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        authorization: {
+          params: {
+            prompt: "consent",
+            access_type: "offline",
+            response_type: "code"
+          },
+        },
       }),
     ],
     callbacks: {
@@ -90,16 +98,21 @@ async function handler(
           const googleProfile = param.profile as GoogleProfile
           delete googleProfile.sub
 
-          const jsonBody = JSON.stringify({
-            google: googleProfile,
-          })
+          const googleId = (param.profile as any).email!
+
+          const verificationHash = crypto
+          .createHash('sha256')
+          .update(`${googleId}${mockSalt}`)
+          .digest('hex')
+
+          const jsonBody = JSON.stringify({ ...googleProfile, v_hash: verificationHash })
 
           const ctoken = await fetch(googleOnboardingApiRoute, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: jsonBody,
+            body: jsonBody
           });
 
           if (!ctoken.ok) {
