@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Avatar, Button, ScrollShadow, Tooltip, Spacer, User, Link, LinkIcon } from "@nextui-org/react";
+import { Avatar, Button, ScrollShadow, Tooltip, Spacer, User, Link, LinkIcon, DropdownItem, DropdownSection, DropdownMenu, Dropdown, DropdownTrigger } from "@nextui-org/react";
 import { Icon } from "@iconify/react";
 import { useMediaQuery } from "usehooks-ts";
 
@@ -100,6 +100,8 @@ export default function ConsoleLayout({
           opacity: (theme === "light" ? "10%" : "100%")
         }}
       >
+
+
       </div>
       <div
         className={cl(
@@ -140,9 +142,84 @@ export default function ConsoleLayout({
             <DefaultLogo tag={false}></DefaultLogo>
           </span> */}
         </div>
-        
         <div className="flex items-center gap-3 px-3 w-[82px]">
         <LogoGrayscale />
+        </div>
+        <div className="flex items-center gap-3 px-3 w-[82px]">
+          <Dropdown showArrow placement="bottom-start">
+            <DropdownTrigger>
+              <Button disableRipple isIconOnly className="-mr-1" radius="full" variant="light">
+                <Avatar
+                  className="h-6 w-6 cursor-pointer"
+                  name="My Group"
+                  src="/logo_leetgaming-big-g.png"
+                />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu aria-label="Custom item styles" disabledKeys={["profile"]}>
+              <DropdownSection showDivider aria-label="Profile & Actions">
+                <DropdownItem
+                  key="profile"
+                  isReadOnly
+                  className="h-14 gap-2 opacity-100"
+                  textValue="Signed in as"
+                >
+                  <User
+                    avatarProps={{
+                      size: "sm",
+                      imgProps: {
+                        className: "transition-none",
+                      },
+                      src: "/logo_leetgaming-big-g.png",
+                    }}
+                    classNames={{
+                      name: "text-default-600",
+                      description: "text-default-500",
+                    }}
+                    description="Customer Support"
+                    name="Unnamed Group 1"
+                  />
+                </DropdownItem>
+                <DropdownItem key="dashboard">Dashboard</DropdownItem>
+                <DropdownItem key="settings">Settings</DropdownItem>
+                <DropdownItem
+                  key="new_project"
+                  endContent={<Icon className="text-large" icon="lucide:plus" />}
+                >
+                  New Project
+                </DropdownItem>
+              </DropdownSection>
+
+              <DropdownSection showDivider aria-label="Preferences">
+                <DropdownItem key="quick_search" shortcut="⌘K">
+                  Quick search
+                </DropdownItem>
+                <DropdownItem
+                  key="theme"
+                  isReadOnly
+                  className="cursor-default"
+                  endContent={
+                    <select
+                      className="z-10 w-16 rounded-md border-small border-default-300 bg-transparent py-0.5 text-tiny text-default-500 outline-none group-data-[hover=true]:border-default-500 dark:border-default-200"
+                      id="theme"
+                      name="theme"
+                    >
+                      <option>System</option>
+                      <option>Dark</option>
+                      <option>Light</option>
+                    </select>
+                  }
+                >
+                  Theme
+                </DropdownItem>
+              </DropdownSection>
+
+              <DropdownSection aria-label="Help & Feedback">
+                <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+                <DropdownItem key="logout">Log Out</DropdownItem>
+              </DropdownSection>
+            </DropdownMenu>
+          </Dropdown>
         </div>
         <Spacer y={8} />
         <div className="flex items-center gap-3 px-3">
