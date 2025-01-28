@@ -7,6 +7,8 @@ import {Button, Spacer} from "@nextui-org/react";
 import TeamCard from "@/components/teams/team-card/App";
 import { SearchIcon, UserIcon } from "@/components/icons";
 import { Icon } from "@iconify/react";
+import LaunchYourSquadButton from "@/components/teams/team-form/launch-your-squad-button";
+import ApplyNowButton from "@/components/players/player-form/apply-now-button";
 
 const Teams: Team[] = [
   {
@@ -164,8 +166,9 @@ export default function Component() {
         <Spacer y={4} />
         <div className="flex w-full justify-center gap-2">
           <Button startContent={<SearchIcon size={16} />} variant="ghost">Search</Button>
-          <Button startContent={<UserIcon size={18} />} color="primary" variant="faded">Apply Now</Button>
-          <Button startContent={<Icon icon="solar:users-group-two-rounded-outline" width={18} />} color="primary" variant="ghost">Launch Your Squad</Button>
+          <ApplyNowButton />
+          {/* <Button startContent={<Icon icon="solar:users-group-two-rounded-outline" width={18} />} color="primary" variant="ghost">Launch Your Squad</Button> */}
+          <LaunchYourSquadButton />
         </div>
       </div>
       <div className="mt-12 grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
