@@ -15,8 +15,8 @@ export const LoginButton = () => {
   const { theme } = useTheme()
   return (
     <div className="flex relative">
-      <Link style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}} href="/signup">[ + sign-up ]</Link>
-      <Spacer x={4} />
+      {/* <Link style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}} href="/signup">[ + sign-up ]</Link>
+      <Spacer x={4} /> */}
 
       <Link href="/signin" style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}}>
       <BattleButton style={{ height: "64px", width: "110px", borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: "#F5F5F5", marginRight: "-25px"}}>

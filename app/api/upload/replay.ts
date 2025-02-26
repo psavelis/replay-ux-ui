@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import path from "path";
 import { writeFile } from "fs/promises";
+import { getToken } from 'next-auth/jwt';
 
 const game_id = 'cs2'
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -29,11 +30,18 @@ export const POST = async (req: any, res: any) => {
   const newFormData = new FormData();
   formData.append("file", file);
 
+  const token = await getToken({ req });
+  const rid = token?.rid;
+  if (!rid) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const result = await fetch(`${process.env.REPLAY_API_URL!}/games/${game_id}/replay`, {
     method: "POST",
     body: newFormData,
-
+    headers: {
+      'X-Resource-Owner-ID': rid?.toString(),
+    }
   })
 
   const resultJson = await result.json();
