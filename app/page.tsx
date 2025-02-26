@@ -15,7 +15,7 @@ export default function Component() {
     <div className="relative flex h-screen min-h-dvh w-full flex-col overflow-hidden bg-background left-0 right-0">
       {/* <BasicNavbar /> */}
       <main className="container mx-auto mt-[24px] flex w-full flex-col items-start px-8">
-        <section className="z-20 flex flex-col items-start justify-center gap-[18px] sm:gap-6">
+        <section className="z-10 flex flex-col items-start justify-center gap-[18px] sm:gap-6">
           <Button
             className="h-9 overflow-hidden border-1 border-default-100 bg-default-50 px-[18px] py-2 text-small font-normal leading-5 text-default-500"
             endContent={

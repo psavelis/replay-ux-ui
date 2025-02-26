@@ -61,7 +61,7 @@ export const Navbar = () => {
   const searchInput = SearchInput();
 
   return (
-    <NextUINavbar maxWidth="full" height={26} position="sticky" isBordered={true} isBlurred={true} style={{
+    <NextUINavbar maxWidth="full" height={16} position="sticky" isBordered={true} isBlurred={true} style={{
       backgroundImage: `url('/blur-glow-pry-gh.svg')`,
       // backgroundSize: "cover",
       // backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -98,7 +98,7 @@ export const Navbar = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              fontSize: "12px",
+              fontSize: "13px",
               color: item.href === "/match-making" ? "rgb(52, 68, 92)" : (item.href === "/cloud" ? "#F5F5F5" : ""),
             }}
             >

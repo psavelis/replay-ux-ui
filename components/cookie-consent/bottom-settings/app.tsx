@@ -1,15 +1,14 @@
 "use client";
 
 import React from "react";
-import {Button, Link, ResizablePanel, Spacer} from "@nextui-org/react";
-import {LazyMotion, domAnimation, AnimatePresence, m} from "framer-motion";
-;
+import { Button, Link, ResizablePanel, Spacer } from "@nextui-org/react";
+import { LazyMotion, domAnimation, AnimatePresence, m } from "framer-motion";
 import SwitchCell from "./switch-cell";
 import { cl } from "@/components/cl";
 
 const variants = {
-  visible: {opacity: 1},
-  hidden: {opacity: 0},
+  visible: { opacity: 1 },
+  hidden: { opacity: 0 },
 };
 
 export default function CookieSettingsConsent() {
@@ -19,12 +18,12 @@ export default function CookieSettingsConsent() {
     children,
     className,
     ...props
-  }: React.PropsWithChildren<{className?: string}>) => (
+  }: React.PropsWithChildren<{ className?: string }>) => (
     <m.div
       animate="visible"
       className={cl(
         "pointer-events-auto ml-auto max-w-sm rounded-large border border-divider bg-background/15 p-6 shadow-small backdrop-blur",
-        className,
+        className
       )}
       exit="hidden"
       initial="hidden"

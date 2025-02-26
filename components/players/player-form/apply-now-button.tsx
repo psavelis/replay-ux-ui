@@ -7,22 +7,21 @@ import {
   ModalFooter,
   Button,
   useDisclosure,
-  Checkbox,
   Input,
-  Link,
-  Dropdown,
   Select,
   Chip,
   SelectItem,
   Avatar,
-  Textarea,
-  SelectSection,
   Spacer,
+  Autocomplete,
+  AutocompleteSection,
+  AutocompleteItem,
 } from "@nextui-org/react";
 import { Form } from "@nextui-org/form";
 import { Icon } from "@iconify/react";
 import AvatarUploader from "@/components/avatar/avatar-uploader";
 import { UserIcon } from "@/components/icons";
+import { useSession } from "next-auth/react";
 
 const games = [
   { id: 1, name: "Counter-Strike: Global Offensive", icon: "https://avatars.githubusercontent.com/u/168373383" },
@@ -33,13 +32,21 @@ const games = [
   { id: 6, name: "Rainbow Six Siege", icon: "https://avatars.githubusercontent.com/u/168373383" },
 ];
 
-const selecHeadingClasses =
-  "flex w-full sticky top-1 z-20 py-1.5 px-2 bg-default-100 shadow-small rounded-small";
+const headingClasses = "flex w-full sticky top-1 z-10 py-1.5 px-2 pt-4 bg-default-100 shadow-small rounded-small";
 
 export default function App() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { data: session } = useSession();
   const [displayName, setDisplayName] = useState("");
   const [slug, setSlug] = useState("");
+
+  const handleOpen = () => {
+    if (!session) {
+      window.location.href = '/signin';
+    } else {
+      onOpen();
+    }
+  };
 
   const onSubmit = (e: any) => {
     e.preventDefault();
@@ -53,7 +60,7 @@ export default function App() {
 
   return (
     <>
-      <Button startContent={<UserIcon size={18} />} color="primary" variant="faded" onPress={onOpen}>Apply Now</Button>
+      <Button startContent={<UserIcon size={18} />} color="primary" variant="faded" onPress={handleOpen}>Apply Now</Button>
       <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (
@@ -111,20 +118,49 @@ export default function App() {
                         onChange={handleDisplayNameChange}
                       />
 
-                      <Select variant="flat"
+                      <Autocomplete
+                        className="max-w-xs"
+                        label="Playing Role"
+                        placeholder="Search an playing roles"
+                        scrollShadowProps={{
+                          isEnabled: false,
+                        }}
+                        variant="bordered"
+                      >
+                        <AutocompleteSection
+                          classNames={{
+                            heading: headingClasses,
+                          }}
+                          title="Role"
+                        >
+                          <AutocompleteItem key="Entry Fragger">Entry Fragger</AutocompleteItem>
+                          <AutocompleteItem key="Support">Support</AutocompleteItem>
+                          <AutocompleteItem key="In-Game Leader (IGL)">In-Game Leader (IGL)</AutocompleteItem>
+                          <AutocompleteItem key="AWPer">AWPer</AutocompleteItem>
+                          <AutocompleteItem key="Lurker">Lurker</AutocompleteItem>
+                          <AutocompleteItem key="Anchor">Anchor</AutocompleteItem>
+                          <AutocompleteItem key="Controller">Controller</AutocompleteItem>
+                          <AutocompleteItem key="Duelist">Duelist</AutocompleteItem>
+                          <AutocompleteItem key="Initiator">Initiator</AutocompleteItem>
+                          <AutocompleteItem key="Rifler">Rifler</AutocompleteItem>
+                          <AutocompleteItem key="Rotator">Rotator</AutocompleteItem>
+                        </AutocompleteSection>
+                      </Autocomplete>
+
+                      <Select variant="bordered"
                         className="pt-2"
-                        label="Visibility"
+                        label="Profile Visibility Options"
                         placeholder="Select a visibility option"
                       >
-                        <SelectItem key="Public" value="public" textValue="Public"><div className="flex items-center"> <Icon icon="mdi:earth" /><Spacer x={2}/>Public (Default)</div></SelectItem>
-                        <SelectItem key="Private" value="private" textValue="Private"><div className="flex items-center"> <Icon icon="mdi:lock" /><Spacer x={2}/> Private</div></SelectItem>
-                        <SelectItem key="Restricted" value="restricted" textValue="Restricted"><div className="flex items-center"> <Icon icon="mdi:account-group" /><Spacer x={2}/> Group & Members </div></SelectItem>
+                        <SelectItem key="Public" value="public" textValue="Public"><div className="flex items-center"> <Icon icon="mdi:earth" /><Spacer x={2} />Public (Default)</div></SelectItem>
+                        <SelectItem key="Private" value="private" textValue="Private"><div className="flex items-center"> <Icon icon="mdi:lock" /><Spacer x={2} /> Private</div></SelectItem>
+                        <SelectItem key="Restricted" value="restricted" textValue="Restricted"><div className="flex items-center"> <Icon icon="mdi:account-group" /><Spacer x={2} /> Group & Members </div></SelectItem>
                       </Select>
                     </div>
                   </div>
                   <Input
                     variant="flat"
-                    startContent={<span className="text-default-400 pr-4">leetgaming.pro/</span>}
+                    startContent={<small className="text-default-400">leetgaming.pro/players/</small>}
                     isRequired
                     label="URL"
                     labelPlacement="outside"

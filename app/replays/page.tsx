@@ -29,7 +29,7 @@ export default function Component() {
       </nav>
       <div className="flex gap-x-6">
         <div className="w-full flex-1 flex-col">
-          <header className="relative z-20 flex flex-col gap-2 rounded-medium bg-default-50 px-4 pb-3 pt-2 md:pt-3">
+          <header className="relative z-10 flex flex-col gap-2 rounded-medium bg-default-50 px-4 pb-3 pt-2 md:pt-3">
             <div className="flex items-center gap-1 md:hidden md:gap-2">
               <h2 className="text-large font-medium">Replays (Mob)</h2>
               <span className="text-small text-default-400">(9)</span>
