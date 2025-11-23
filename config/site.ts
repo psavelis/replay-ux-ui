@@ -53,8 +53,8 @@ export const siteConfig = {
     // 	href: "/replays",
     // },
     {
-      label: 'REPLAY',
-      href: '/cloud', // ProductLanding (if not logged in) / Dashboard (if logged in) (option: storage, private, privately shared, public, upgrade to pro)
+      label: 'CLOUD',
+      href: '/cloud', // Unified label for replay storage & dashboard
     },
     // {
     //   label: "SUPPLY",

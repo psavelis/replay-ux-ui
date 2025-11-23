@@ -10,21 +10,15 @@ export type Loggable = pino.Logger & {
 
 const logLevel = isProd ? 'info' : 'debug';
 
-const transport = pino.transport({
-  target: 'pino-pretty',
-  options: {
-    colorize: true,
-    translateTime: 'SYS:standard'
-  }
-});
+// Only use pino-pretty in development, not in production builds
+const pinoConfig: pino.LoggerOptions = {
+  level: logLevel,
+  base: null, // Remove default fields
+};
 
-export const logger: any = pino(
-  {
-    level: logLevel,
-    base: null, // Remove default fields
-    transport,
-  }
-);
+// Simple logger without worker threads to avoid Next.js module resolution issues
+// pino-pretty transport causes worker thread errors in Next.js dev mode
+export const logger: any = pino(pinoConfig);
 
 // TODO: mover para middleware
 logger.withRequest = (req: any) => {

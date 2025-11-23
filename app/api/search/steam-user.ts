@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
+const REPLAY_API_URL = process.env.REPLAY_API_URL || process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { steamId } = req.body;
@@ -9,12 +11,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         try {
-            // Replace with actual API call to Steam to get user data
             const userData = await fetchSteamUserData(steamId);
-
             return res.status(200).json(userData);
-        } catch (error) {
-            return res.status(500).json({ error: 'Failed to fetch user data' });
+        } catch (error: any) {
+            console.error('Failed to fetch Steam user data:', error);
+            return res.status(500).json({ 
+                error: 'Failed to fetch user data',
+                details: error.message 
+            });
         }
     } else {
         res.setHeader('Allow', ['POST']);
@@ -23,11 +27,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function fetchSteamUserData(steamId: string) {
-    // Mock function to simulate fetching user data from Steam API
-    // Replace with actual implementation
-    return {
-        steamId,
-        username: 'SampleUser',
-        games: ['Game1', 'Game2', 'Game3']
-    };
+    // Call replay-api Steam user endpoint
+    const response = await fetch(`${REPLAY_API_URL}/steam/users/${steamId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Steam API returned ${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
 }

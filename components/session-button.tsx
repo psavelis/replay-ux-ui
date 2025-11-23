@@ -32,7 +32,7 @@ export default function SessionButton() {
   return (
     <div className='flex relative'>
       <Link
-        href='/home5'
+        href='/cloud'
         style={{
           borderRadius: '0',
           borderColor: 'none',
@@ -75,14 +75,7 @@ export default function SessionButton() {
         
       </Link>
 
-      {/* <Link href="/home5" style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold" }}>
-        <BattleButton variant="light" disableRipple endContent={<VerticalDotsIcon width={undefined} height={undefined} />}>PRO</BattleButton>
-      </Link>
-      <Spacer x={4} />
-      <BattleButton variant="light" disableRipple endContent={<PowerButtonIcon />} onClick={() => signOut()}>Logout</BattleButton> */}
-
-      {/* <Link style={{ borderRadius: "0", borderColor: "none", borderStyle: "solid", borderWidth: "0px", fontWeight: "bold", color: theme === "dark" ? "#f5f0e1" : "#34445C"}} href="/home5">[ console ]</Link>
-      <Spacer x={4} /> */}
+      
 
       <Spacer x={4} />
       <Link

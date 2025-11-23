@@ -43,8 +43,11 @@ export default function SignUp() {
       </div>
 
       {/* Sign Up Form */}
-      <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
-        <p className="pb-2 text-xl font-medium">Sign Up</p>
+      <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-2xl backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 border border-foreground/10">
+        <div className="text-center pb-2">
+          <h1 className="text-2xl font-bold tracking-tight">Create Account</h1>
+          <p className="text-sm text-foreground/60 mt-1">Join LeetGaming.PRO today</p>
+        </div>
         <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
           <Input
             isRequired
@@ -110,7 +113,13 @@ export default function SignUp() {
               Privacy Policy
             </Link>
           </Checkbox>
-          <Button color="primary" type="submit">
+          <Button
+            color="primary"
+            type="submit"
+            size="lg"
+            radius="md"
+            className="font-medium"
+          >
             Sign Up
           </Button>
         </form>
@@ -120,22 +129,32 @@ export default function SignUp() {
           <Divider className="flex-1" />
         </div>
         <div className="flex flex-col gap-2">
-           <Button
+          <Button
             startContent={<SteamIcon />}
             variant="bordered"
+            size="lg"
+            radius="md"
+            onClick={() => {/* @ts-ignore */
+              if (typeof window !== 'undefined') import('next-auth/react').then(m => m.signIn('steam'))
+            }}
           >
             Continue with Steam
           </Button>
           <Button
             startContent={<Icon icon="flat-color-icons:google" width={24} />}
             variant="bordered"
+            size="lg"
+            radius="md"
+            onClick={() => {/* @ts-ignore */
+              if (typeof window !== 'undefined') import('next-auth/react').then(m => m.signIn('google'))
+            }}
           >
             Continue with Google
           </Button>
         </div>
-        <p className="text-center text-small">
-          Already have an account?&nbsp;
-          <Link href="/signin" size="sm">
+        <p className="text-center text-sm text-foreground/60">
+          Already have an account?{" "}
+          <Link href="/signin" size="sm" className="font-medium">
             Log In
           </Link>
         </p>

@@ -4,6 +4,8 @@ import GoogleProvider from 'next-auth/providers/google'
 import crypto from 'crypto'
 
 import type { NextRequest } from 'next/server'
+import { getRIDTokenManager } from '@/types/replay-api/auth'
+import { IdentifierSourceType } from '@/types/replay-api/entities.types'
 
 const mockSalt = process.env.STEAM_VHASH_SOURCE!
 
@@ -17,6 +19,14 @@ async function handler(
 ) {
   return NextAuth(req, ctx, {
     secret: process.env.NEXTAUTH_SECRET!,
+    pages: {
+      signIn: '/signin',
+      error: '/api/auth/error',
+    },
+    session: {
+      strategy: 'jwt',
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+    },
     providers: [
       SteamProvider(req, {
         clientSecret: process.env.STEAM_SECRET!,
@@ -36,111 +46,181 @@ async function handler(
     ],
     callbacks: {
       async jwt(param) {
+        // Only process account linking on initial sign in
         if (param?.account?.provider === 'steam') {
-          param.token.steam = param.profile
+          try {
+            param.token.steam = param.profile as SteamUserProfile | undefined
 
-          const steamId = (param.profile as any).steamid!
+            const steamId = (param.profile as any)?.steamid
 
-          if (!steamId) {
-            const p = JSON.stringify(param)
-            throw new Error(`No steam_id found in profile ${p}`)
+            if (!steamId) {
+              console.error('No steam_id found in profile', param.profile)
+              // Return token without backend onboarding - allow basic auth
+              return param.token
+            }
+
+            const steamProfile = param.profile as SteamUserProfile
+            const profileCopy = { ...steamProfile }
+            delete (profileCopy as any).steamid
+
+            const verificationHash = crypto
+              .createHash('sha256')
+              .update(`${steamId}${mockSalt}`)
+              .digest('hex')
+
+            const jsonBody = JSON.stringify({
+              v_hash: verificationHash,
+              steam: {
+                id: steamId,
+                communityvisibilitystate: profileCopy.communityvisibilitystate,
+                profilestate: profileCopy.profilestate,
+                personaname: profileCopy.personaname,
+                profileurl: profileCopy.profileurl,
+                avatar: profileCopy.avatar,
+                avatarmedium: profileCopy.avatarmedium,
+                avatarfull: profileCopy.avatarfull,
+                avatarhash: profileCopy.avatarhash,
+                personastate: profileCopy.personastate,
+                realname: profileCopy.realname,
+                primaryclanid: profileCopy.primaryclanid,
+                personastateflags: profileCopy.personastateflags,
+                timecreated: new Date(profileCopy.timecreated * 1000).toISOString()
+              },
+            })
+
+            try {
+              const ctoken = await fetch(steamOnboardingApiRoute, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: jsonBody,
+              });
+
+              if (ctoken.ok) {
+                // API returns user object in body and RID in headers
+                const userData = await ctoken.json()
+                const rid = ctoken.headers.get('X-Resource-Owner-ID') ?? undefined
+                const uid = userData.resource_owner?.user_id || userData.id
+
+                param.token.rid = rid
+                param.token.uid = uid
+
+                // Store RID token in manager for SDK usage (client-side only)
+                if (typeof window !== 'undefined' && rid) {
+                  getRIDTokenManager().setFromOnboarding({
+                    profile: { id: '', rid_source: IdentifierSourceType.Steam, source_key: steamId },
+                    rid,
+                    user_id: uid
+                  }).catch(err => console.error('Failed to set RID token:', err));
+                }
+              } else {
+                console.error('Steam onboarding API error:', await ctoken.text())
+                // Continue with Steam auth even if backend onboarding fails
+              }
+            } catch (apiError) {
+              console.error('Steam onboarding API request failed:', apiError)
+              // Continue with Steam auth even if backend is unavailable
+            }
+          } catch (error) {
+            console.error('Error processing Steam authentication:', error)
+            // Continue with basic Steam auth
           }
-
-          const steamProfile = param.profile as SteamUserProfile
-          delete steamProfile.steamid
-
-          const verificationHash = crypto
-            .createHash('sha256')
-            .update(`${steamId}${mockSalt}`)
-            .digest('hex')
-
-          const jsonBody = JSON.stringify({
-            v_hash: verificationHash,
-            steam: {
-              id: steamId,
-              communityvisibilitystate: steamProfile.communityvisibilitystate,
-              profilestate: steamProfile.profilestate,
-              personaname: steamProfile.personaname,
-              profileurl: steamProfile.profileurl,
-              avatar: steamProfile.avatar,
-              avatarmedium: steamProfile.avatarmedium,
-              avatarfull: steamProfile.avatarfull,
-              avatarhash: steamProfile.avatarhash,
-              personastate: steamProfile.personastate,
-              realname: steamProfile.realname,
-              primaryclanid: steamProfile.primaryclanid,
-              personastateflags: steamProfile.personastateflags,
-              timecreated: new Date(steamProfile.timecreated * 1000).toISOString()
-            },
-          })
-
-          const ctoken = await fetch(steamOnboardingApiRoute, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonBody,
-          });
-
-          if (!ctoken.ok) {
-            throw new Error(await ctoken.text())
-          }
-
-          const { uid, rid } = await ctoken.json()
-
-          param.token.rid = rid
-          param.token.uid = uid
         }
 
         if (param?.account?.provider === 'google') {
-          param.token.google = param.profile as GoogleProfile
+          try {
+            param.token.google = param.profile as GoogleProfile
 
-          const googleProfile = param.profile as GoogleProfile
-          delete googleProfile.sub
+            const googleProfile = { ...(param.profile as GoogleProfile) }
+            delete (googleProfile as any).sub
 
-          const googleId = (param.profile as any).email!
+            const googleId = (param.profile as any).email!
 
-          const verificationHash = crypto
-          .createHash('sha256')
-          .update(`${googleId}${mockSalt}`)
-          .digest('hex')
+            if (!googleId) {
+              console.error('No email found in Google profile', param.profile)
+              // Return token without backend onboarding - allow basic auth
+              return param.token
+            }
 
-          const jsonBody = JSON.stringify({ ...googleProfile, v_hash: verificationHash })
+            const verificationHash = crypto
+              .createHash('sha256')
+              .update(`${googleId}${mockSalt}`)
+              .digest('hex')
 
-          const ctoken = await fetch(googleOnboardingApiRoute, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonBody
-          });
+            const jsonBody = JSON.stringify({ ...googleProfile, v_hash: verificationHash })
 
-          if (!ctoken.ok) {
-            throw new Error(await ctoken.text())
+            try {
+              const ctoken = await fetch(googleOnboardingApiRoute, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: jsonBody
+              });
+
+              if (ctoken.ok) {
+                // API returns user object in body and RID in headers
+                const userData = await ctoken.json()
+                const rid = ctoken.headers.get('X-Resource-Owner-ID') ?? undefined
+                const uid = userData.resource_owner?.user_id || userData.id
+
+                param.token.rid = rid
+                param.token.uid = uid
+
+                // Store RID token in manager for SDK usage (client-side only)
+                if (typeof window !== 'undefined' && rid) {
+                  getRIDTokenManager().setFromOnboarding({
+                    profile: { id: '', rid_source: IdentifierSourceType.Google, source_key: googleId },
+                    rid,
+                    user_id: uid
+                  }).catch(err => console.error('Failed to set RID token:', err));
+                }
+              } else {
+                console.error('Google onboarding API error:', await ctoken.text())
+                // Continue with Google auth even if backend onboarding fails
+              }
+            } catch (apiError) {
+              console.error('Google onboarding API request failed:', apiError)
+              // Continue with Google auth even if backend is unavailable
+            }
+          } catch (error) {
+            console.error('Error processing Google authentication:', error)
+            // Continue with basic Google auth
           }
-
-          const { uid, rid } = await ctoken.json()
-
-          param.token.rid = rid
-          param.token.uid = uid
         }
 
         return param.token
       },
       session({ session, token }) {
-        if ('steam' in token) {
-          // @ts-expect-error
+        // Add custom fields from token to session
+        if (token.steam) {
           session.user.steam = token.steam
         }
 
-        if ('google' in token) {
-          // @ts-expect-error
+        if (token.google) {
           session.user.google = token.google
+        }
+
+        // Add RID and UID from token to session
+        if (token.rid) {
+          session.user.rid = token.rid
+        }
+
+        if (token.uid) {
+          session.user.uid = token.uid
+          session.user.id = token.uid // Also set as id for compatibility
         }
 
         return session
       }
-    }
+    },
+    logger: {
+      error: () => {}, // Suppress NextAuth internal logging errors
+      warn: () => {},
+      debug: () => {},
+    },
+    debug: false, // Disable debug mode to prevent _log endpoint calls
   })
 }
 

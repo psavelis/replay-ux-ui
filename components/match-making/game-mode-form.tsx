@@ -24,6 +24,7 @@ import {cn} from "@nextui-org/react";
 import { title } from "../primitives";
 import { useTheme } from "next-themes";
 import { BestOfFiveMatchIcon, BestOfThreeMatchIcon, SingleEliminationMatchIcon } from "../icons";
+import { useWizard } from "./wizard-context";
 
 export type GameModeFormProps = React.HTMLAttributes<HTMLFormElement>;
 
@@ -68,6 +69,7 @@ export const CustomRadio = (props: any) => {
 
 const GameModeForm = React.forwardRef<HTMLFormElement, GameModeFormProps>(
   ({className, ...props}, ref) => {
+    const { updateState } = useWizard();
     const appearanceNoneClassName =
       "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
       let { theme } = useTheme();
@@ -88,7 +90,10 @@ const GameModeForm = React.forwardRef<HTMLFormElement, GameModeFormProps>(
           {...props}
         >
      
-      <RadioGroup className="w-[500px] justify-center items-center">
+      <RadioGroup
+        className="w-[500px] justify-center items-center"
+        onValueChange={(value) => updateState({ gameMode: value })}
+      >
       <CustomRadio className="justify-center text-center items-center" description="Free or unlimited gameplay. Recommended for training or just player networking." value="free">
           <div className="flex flex-col items-center gap-2">
           Casual

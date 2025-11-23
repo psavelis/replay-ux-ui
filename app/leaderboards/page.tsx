@@ -1,9 +1,562 @@
-import { title } from "@/components/primitives";
+"use client";
+
+import React, { useState } from "react";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableColumn,
+  TableRow,
+  TableCell,
+  Avatar,
+  Chip,
+  Button,
+  Tabs,
+  Tab,
+  Card,
+  CardBody,
+  Select,
+  SelectItem,
+  Input,
+} from "@nextui-org/react";
+import { Icon } from "@iconify/react";
+import { title, subtitle } from "@/components/primitives";
+import { SearchIcon } from "@/components/icons";
+
+interface LeaderboardPlayer {
+  rank: number;
+  previousRank: number;
+  name: string;
+  avatar: string;
+  rating: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  kd: number;
+  tier: string;
+  country: string;
+}
+
+const MOCK_LEADERBOARD_DATA: LeaderboardPlayer[] = [
+  {
+    rank: 1,
+    previousRank: 1,
+    name: "s1mple",
+    avatar: "https://i.pravatar.cc/150?img=1",
+    rating: 4850,
+    wins: 342,
+    losses: 128,
+    winRate: 72.8,
+    kd: 1.42,
+    tier: "Challenger",
+    country: "UA",
+  },
+  {
+    rank: 2,
+    previousRank: 3,
+    name: "ZywOo",
+    avatar: "https://i.pravatar.cc/150?img=2",
+    rating: 4720,
+    wins: 318,
+    losses: 145,
+    winRate: 68.7,
+    kd: 1.38,
+    tier: "Challenger",
+    country: "FR",
+  },
+  {
+    rank: 3,
+    previousRank: 2,
+    name: "NiKo",
+    avatar: "https://i.pravatar.cc/150?img=3",
+    rating: 4680,
+    wins: 305,
+    losses: 152,
+    winRate: 66.7,
+    kd: 1.35,
+    tier: "Challenger",
+    country: "BA",
+  },
+  {
+    rank: 4,
+    previousRank: 5,
+    name: "device",
+    avatar: "https://i.pravatar.cc/150?img=4",
+    rating: 4540,
+    wins: 298,
+    losses: 160,
+    winRate: 65.1,
+    kd: 1.31,
+    tier: "Grandmaster",
+    country: "DK",
+  },
+  {
+    rank: 5,
+    previousRank: 4,
+    name: "m0NESY",
+    avatar: "https://i.pravatar.cc/150?img=5",
+    rating: 4510,
+    wins: 285,
+    losses: 168,
+    winRate: 62.9,
+    kd: 1.29,
+    tier: "Grandmaster",
+    country: "RU",
+  },
+  {
+    rank: 6,
+    previousRank: 7,
+    name: "donk",
+    avatar: "https://i.pravatar.cc/150?img=6",
+    rating: 4420,
+    wins: 276,
+    losses: 175,
+    winRate: 61.2,
+    kd: 1.27,
+    tier: "Grandmaster",
+    country: "RU",
+  },
+  {
+    rank: 7,
+    previousRank: 6,
+    name: "frozen",
+    avatar: "https://i.pravatar.cc/150?img=7",
+    rating: 4380,
+    wins: 268,
+    losses: 182,
+    winRate: 59.6,
+    kd: 1.24,
+    tier: "Grandmaster",
+    country: "SK",
+  },
+  {
+    rank: 8,
+    previousRank: 9,
+    name: "ropz",
+    avatar: "https://i.pravatar.cc/150?img=8",
+    rating: 4310,
+    wins: 259,
+    losses: 188,
+    winRate: 57.9,
+    kd: 1.22,
+    tier: "Grandmaster",
+    country: "EE",
+  },
+  {
+    rank: 9,
+    previousRank: 8,
+    name: "electronic",
+    avatar: "https://i.pravatar.cc/150?img=9",
+    rating: 4280,
+    wins: 252,
+    losses: 194,
+    winRate: 56.5,
+    kd: 1.20,
+    tier: "Grandmaster",
+    country: "RU",
+  },
+  {
+    rank: 10,
+    previousRank: 11,
+    name: "Twistzz",
+    avatar: "https://i.pravatar.cc/150?img=10",
+    rating: 4250,
+    wins: 245,
+    losses: 200,
+    winRate: 55.1,
+    kd: 1.18,
+    tier: "Master",
+    country: "CA",
+  },
+  {
+    rank: 11,
+    previousRank: 10,
+    name: "blameF",
+    avatar: "https://i.pravatar.cc/150?img=11",
+    rating: 4180,
+    wins: 238,
+    losses: 207,
+    winRate: 53.5,
+    kd: 1.16,
+    tier: "Master",
+    country: "DK",
+  },
+  {
+    rank: 12,
+    previousRank: 13,
+    name: "rain",
+    avatar: "https://i.pravatar.cc/150?img=12",
+    rating: 4120,
+    wins: 231,
+    losses: 213,
+    winRate: 52.0,
+    kd: 1.14,
+    tier: "Master",
+    country: "NO",
+  },
+];
+
+const TEAM_LEADERBOARD = [
+  {
+    rank: 1,
+    previousRank: 1,
+    name: "FaZe Clan",
+    avatar: "https://avatars.githubusercontent.com/u/168373383",
+    rating: 5200,
+    wins: 127,
+    losses: 38,
+    winRate: 77.0,
+    members: 5,
+    country: "EU",
+  },
+  {
+    rank: 2,
+    previousRank: 3,
+    name: "Natus Vincere",
+    avatar: "https://avatars.githubusercontent.com/u/168373383",
+    rating: 5150,
+    wins: 122,
+    losses: 42,
+    winRate: 74.4,
+    members: 5,
+    country: "UA",
+  },
+  {
+    rank: 3,
+    previousRank: 2,
+    name: "G2 Esports",
+    avatar: "https://avatars.githubusercontent.com/u/168373383",
+    rating: 5080,
+    wins: 118,
+    losses: 47,
+    winRate: 71.5,
+    members: 5,
+    country: "EU",
+  },
+  {
+    rank: 4,
+    previousRank: 4,
+    name: "Vitality",
+    avatar: "https://avatars.githubusercontent.com/u/168373383",
+    rating: 4920,
+    wins: 112,
+    losses: 53,
+    winRate: 67.9,
+    members: 5,
+    country: "FR",
+  },
+  {
+    rank: 5,
+    previousRank: 6,
+    name: "Spirit",
+    avatar: "https://avatars.githubusercontent.com/u/168373383",
+    rating: 4850,
+    wins: 108,
+    losses: 58,
+    winRate: 65.1,
+    members: 5,
+    country: "RU",
+  },
+];
 
 export default function LeaderboardsPage() {
-	return (
-		<div>
-			<h1 className={title()}>Ranking</h1>
-		</div>
-	);
+  const [selectedTab, setSelectedTab] = useState("players");
+  const [selectedRegion, setSelectedRegion] = useState("global");
+  const [selectedGame, setSelectedGame] = useState("cs2");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const getRankChangeIcon = (current: number, previous: number) => {
+    if (current < previous) {
+      return <Icon icon="mdi:arrow-up" className="text-success" />;
+    } else if (current > previous) {
+      return <Icon icon="mdi:arrow-down" className="text-danger" />;
+    }
+    return <Icon icon="mdi:minus" className="text-default-400" />;
+  };
+
+  const getRankBadgeColor = (rank: number) => {
+    if (rank === 1) return "warning";
+    if (rank === 2) return "default";
+    if (rank === 3) return "warning";
+    return "primary";
+  };
+
+  return (
+    <div className="flex w-full flex-col items-center gap-8 px-4 py-8 lg:px-24">
+      {/* Header */}
+      <div className="flex w-full max-w-7xl flex-col items-center text-center gap-2">
+        <h2 className="text-secondary font-medium">Global Rankings</h2>
+        <h1 className={title({ size: "lg" })}>Leaderboards</h1>
+        <p className={subtitle({ class: "mt-2 max-w-2xl" })}>
+          Track the top players and teams across all competitive games. Rankings updated daily.
+        </p>
+      </div>
+
+      {/* Filters */}
+      <Card className="w-full max-w-7xl">
+        <CardBody>
+          <div className="flex flex-col md:flex-row gap-4 items-end">
+            <Input
+              placeholder="Search players or teams..."
+              startContent={<SearchIcon size={18} />}
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              className="flex-1"
+              variant="bordered"
+            />
+            <Select
+              label="Game"
+              selectedKeys={[selectedGame]}
+              onSelectionChange={(keys) => setSelectedGame(Array.from(keys)[0] as string)}
+              className="w-full md:w-48"
+              variant="bordered"
+            >
+              <SelectItem key="cs2" value="cs2">CS2</SelectItem>
+              <SelectItem key="csgo" value="csgo">CS:GO</SelectItem>
+              <SelectItem key="valorant" value="valorant">Valorant</SelectItem>
+            </Select>
+            <Select
+              label="Region"
+              selectedKeys={[selectedRegion]}
+              onSelectionChange={(keys) => setSelectedRegion(Array.from(keys)[0] as string)}
+              className="w-full md:w-48"
+              variant="bordered"
+            >
+              <SelectItem key="global" value="global">Global</SelectItem>
+              <SelectItem key="na" value="na">North America</SelectItem>
+              <SelectItem key="eu" value="eu">Europe</SelectItem>
+              <SelectItem key="asia" value="asia">Asia</SelectItem>
+              <SelectItem key="sa" value="sa">South America</SelectItem>
+            </Select>
+          </div>
+        </CardBody>
+      </Card>
+
+      {/* Leaderboard Tabs */}
+      <div className="w-full max-w-7xl">
+        <Tabs
+          selectedKey={selectedTab}
+          onSelectionChange={(key) => setSelectedTab(key as string)}
+          variant="underlined"
+          classNames={{
+            tabList: "gap-6 w-full",
+            cursor: "bg-primary",
+            tab: "h-12",
+            panel: "pt-6",
+          }}
+        >
+          <Tab
+            key="players"
+            title={
+              <div className="flex items-center gap-2">
+                <Icon icon="mdi:account" width={20} />
+                <span>Players</span>
+              </div>
+            }
+          >
+            <Card>
+              <CardBody className="p-0">
+                <Table
+                  aria-label="Player leaderboard"
+                  classNames={{
+                    wrapper: "shadow-none",
+                    th: "bg-default-100",
+                  }}
+                >
+                  <TableHeader>
+                    <TableColumn className="w-20">RANK</TableColumn>
+                    <TableColumn>PLAYER</TableColumn>
+                    <TableColumn className="text-center">RATING</TableColumn>
+                    <TableColumn className="text-center hidden md:table-cell">W/L</TableColumn>
+                    <TableColumn className="text-center hidden md:table-cell">WIN RATE</TableColumn>
+                    <TableColumn className="text-center hidden lg:table-cell">K/D</TableColumn>
+                    <TableColumn className="text-center">TIER</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    {MOCK_LEADERBOARD_DATA.map((player) => (
+                      <TableRow key={player.rank} className="hover:bg-default-50">
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Chip
+                              size="sm"
+                              variant={player.rank <= 3 ? "shadow" : "flat"}
+                              color={getRankBadgeColor(player.rank)}
+                              className="font-bold min-w-12"
+                            >
+                              #{player.rank}
+                            </Chip>
+                            <div className="hidden md:block">
+                              {getRankChangeIcon(player.rank, player.previousRank)}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar
+                              src={player.avatar}
+                              size="sm"
+                              className="flex-shrink-0"
+                            />
+                            <div className="flex flex-col">
+                              <span className="font-semibold">{player.name}</span>
+                              <span className="text-xs text-default-400">{player.country}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-center">
+                            <Chip size="sm" variant="flat" color="primary">
+                              {player.rating}
+                            </Chip>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <div className="text-center">
+                            <span className="text-success font-semibold">{player.wins}</span>
+                            <span className="text-default-400"> / </span>
+                            <span className="text-danger font-semibold">{player.losses}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <div className="text-center font-semibold">
+                            {player.winRate.toFixed(1)}%
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          <div className="text-center font-mono">
+                            {player.kd.toFixed(2)}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-center">
+                            <Chip
+                              size="sm"
+                              variant="flat"
+                              className="text-xs"
+                              style={{
+                                backgroundColor:
+                                  player.tier === "Challenger"
+                                    ? "#DCFF3730"
+                                    : player.tier === "Grandmaster"
+                                    ? "#E74C3C30"
+                                    : "#9B59B630",
+                              }}
+                            >
+                              {player.tier}
+                            </Chip>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Tab>
+
+          <Tab
+            key="teams"
+            title={
+              <div className="flex items-center gap-2">
+                <Icon icon="mdi:account-group" width={20} />
+                <span>Teams</span>
+              </div>
+            }
+          >
+            <Card>
+              <CardBody className="p-0">
+                <Table
+                  aria-label="Team leaderboard"
+                  classNames={{
+                    wrapper: "shadow-none",
+                    th: "bg-default-100",
+                  }}
+                >
+                  <TableHeader>
+                    <TableColumn className="w-20">RANK</TableColumn>
+                    <TableColumn>TEAM</TableColumn>
+                    <TableColumn className="text-center">RATING</TableColumn>
+                    <TableColumn className="text-center hidden md:table-cell">W/L</TableColumn>
+                    <TableColumn className="text-center hidden md:table-cell">WIN RATE</TableColumn>
+                    <TableColumn className="text-center hidden lg:table-cell">MEMBERS</TableColumn>
+                  </TableHeader>
+                  <TableBody>
+                    {TEAM_LEADERBOARD.map((team) => (
+                      <TableRow key={team.rank} className="hover:bg-default-50">
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Chip
+                              size="sm"
+                              variant={team.rank <= 3 ? "shadow" : "flat"}
+                              color={getRankBadgeColor(team.rank)}
+                              className="font-bold min-w-12"
+                            >
+                              #{team.rank}
+                            </Chip>
+                            <div className="hidden md:block">
+                              {getRankChangeIcon(team.rank, team.previousRank)}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <Avatar
+                              src={team.avatar}
+                              size="sm"
+                              className="flex-shrink-0"
+                            />
+                            <div className="flex flex-col">
+                              <span className="font-semibold">{team.name}</span>
+                              <span className="text-xs text-default-400">{team.country}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex justify-center">
+                            <Chip size="sm" variant="flat" color="primary">
+                              {team.rating}
+                            </Chip>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <div className="text-center">
+                            <span className="text-success font-semibold">{team.wins}</span>
+                            <span className="text-default-400"> / </span>
+                            <span className="text-danger font-semibold">{team.losses}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <div className="text-center font-semibold">
+                            {team.winRate.toFixed(1)}%
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell">
+                          <div className="flex justify-center">
+                            <Chip size="sm" variant="flat">
+                              {team.members} players
+                            </Chip>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardBody>
+            </Card>
+          </Tab>
+        </Tabs>
+      </div>
+
+      {/* Info Card */}
+      <Card className="w-full max-w-7xl bg-gradient-to-r from-primary-50 to-secondary-50">
+        <CardBody className="text-center py-8">
+          <Icon icon="mdi:information" className="text-4xl mx-auto mb-2 text-primary" />
+          <h3 className="text-lg font-semibold mb-2">Rankings Update Schedule</h3>
+          <p className="text-default-600">
+            Leaderboards are updated daily at 00:00 UTC. Play ranked matches to climb the ladder and earn your place among the top players!
+          </p>
+        </CardBody>
+      </Card>
+    </div>
+  );
 }

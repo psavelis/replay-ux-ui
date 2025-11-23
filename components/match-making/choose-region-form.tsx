@@ -9,11 +9,13 @@ import BattleButton from "../filters/ctas/material-button/battle-button";
 import { title } from "../primitives";
 
 import { useTheme } from "next-themes";
+import { useWizard } from "./wizard-context";
 
 export type ChooseRegionFormProps = React.HTMLAttributes<HTMLFormElement>;
 
 const ChooseRegionForm = React.forwardRef<HTMLFormElement, ChooseRegionFormProps>(
   ({ className, ...props }, ref) => {
+    const { updateState } = useWizard();
     const radioClassNames = {
       base: cn(
         "inline-flex m-0 bg-default-100 items-center justify-between",
@@ -50,6 +52,7 @@ const ChooseRegionForm = React.forwardRef<HTMLFormElement, ChooseRegionFormProps
       }}
       defaultValue="region1"
       name="region"
+      onValueChange={(value) => updateState({ region: value })}
     >
       <div className="flex w-full flex-col">
         <Tabs aria-label="Options" className="w-full"  variant="solid">

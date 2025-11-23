@@ -31,8 +31,11 @@ export default function SignInBlurreds() {
       backgroundPosition: "center",
     }}
   >
-      <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-small backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50">
-        <p className="pb-2 text-xl font-medium">Log In</p>
+      <div className="flex w-full max-w-sm flex-col gap-4 rounded-large bg-background/60 px-8 pb-10 pt-6 shadow-2xl backdrop-blur-md backdrop-saturate-150 dark:bg-default-100/50 border border-foreground/10">
+        <div className="text-center pb-2">
+          <h1 className="text-2xl font-bold tracking-tight">Welcome Back</h1>
+          <p className="text-sm text-foreground/60 mt-1">Sign in to your account</p>
+        </div>
         <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
           <Input
             classNames={inputClasses}
@@ -79,7 +82,12 @@ export default function SignInBlurreds() {
               Forgot password?
             </Link>
           </div>
-          <Button className={buttonClasses} type="submit">
+          <Button
+            className={buttonClasses}
+            type="submit"
+            size="lg"
+            radius="md"
+          >
             Log In
           </Button>
         </form>
@@ -89,19 +97,28 @@ export default function SignInBlurreds() {
           <Divider className="flex-1" />
         </div>
         <div className="flex flex-col gap-2">
-
-          {/* shortcut="⌘G" */}
-          <Button className={buttonClasses} startContent={<SteamIcon />} onClick={() => signIn(["steam"] as any)}>
+          <Button
+            className={buttonClasses}
+            startContent={<SteamIcon />}
+            onClick={() => signIn("steam")}
+            size="lg"
+            radius="md"
+          >
             Continue with Steam
           </Button>
-          <Button onClick={() => signIn(["google"] as any)} className={buttonClasses} startContent={<GoogleIcon width={24} />}>
+          <Button
+            onClick={() => signIn("google")}
+            className={buttonClasses}
+            startContent={<GoogleIcon width={24} />}
+            size="lg"
+            radius="md"
+          >
             Continue with Google
           </Button>
-
         </div>
-        <p className="text-center text-small text-foreground/50">
-          Need to create an account?&nbsp;
-          <Link color="foreground" href="/signup" size="sm">
+        <p className="text-center text-sm text-foreground/60">
+          Need to create an account?{" "}
+          <Link color="foreground" href="/signup" size="sm" className="font-medium">
             Sign Up
           </Link>
         </p>

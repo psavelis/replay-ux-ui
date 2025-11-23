@@ -1,177 +1,354 @@
-// // /app/blog/page.tsx
-// "use client";
+'use client';
 
-// import { Card, CardFooter, Accordion, AccordionItem, Image } from '@nextui-org/react';
-// import Link from 'next/link';
-// import React from 'react';
-// // import fs from 'fs';
-// // import path from 'path';
+/**
+ * Intelligent News/Blog Page
+ * Features: Categories, featured posts, recent posts, search integration
+ */
 
-// // async function getBlogPostPaths() {
-// //   // const postsDirectory = path.join(process.cwd(), 'app/blog');
-// //   // const yearDirs = fs.readdirSync(postsDirectory, { withFileTypes: true })
-// //   //   .filter((dirent: { isDirectory: () => any; }) => dirent.isDirectory())
-// //   //   .map((dirent: { name: any; }) => dirent.name);
+import React, { useState } from 'react';
+import { Card, CardHeader, CardBody, CardFooter, Image, Button, Chip, Input } from '@nextui-org/react';
+import { Icon } from '@iconify/react';
+import { PageContainer } from '@/components/layouts/centered-content';
 
-  
-// //   // yearDirs.forEach((year: any) => {
-// //   //   const monthDirs = fs.readdirSync(path.join(postsDirectory, year));
-// //   //   monthDirs.forEach((month: any) => {
-// //   //     const dayDirs = fs.readdirSync(path.join(postsDirectory, year, month));
-// //   //     dayDirs.forEach((day: any) => {
-// //   //       const pageFile = fs.readdirSync(path.join(postsDirectory, year, month, day)).find((file: string) => file.endsWith('.tsx'));
-// //   //       if (pageFile) {
-// //   //         posts.push(`/${year}/${month}/${day}/${pageFile.replace('.tsx', '')}`);
-// //   //       }
-// //   //     });
-// //   //   });
-// //   // });
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: {
+    name: string;
+    avatar: string;
+  };
+  category: string;
+  tags: string[];
+  publishedAt: string;
+  readTime: number;
+  featured: boolean;
+  image: string;
+  slug: string;
+}
 
-// //   // posts.push();
+// Mock blog posts data - in production, fetch from API/CMS
+const mockPosts: BlogPost[] = [
+  {
+    id: '1',
+    title: 'Introducing Advanced Match Analytics: Deep Dive into Your CS2 Performance',
+    excerpt: 'Learn how our new analytics engine breaks down every round, every kill, and every decision you make in Counter-Strike 2.',
+    content: '',
+    author: {
+      name: 'Sarah Chen',
+      avatar: 'https://i.pravatar.cc/150?u=sarah',
+    },
+    category: 'Product Updates',
+    tags: ['analytics', 'cs2', 'features'],
+    publishedAt: '2024-01-15',
+    readTime: 8,
+    featured: true,
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+    slug: 'advanced-match-analytics',
+  },
+  {
+    id: '2',
+    title: 'Pro Player Spotlight: Interview with Team Liquid\'s Entry Fragger',
+    excerpt: 'We sat down with one of the best entry fraggers in competitive CS2 to discuss strategies, warmup routines, and mental preparation.',
+    content: '',
+    author: {
+      name: 'Mike Rodriguez',
+      avatar: 'https://i.pravatar.cc/150?u=mike',
+    },
+    category: 'Interviews',
+    tags: ['pro-players', 'interviews', 'strategies'],
+    publishedAt: '2024-01-12',
+    readTime: 12,
+    featured: true,
+    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800',
+    slug: 'pro-player-spotlight-team-liquid',
+  },
+  {
+    id: '3',
+    title: 'Matchmaking 2.0: Premium Tiers and Priority Queues Explained',
+    excerpt: 'Everything you need to know about our new matchmaking system, tier benefits, and how priority queues work.',
+    content: '',
+    author: {
+      name: 'Alex Kim',
+      avatar: 'https://i.pravatar.cc/150?u=alex',
+    },
+    category: 'Product Updates',
+    tags: ['matchmaking', 'premium', 'features'],
+    publishedAt: '2024-01-10',
+    readTime: 6,
+    featured: false,
+    image: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=800',
+    slug: 'matchmaking-premium-tiers',
+  },
+  {
+    id: '4',
+    title: 'Community Tournament Results: January 2024',
+    excerpt: 'Recap of last month\'s community tournaments, top performers, and prize distributions.',
+    content: '',
+    author: {
+      name: 'Emma Watson',
+      avatar: 'https://i.pravatar.cc/150?u=emma',
+    },
+    category: 'Community',
+    tags: ['tournaments', 'community', 'esports'],
+    publishedAt: '2024-01-08',
+    readTime: 5,
+    featured: false,
+    image: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?w=800',
+    slug: 'january-tournament-results',
+  },
+  {
+    id: '5',
+    title: '5 Tips to Improve Your CS2 Aim from Pro Coaches',
+    excerpt: 'Professional CS2 coaches share their top tips for improving aim consistency, reaction time, and crosshair placement.',
+    content: '',
+    author: {
+      name: 'Coach James',
+      avatar: 'https://i.pravatar.cc/150?u=james',
+    },
+    category: 'Guides',
+    tags: ['guides', 'aim', 'coaching'],
+    publishedAt: '2024-01-05',
+    readTime: 10,
+    featured: false,
+    image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800',
+    slug: 'improve-cs2-aim-tips',
+  },
+  {
+    id: '6',
+    title: 'Behind the Scenes: How We Process 1M+ Replays Monthly',
+    excerpt: 'Technical deep dive into our replay processing pipeline, infrastructure, and the challenges we\'ve overcome.',
+    content: '',
+    author: {
+      name: 'Tech Team',
+      avatar: 'https://i.pravatar.cc/150?u=tech',
+    },
+    category: 'Engineering',
+    tags: ['technical', 'infrastructure', 'replays'],
+    publishedAt: '2024-01-03',
+    readTime: 15,
+    featured: false,
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800',
+    slug: 'replay-processing-pipeline',
+  },
+];
 
-// //   return posts;
-// // }
+const categories = ['All', 'Product Updates', 'Interviews', 'Community', 'Guides', 'Engineering'];
 
-// export default async function BlogPage() {
-//   const posts: string[] = [`/blog/2024/06/05/anything`];
-//   const [selectedYear, setSelectedYear] = React.useState(null);
+const categoryColors: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'danger'> = {
+  'Product Updates': 'primary',
+  'Interviews': 'secondary',
+  'Community': 'success',
+  'Guides': 'warning',
+  'Engineering': 'danger',
+};
 
-//   const postsByYear = posts.reduce((acc: any, postPath:any) => {
-//     const year = postPath.split('/')[1];
-//     acc[year] = acc[year] || [];
-//     acc[year].push(postPath);
-//     return acc;
-//   }, {});
+export default function BlogPage() {
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
-//   const latestPost = posts[posts.length - 1]; 
+  const featuredPosts = mockPosts.filter((post) => post.featured);
+  const regularPosts = mockPosts.filter((post) => !post.featured);
 
-//   return (
-//     <div>
-//       <section>
-//         <h2>Featured Post</h2>
-//         <Link href={latestPost}>
-//               <Card isHoverable isPressable>
-//                 <Image src="/cs2/radar/de_inferno.webp" width="100%" height={200} alt="Featured Post" />
-//                 <CardFooter>
-//                   <b>{latestPost}</b> {/* Display the post title or extract it from the file */}
-//                 </CardFooter>
-//               </Card>
-//             </Link>
-//       </section>
+  const filteredPosts = regularPosts.filter((post) => {
+    const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
+    const matchesSearch =
+      searchQuery === '' ||
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-//       <section>
-//         <h2>All Posts</h2>
-//         <Accordion>
-//           {Object.entries(postsByYear).map(([year, yearPosts]) => (
-//             <AccordionItem key={year} title={year}>
-//               {(yearPosts as any).map((postPath: string) => (
-//                 <Link href={postPath} key={postPath}>
-//                   <span>{postPath}</span>
-//                 </Link>
-//               ))}
-//             </AccordionItem>
-//           ))}
-//         </Accordion>
-//       </section>
-//     </div>
-//   );
-// }
+    return matchesCategory && matchesSearch;
+  });
 
-
-
-// ----///-----
-
-
-import {Card, CardHeader, CardFooter, Image, Button} from "@nextui-org/react";
-
-export default function App() {
   return (
-    <div className="max-w-[900px] gap-2 grid grid-cols-12 grid-rows-2 px-8">
-      <Card className="col-span-12 sm:col-span-4 h-[300px]">
-        <CardHeader className="absolute z-10 top-1 flex-col !items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">What to watch</p>
-          <h4 className="text-white font-medium text-large">Stream your match</h4>
-        </CardHeader>
-        <Image
-          removeWrapper
-          alt="Card background"
-          className="z-0 w-full h-full object-cover"
-          src="https://avatars.githubusercontent.com/u/168373383"
-        />
-      </Card>
-      <Card className="col-span-12 sm:col-span-4 h-[300px]">
-        <CardHeader className="absolute z-10 top-1 flex-col !items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">Sustainable ecosystem</p>
-          <h4 className="text-white font-medium text-large">Contribute to the planet</h4>
-        </CardHeader>
-        <Image
-          removeWrapper
-          alt="Card background"
-          className="z-0 w-full h-full object-cover"
-          src="https://avatars.githubusercontent.com/u/191552475"
-        />
-      </Card>
-      <Card className="col-span-12 sm:col-span-4 h-[300px]">
-        <CardHeader className="absolute z-10 top-1 flex-col !items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">Supercharged</p>
-          <h4 className="text-white font-medium text-large">Leverage professional e-sports competition</h4>
-        </CardHeader>
-        <Image
-          removeWrapper
-          alt="Card background"
-          className="z-0 w-full h-full object-cover"
-          src="https://avatars.githubusercontent.com/u/168373383"
-        />
-      </Card>
-      <Card isFooterBlurred className="w-full h-[300px] col-span-12 sm:col-span-5">
-        <CardHeader className="absolute z-10 top-1 flex-col items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">New</p>
-          <h4 className="text-black font-medium text-2xl">Replay-API</h4>
-        </CardHeader>
-        <Image
-          removeWrapper
-          alt="Card example background"
-          className="z-0 w-full h-full scale-125 -translate-y-6 object-cover"
-          src="https://avatars.githubusercontent.com/u/191552475"
-        />
-        <CardFooter className="absolute bg-white/30 bottom-0 border-t-1 border-zinc-100/50 z-10 justify-between">
-          <div>
-            <p className="text-black text-tiny">Available soon.</p>
-            <p className="text-black text-tiny">Get notified.</p>
+    <PageContainer
+      title="News & Insights"
+      description="Latest updates, guides, and stories from the LeetGaming.PRO community"
+      maxWidth="7xl"
+    >
+      {/* Featured Posts */}
+      {featuredPosts.length > 0 && (
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <Icon icon="solar:star-bold" className="text-warning" width={28} />
+            Featured Stories
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {featuredPosts.map((post) => (
+              <Card
+                key={post.id}
+                isPressable
+                className="hover:scale-[1.02] transition-transform"
+                onPress={() => (window.location.href = `/blog/${post.slug}`)}
+              >
+                <CardHeader className="absolute z-10 top-4 flex-col items-start bg-black/60 backdrop-blur-sm m-2 rounded-large">
+                  <Chip size="sm" color={categoryColors[post.category] || 'default'} variant="flat">
+                    {post.category}
+                  </Chip>
+                  <h3 className="text-white/90 font-bold text-xl mt-2">{post.title}</h3>
+                </CardHeader>
+                <Image
+                  removeWrapper
+                  alt={post.title}
+                  className="z-0 w-full h-full object-cover"
+                  src={post.image}
+                  height={400}
+                />
+                <CardFooter className="absolute bg-black/60 bottom-0 z-10 border-t-1 border-default-600">
+                  <div className="flex flex-col w-full gap-2">
+                    <p className="text-tiny text-white/80">{post.excerpt}</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          alt={post.author.name}
+                          className="rounded-full"
+                          height={24}
+                          width={24}
+                          src={post.author.avatar}
+                        />
+                        <span className="text-tiny text-white/60">{post.author.name}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-tiny text-white/60">
+                        <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                        <span className="flex items-center gap-1">
+                          <Icon icon="solar:clock-circle-linear" width={14} />
+                          {post.readTime} min read
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardFooter>
+              </Card>
+            ))}
           </div>
-          <Button className="text-tiny" color="primary" radius="full" size="sm">
-            Notify Me
-          </Button>
-        </CardFooter>
-      </Card>
-      <Card isFooterBlurred className="w-full h-[300px] col-span-12 sm:col-span-7">
-        <CardHeader className="absolute z-10 top-1 flex-col items-start">
-          <p className="text-tiny text-white/60 uppercase font-bold">Your day your way</p>
-          <h4 className="text-white/90 font-medium text-xl">Your checklist for better sleep</h4>
-        </CardHeader>
-        <Image
-          removeWrapper
-          alt="Relaxing app background"
-          className="z-0 w-full h-full object-cover"
-          src="https://avatars.githubusercontent.com/u/168373383"
+        </div>
+      )}
+
+      {/* Filters and Search */}
+      <div className="mb-8 flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+        <div className="flex flex-wrap gap-2">
+          {categories.map((category) => (
+            <Chip
+              key={category}
+              size="lg"
+              variant={selectedCategory === category ? 'solid' : 'bordered'}
+              color={selectedCategory === category ? 'primary' : 'default'}
+              className="cursor-pointer"
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </Chip>
+          ))}
+        </div>
+        <Input
+          className="max-w-xs"
+          placeholder="Search posts..."
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          startContent={<Icon icon="solar:magnifer-linear" width={20} />}
+          isClearable
+          onClear={() => setSearchQuery('')}
         />
-        <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
-          <div className="flex flex-grow gap-2 items-center">
-            <Image
-              alt="Breathing app icon"
-              className="rounded-full w-10 h-11 bg-black"
-              src="https://avatars.githubusercontent.com/u/191552475"
-            />
-            <div className="flex flex-col">
-              <p className="text-tiny text-white/60">Breathing App</p>
-              <p className="text-tiny text-white/60">Get a good night&#39;s sleep.</p>
+      </div>
+
+      {/* Recent Posts Grid */}
+      <div>
+        <h2 className="text-2xl font-bold mb-6">Recent Posts</h2>
+        {filteredPosts.length === 0 ? (
+          <div className="text-center py-12">
+            <Icon icon="solar:ghost-linear" width={64} className="mx-auto mb-4 text-default-400" />
+            <p className="text-default-600">No posts found matching your criteria</p>
+            <Button
+              className="mt-4"
+              variant="light"
+              color="primary"
+              onClick={() => {
+                setSelectedCategory('All');
+                setSearchQuery('');
+              }}
+            >
+              Clear filters
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPosts.map((post) => (
+              <Card
+                key={post.id}
+                isPressable
+                className="hover:scale-[1.02] transition-transform"
+                onPress={() => (window.location.href = `/blog/${post.slug}`)}
+              >
+                <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
+                  <Chip size="sm" color={categoryColors[post.category] || 'default'} variant="flat" className="mb-2">
+                    {post.category}
+                  </Chip>
+                  <h4 className="font-bold text-lg line-clamp-2">{post.title}</h4>
+                </CardHeader>
+                <CardBody className="overflow-visible py-2 px-4">
+                  <Image
+                    alt={post.title}
+                    className="object-cover rounded-xl"
+                    src={post.image}
+                    width="100%"
+                    height={180}
+                  />
+                  <p className="text-tiny text-default-600 mt-3 line-clamp-3">{post.excerpt}</p>
+                </CardBody>
+                <CardFooter className="text-small px-4 pt-0">
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <Image
+                        alt={post.author.name}
+                        className="rounded-full"
+                        height={20}
+                        width={20}
+                        src={post.author.avatar}
+                      />
+                      <span className="text-tiny text-default-500">{post.author.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-tiny text-default-400">
+                      <Icon icon="solar:clock-circle-linear" width={14} />
+                      {post.readTime} min
+                    </div>
+                  </div>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Newsletter Subscription */}
+      <Card className="mt-12 bg-gradient-to-r from-primary-500 to-secondary-500">
+        <CardBody className="py-8 px-6 lg:px-12">
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            <div className="flex-1 text-center lg:text-left">
+              <h3 className="text-2xl font-bold text-white mb-2">Stay Updated</h3>
+              <p className="text-white/80">
+                Get the latest news, guides, and updates delivered directly to your inbox.
+              </p>
+            </div>
+            <div className="flex gap-2 w-full lg:w-auto">
+              <Input
+                className="min-w-[280px]"
+                placeholder="Enter your email"
+                type="email"
+                variant="bordered"
+                classNames={{
+                  input: 'text-white',
+                  inputWrapper: 'border-white/40 hover:border-white/60',
+                }}
+              />
+              <Button color="default" variant="solid" className="bg-white text-primary font-semibold">
+                Subscribe
+              </Button>
             </div>
           </div>
-          <Button radius="full" size="sm">
-            Get App
-          </Button>
-        </CardFooter>
+        </CardBody>
       </Card>
-    </div>
+    </PageContainer>
   );
 }
