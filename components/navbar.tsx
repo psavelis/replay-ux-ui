@@ -8,6 +8,8 @@ import {
   NavbarMenuItem,
 } from "@nextui-org/navbar";
 import { Link } from "@nextui-org/link";
+import { Divider } from "@nextui-org/react";
+import { Icon } from "@iconify/react";
 
 import { link as linkStyles } from "@nextui-org/theme";
 
@@ -31,13 +33,13 @@ import {
 import { logo, title } from './primitives';
 import { LoginButton } from './login-button';
 import SessionButton from './session-button';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import SearchInput from "./search/search-modal/search-modal";
 
 import DefaultLogo from './logo/logo-default';
 import { useTheme } from "next-themes";
 import { electrolize } from "@/config/fonts";
-import { Chip } from "@nextui-org/react";
+import { Chip, Button } from "@nextui-org/react";
 import { NotificationCenter } from '@/components/notifications/notification-center';
 
 export const Navbar = () => {
@@ -128,27 +130,64 @@ export const Navbar = () => {
         <NavbarMenuToggle />
       </NavbarContent>
 
-      <NavbarMenu>
-        {searchInput}
-        <div className="mx-4 mt-4 flex flex-col gap-2">
-          {siteConfig.navMenuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                className="w-full"
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === siteConfig.navMenuItems.length - 1
-                      ? "danger"
-                      : "foreground"
-                }
-                href={item.href}
-                size="lg"
-              >
-                {item.label}
-              </Link>
-            </NavbarMenuItem>
-          ))}
+      <NavbarMenu className="pt-6 pb-6 gap-2 bg-background/95 backdrop-blur-xl">
+        <div className="px-4 mb-4">
+          {searchInput}
+        </div>
+        <div className="flex flex-col gap-1 px-2">
+          {siteConfig.navMenuItems.map((item, index) => {
+            // Handle divider
+            if (item.label === 'divider') {
+              return <Divider key={`divider-${index}`} className="my-2" />;
+            }
+
+            const isHighlight = (item as any).highlight;
+            const itemIcon = (item as any).icon;
+
+            return (
+              <NavbarMenuItem key={`${item.label}-${index}`}>
+                <Link
+                  className={clsx(
+                    "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                    isHighlight
+                      ? "bg-primary text-primary-foreground font-semibold"
+                      : "hover:bg-default-100 text-foreground"
+                  )}
+                  href={item.href}
+                  size="lg"
+                >
+                  {itemIcon && (
+                    <Icon
+                      icon={itemIcon}
+                      className={clsx(
+                        "w-5 h-5",
+                        isHighlight ? "text-primary-foreground" : "text-default-500"
+                      )}
+                    />
+                  )}
+                  <span>{item.label}</span>
+                </Link>
+              </NavbarMenuItem>
+            );
+          })}
+
+          {/* Logout button - only show if logged in */}
+          {session && (
+            <>
+              <Divider className="my-2" />
+              <NavbarMenuItem>
+                <Button
+                  className="w-full justify-start gap-3 px-3"
+                  color="danger"
+                  variant="light"
+                  startContent={<Icon icon="solar:logout-2-bold" className="w-5 h-5" />}
+                  onPress={() => signOut()}
+                >
+                  Log Out
+                </Button>
+              </NavbarMenuItem>
+            </>
+          )}
         </div>
       </NavbarMenu>
     </NextUINavbar>

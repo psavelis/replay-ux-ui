@@ -7,10 +7,11 @@ import FadeInImage from "./landing/fade-in-image";
 import AppScreenshotSkewed from "./landing/app-screenshot-skewed";
 import { useTheme } from "next-themes";
 import { logo, title } from "@/components/primitives";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Component() {
   const { theme } = useTheme()
+  const router = useRouter()
   return (
     <div className="relative flex h-screen min-h-dvh w-full flex-col overflow-hidden bg-background left-0 right-0">
       {/* <BasicNavbar /> */}
@@ -27,6 +28,7 @@ export default function Component() {
             }
             radius="full"
             variant="bordered"
+            onPress={() => router.push('/onboarding')}
           >
             New onboarding experience
           </Button>
@@ -109,6 +111,7 @@ export default function Component() {
                     style={{backgroundColor: theme === 'dark' ? "#DCFF37" : "#34445C", color: theme === 'dark' ? "#333" : "#F2F2F2"}}
                     radius="lg"
                     size="lg"
+                    onPress={() => router.push('/onboarding')}
                   >
                     Get Started
                   </Button>

@@ -3,6 +3,7 @@
 import React from "react";
 import {domAnimation, LazyMotion, m} from "framer-motion";
 import { useSession } from "next-auth/react";
+import { useToast } from "@/components/toast/toast-provider";
 
 import MultistepSidebar from "./multistep-sidebar";
 import SquadForm from "./squad-form";
@@ -34,6 +35,7 @@ const variants = {
 function WizardContent() {
   const { state, updateState, startMatchmaking } = useWizard();
   const { data: session } = useSession();
+  const { showToast } = useToast();
   const [[page, direction], setPage] = React.useState([0, 0]);
 
   const paginate = React.useCallback((newDirection: number) => {
@@ -63,7 +65,7 @@ function WizardContent() {
     // If on final step (page 5), trigger matchmaking
     if (page === 5) {
       if (!session?.user) {
-        alert('Please sign in to start matchmaking');
+        showToast('Please sign in to start matchmaking', 'warning');
         return;
       }
       await startMatchmaking((session.user as any)?.id || 'mock-player-id');
@@ -71,7 +73,7 @@ function WizardContent() {
     } else {
       paginate(1);
     }
-  }, [paginate, page, session, startMatchmaking]);
+  }, [paginate, page, session, startMatchmaking, showToast]);
 
   const content = React.useMemo(() => {
     let component = <ChooseRegionForm />;

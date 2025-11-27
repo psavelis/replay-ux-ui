@@ -75,7 +75,7 @@ export default function Component(props: CardProps) {
           aria-label="Onboarding checklist"
           items={items}
           variant="flat"
-          onAction={(selectedKey) => alert(selectedKey)}
+          onAction={(selectedKey) => console.log('Onboarding step selected:', selectedKey)}
         >
           {(item) => (
             <ListboxItem

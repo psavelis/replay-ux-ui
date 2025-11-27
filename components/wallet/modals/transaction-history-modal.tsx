@@ -32,6 +32,7 @@ import type {
   TransactionStatus,
   Currency,
 } from '@/types/replay-api/wallet.types';
+import { formatAmount } from '@/types/replay-api/wallet.types';
 
 interface TransactionHistoryModalProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
 
       if (result) {
         setTransactions(reset ? result.transactions : [...transactions, ...result.transactions]);
-        setHasMore(result.has_more);
+        setHasMore(result.has_more ?? false);
         setOffset(currentOffset + result.transactions.length);
       }
     } catch (error) {
@@ -327,7 +328,7 @@ function TransactionItem({ transaction }: { transaction: WalletTransaction }) {
                   <p className="font-semibold capitalize">
                     {transaction.type.replace('_', ' ')}
                   </p>
-                  <TransactionStatusBadge status={transaction.status} />
+                  {transaction.status && <TransactionStatusBadge status={transaction.status} />}
                 </div>
                 {transaction.description && (
                   <p className="text-sm text-default-600">{transaction.description}</p>
@@ -351,7 +352,7 @@ function TransactionItem({ transaction }: { transaction: WalletTransaction }) {
                   isCredit ? 'text-success-600' : 'text-warning-600'
                 }`}
               >
-                {isCredit ? '+' : '-'}${transaction.amount.dollars.toFixed(2)}
+                {isCredit ? '+' : '-'}{formatAmount(transaction.amount)}
               </p>
               <p className="text-xs text-default-500">{transaction.currency}</p>
             </div>

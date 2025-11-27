@@ -249,3 +249,99 @@ export const REGIONS: Record<string, RegionOption> = {
     icon: '🇧🇷',
   },
 };
+
+// --- Helper Functions (reduce code bloat in components) ---
+
+/**
+ * Get session status display config
+ */
+export const getSessionStatusConfig = (status: SessionStatus): { color: 'success' | 'warning' | 'danger' | 'default' | 'primary'; label: string; icon: string } => {
+  const config: Record<SessionStatus, { color: 'success' | 'warning' | 'danger' | 'default' | 'primary'; label: string; icon: string }> = {
+    queued: { color: 'warning', label: 'Queued', icon: 'solar:clock-circle-bold' },
+    searching: { color: 'primary', label: 'Searching', icon: 'solar:magnifer-bold' },
+    matched: { color: 'success', label: 'Matched', icon: 'solar:check-circle-bold' },
+    ready: { color: 'success', label: 'Ready', icon: 'solar:play-circle-bold' },
+    cancelled: { color: 'default', label: 'Cancelled', icon: 'solar:close-circle-bold' },
+    expired: { color: 'danger', label: 'Expired', icon: 'solar:alarm-bold' },
+  };
+  return config[status] ?? config.queued;
+};
+
+/**
+ * Get queue health display config
+ */
+export const getQueueHealthConfig = (health: QueueHealth): { color: 'success' | 'warning' | 'danger' | 'default'; label: string; icon: string } => {
+  const config: Record<QueueHealth, { color: 'success' | 'warning' | 'danger' | 'default'; label: string; icon: string }> = {
+    healthy: { color: 'success', label: 'Healthy', icon: 'solar:check-circle-bold' },
+    moderate: { color: 'warning', label: 'Moderate', icon: 'solar:clock-circle-bold' },
+    slow: { color: 'warning', label: 'Slow', icon: 'solar:hourglass-bold' },
+    degraded: { color: 'danger', label: 'Degraded', icon: 'solar:danger-triangle-bold' },
+  };
+  return config[health] ?? config.healthy;
+};
+
+/**
+ * Get tier display config
+ */
+export const getTierConfig = (tier: MatchmakingTier): TierBenefits => {
+  return TIER_BENEFITS[tier] ?? TIER_BENEFITS.free;
+};
+
+/**
+ * Format estimated wait time
+ */
+export const formatWaitTime = (seconds: number): string => {
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  if (minutes < 60) {
+    return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`;
+  }
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return `${hours}h ${remainingMinutes}m`;
+};
+
+/**
+ * Format elapsed time since queue start
+ */
+export const formatElapsedTime = (seconds: number): string => {
+  return formatWaitTime(seconds);
+};
+
+/**
+ * Check if session is in a terminal state
+ */
+export const isSessionTerminal = (status: SessionStatus): boolean => {
+  return ['matched', 'cancelled', 'expired'].includes(status);
+};
+
+/**
+ * Check if session is actively searching
+ */
+export const isSessionActive = (status: SessionStatus): boolean => {
+  return ['queued', 'searching'].includes(status);
+};
+
+/**
+ * Get game mode by ID
+ */
+export const getGameMode = (modeId: string): GameModeOption | undefined => {
+  return GAME_MODES[modeId];
+};
+
+/**
+ * Get region by ID
+ */
+export const getRegion = (regionId: string): RegionOption | undefined => {
+  return REGIONS[regionId];
+};
+
+/**
+ * Calculate estimated wait reduction based on tier
+ */
+export const calculateWaitReduction = (baseSeconds: number, tier: MatchmakingTier): number => {
+  const benefits = TIER_BENEFITS[tier];
+  const reduction = (baseSeconds * benefits.waitTimeReduction) / 100;
+  return Math.floor(baseSeconds - reduction);
+};

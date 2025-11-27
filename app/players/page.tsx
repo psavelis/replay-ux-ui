@@ -415,7 +415,7 @@ export default function PlayersPage() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedPlayers.map((player) => (
-              <Card key={player.id} className="hover:scale-105 transition-transform">
+              <Card key={player.id} className="hover:shadow-lg hover:border-primary/50 transition-all">
                 <CardHeader className="flex flex-col gap-3 p-6">
                   <div className="flex w-full justify-between items-start">
                     <Avatar

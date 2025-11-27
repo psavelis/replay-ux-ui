@@ -45,6 +45,22 @@ export async function GET(request: NextRequest) {
       'X-Intended-Audience': metadata.intendedAudience.toString(),
     };
 
+    // Add resource owner context headers
+    if (metadata.resourceOwner) {
+      if (metadata.resourceOwner.tenant_id) {
+        headers['X-Tenant-ID'] = metadata.resourceOwner.tenant_id;
+      }
+      if (metadata.resourceOwner.client_id) {
+        headers['X-Client-ID'] = metadata.resourceOwner.client_id;
+      }
+      if (metadata.resourceOwner.group_id) {
+        headers['X-Group-ID'] = metadata.resourceOwner.group_id;
+      }
+      if (metadata.resourceOwner.user_id) {
+        headers['X-User-ID'] = metadata.resourceOwner.user_id;
+      }
+    }
+
     return NextResponse.json({ headers });
   } catch (error) {
     console.error('Failed to get auth headers:', error);

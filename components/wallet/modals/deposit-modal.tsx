@@ -1,11 +1,12 @@
 /**
  * Deposit Modal - Premium Implementation
  * Multi-step deposit flow with payment methods, QR codes, and animations
+ * Connected to real /api/payments endpoint
  */
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Modal,
   ModalContent,
@@ -26,9 +27,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { modalAnimations, springs, staggerAnimations } from '@/lib/design/animations';
 import { AnimatedCounter } from '@/components/ui/animated-counter';
 import { SuccessCelebration } from '@/components/ui/success-confetti';
+import type { UserWallet } from '@/types/replay-api/wallet.types';
 
 type PaymentMethod = 'crypto' | 'credit_card' | 'paypal' | 'bank_transfer';
+type PaymentProvider = 'stripe' | 'paypal' | 'crypto' | 'bank_transfer';
 type DepositStep = 'amount' | 'method' | 'payment' | 'confirmation' | 'success';
+
+interface PaymentIntentResponse {
+  payment_id: string;
+  client_secret?: string;
+  status: string;
+  amount: number;
+  currency: string;
+}
 
 interface DepositModalProps {
   isOpen: boolean;
@@ -42,6 +53,28 @@ export function DepositModal({ isOpen, onClose, onSuccess }: DepositModalProps) 
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('crypto');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [wallet, setWallet] = useState<UserWallet | null>(null);
+  const [paymentIntent, setPaymentIntent] = useState<PaymentIntentResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch wallet when modal opens
+  const fetchWallet = useCallback(async () => {
+    try {
+      const response = await fetch('/api/wallet/balance');
+      if (response.ok) {
+        const data = await response.json();
+        setWallet(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch wallet:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchWallet();
+    }
+  }, [isOpen, fetchWallet]);
 
   // Reset state when modal closes
   useEffect(() => {
@@ -52,9 +85,27 @@ export function DepositModal({ isOpen, onClose, onSuccess }: DepositModalProps) 
         setPaymentMethod('crypto');
         setIsProcessing(false);
         setShowSuccess(false);
+        setPaymentIntent(null);
+        setError(null);
       }, 300);
     }
   }, [isOpen]);
+
+  // Map payment method to provider
+  const getProvider = (method: PaymentMethod): PaymentProvider => {
+    switch (method) {
+      case 'credit_card':
+        return 'stripe';
+      case 'paypal':
+        return 'paypal';
+      case 'crypto':
+        return 'crypto';
+      case 'bank_transfer':
+        return 'bank_transfer';
+      default:
+        return 'stripe';
+    }
+  };
 
   const handleNext = () => {
     const steps: DepositStep[] = ['amount', 'method', 'payment', 'confirmation', 'success'];
@@ -73,22 +124,75 @@ export function DepositModal({ isOpen, onClose, onSuccess }: DepositModalProps) 
   };
 
   const handleConfirm = async () => {
+    if (!wallet?.id) {
+      setError('Wallet not found. Please try again.');
+      return;
+    }
+
     setIsProcessing(true);
+    setError(null);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      // Step 1: Create payment intent
+      const createResponse = await fetch('/api/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          wallet_id: wallet.id,
+          amount: parseFloat(amount),
+          currency: 'usd',
+          payment_type: 'deposit',
+          provider: getProvider(paymentMethod),
+          metadata: {
+            payment_method: paymentMethod,
+            source: 'deposit_modal',
+          },
+        }),
+      });
 
-    setIsProcessing(false);
-    setStep('success');
-    setShowSuccess(true);
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json();
+        throw new Error(errorData.error || 'Failed to create payment');
+      }
 
-    // Call success callback
-    onSuccess?.(parseFloat(amount), paymentMethod);
+      const { data: intentData } = await createResponse.json();
+      setPaymentIntent(intentData);
 
-    // Auto-close after celebration
-    setTimeout(() => {
-      onClose();
-    }, 3500);
+      // Step 2: Confirm payment (in production, this would handle Stripe/PayPal SDK flows)
+      const confirmResponse = await fetch(`/api/payments/${intentData.payment_id}/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          payment_method_id: paymentMethod,
+        }),
+      });
+
+      if (!confirmResponse.ok) {
+        const errorData = await confirmResponse.json();
+        throw new Error(errorData.error || 'Failed to confirm payment');
+      }
+
+      // Success!
+      setIsProcessing(false);
+      setStep('success');
+      setShowSuccess(true);
+
+      // Call success callback
+      onSuccess?.(parseFloat(amount), paymentMethod);
+
+      // Auto-close after celebration
+      setTimeout(() => {
+        onClose();
+      }, 3500);
+    } catch (err: any) {
+      setIsProcessing(false);
+      setError(err.message || 'Payment failed. Please try again.');
+      console.error('Payment failed:', err.message);
+    }
   };
 
   const progress = {
@@ -170,6 +274,7 @@ export function DepositModal({ isOpen, onClose, onSuccess }: DepositModalProps) 
                   total={total}
                   method={paymentMethod}
                   isProcessing={isProcessing}
+                  error={error}
                   onConfirm={handleConfirm}
                   onBack={handleBack}
                 />
@@ -532,6 +637,7 @@ function ConfirmationStep({
   total,
   method,
   isProcessing,
+  error,
   onConfirm,
   onBack,
 }: {
@@ -540,6 +646,7 @@ function ConfirmationStep({
   total: number;
   method: PaymentMethod;
   isProcessing: boolean;
+  error: string | null;
   onConfirm: () => void;
   onBack: () => void;
 }) {
@@ -574,6 +681,20 @@ function ConfirmationStep({
           </div>
         </CardBody>
       </Card>
+
+      {error && (
+        <Card className="border-2 border-danger/50 bg-danger/10">
+          <CardBody className="p-4">
+            <div className="flex items-center gap-3">
+              <Icon icon="solar:danger-triangle-bold" className="text-danger" width={24} />
+              <div>
+                <p className="font-semibold text-danger">Payment Error</p>
+                <p className="text-sm text-danger/80">{error}</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      )}
 
       <div className="flex gap-2">
         <Button variant="flat" onPress={onBack} className="flex-1" isDisabled={isProcessing}>

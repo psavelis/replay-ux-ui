@@ -33,7 +33,7 @@ To start the development server, run:
 npm run dev
 ```
 
-The application will be available at `http://localhost:3000`.
+The application will be available at `http://localhost:3030`.
 
 ## Environment Variables
 
@@ -44,10 +44,10 @@ STEAM_SECRET="your_steam_secret"
 STEAM_VHASH_SOURCE="your_steam_vhash_source"
 NODE_ENV="development"
 REPLAY_API_URL="http://host.docker.internal:4991"
-LEET_GAMING_PRO_URL="http://localhost:3000"
+LEET_GAMING_PRO_URL="http://localhost:3030"
 GOOGLE_CLIENT_ID="your_google_client_id"
 GOOGLE_CLIENT_SECRET="your_google_client_secret"
-NEXTAUTH_URL="http://localhost:3000/api/auth"
+NEXTAUTH_URL="http://localhost:3030/api/auth"
 NEXTAUTH_TOKEN="your_nextauth_token"
 NEXTAUTH_SECRET="your_nextauth_secret"
 ```
@@ -63,7 +63,7 @@ To build and run the application using Docker, follow these steps:
 
 2. Run the Docker container:
     ```sh
-    docker run -p 3000:3000 --env-file .env replay-ux-ui
+    docker run -p 3030:3030 --env-file .env replay-ux-ui
     ```
 
 Alternatively, you can use Docker Compose:

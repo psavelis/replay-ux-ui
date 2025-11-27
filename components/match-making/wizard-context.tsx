@@ -8,7 +8,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { DistributionRule } from './prize-distribution-selector';
 import { MatchmakingSDK } from '@/types/replay-api/matchmaking.sdk';
-import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
 import { logger } from '@/lib/logger';
 import type { MatchmakingUIState } from '@/types/replay-api/matchmaking.types';
 
@@ -63,8 +62,9 @@ const initialState: WizardState = {
 
 const WizardContext = createContext<WizardContextType | undefined>(undefined);
 
-// Initialize SDK once
-const matchmakingSDK = new MatchmakingSDK(ReplayApiSettingsMock.baseUrl, logger);
+// Initialize SDK with frontend API routes (which handle auth and forward to backend)
+// Using empty string as base URL means calls go to the same origin (frontend API routes)
+const matchmakingSDK = new MatchmakingSDK('/api', logger);
 
 export function WizardProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<WizardState>(initialState);

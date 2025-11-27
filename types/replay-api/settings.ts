@@ -185,8 +185,56 @@ const Resources: ApiResource[] = [
 ];
 
 
+/**
+ * Get the base URL for the replay API based on environment configuration
+ * Supports multi-region deployments via REPLAY_API_URL and REPLAY_API_REGION
+ */
+function getReplayApiBaseUrl(): string {
+  // Primary: Use explicit REPLAY_API_URL if set
+  if (process.env.REPLAY_API_URL) {
+    return process.env.REPLAY_API_URL;
+  }
+
+  // Secondary: Build URL from region if specified
+  const region = process.env.REPLAY_API_REGION || 'local';
+  const regionUrls: Record<string, string> = {
+    local: 'http://localhost:8080',
+    'na-east': 'https://api-na-east.leetgaming.pro',
+    'na-west': 'https://api-na-west.leetgaming.pro',
+    'eu-west': 'https://api-eu-west.leetgaming.pro',
+    'eu-east': 'https://api-eu-east.leetgaming.pro',
+    'sa': 'https://api-sa.leetgaming.pro',
+    'asia': 'https://api-asia.leetgaming.pro',
+    'oce': 'https://api-oce.leetgaming.pro',
+  };
+
+  return regionUrls[region] || regionUrls.local;
+}
+
+/**
+ * Replay API Settings
+ * Note: Named "Mock" for historical reasons but connects to real backend
+ */
 export const ReplayApiSettingsMock: ReplayApiSettings = {
-  baseUrl: "http://localhost:8080",
+  baseUrl: getReplayApiBaseUrl(),
   resources: Resources,
 };
+
+/**
+ * Get region-specific API URL for matchmaking
+ * Used when user selects a specific region for their match
+ */
+export function getRegionApiUrl(region: string): string {
+  const regionUrls: Record<string, string> = {
+    'na-east': process.env.REPLAY_API_URL_NA_EAST || 'https://api-na-east.leetgaming.pro',
+    'na-west': process.env.REPLAY_API_URL_NA_WEST || 'https://api-na-west.leetgaming.pro',
+    'eu-west': process.env.REPLAY_API_URL_EU_WEST || 'https://api-eu-west.leetgaming.pro',
+    'eu-east': process.env.REPLAY_API_URL_EU_EAST || 'https://api-eu-east.leetgaming.pro',
+    'sa': process.env.REPLAY_API_URL_SA || 'https://api-sa.leetgaming.pro',
+    'asia': process.env.REPLAY_API_URL_ASIA || 'https://api-asia.leetgaming.pro',
+    'oce': process.env.REPLAY_API_URL_OCE || 'https://api-oce.leetgaming.pro',
+  };
+
+  return regionUrls[region] || ReplayApiSettingsMock.baseUrl;
+}
 

@@ -2,10 +2,11 @@
 
 /**
  * Settings Page
- * User preferences, account settings, privacy, and notifications
+ * User preferences, account settings, privacy, billing, and notifications
+ * Supports URL-based tab selection via ?tab= query parameter
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
   Card,
   CardHeader,
@@ -19,11 +20,46 @@ import {
   SelectItem,
   Divider,
   Avatar,
+  Spinner,
 } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { PageContainer } from '@/components/layouts/centered-content';
+import { PrivacySettings } from '@/components/account/privacy-settings';
+import { SubscriptionManagement } from '@/components/checkout/subscription-management';
+import { PaymentHistory } from '@/components/checkout/payment-history';
 
-export default function SettingsPage() {
+/**
+ * Settings tab keys - matches URL query params
+ */
+enum SettingsTab {
+  PROFILE = 'profile',
+  NOTIFICATIONS = 'notifications',
+  PRIVACY = 'privacy',
+  SECURITY = 'security',
+  BILLING = 'billing',
+}
+
+function SettingsContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab') as SettingsTab | null;
+
+  const [selectedTab, setSelectedTab] = useState<string>(tabParam || SettingsTab.PROFILE);
+
+  // Sync tab with URL
+  useEffect(() => {
+    if (tabParam && Object.values(SettingsTab).includes(tabParam)) {
+      setSelectedTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (key: React.Key) => {
+    const tab = key as string;
+    setSelectedTab(tab);
+    router.push(`/settings?tab=${tab}`, { scroll: false });
+  };
+
   const [profileData, setProfileData] = useState({
     nickname: 'ProGamer_2024',
     email: 'user@example.com',
@@ -42,14 +78,6 @@ export default function SettingsPage() {
     push_messages: true,
   });
 
-  const [privacy, setPrivacy] = useState({
-    profile_public: true,
-    show_stats: true,
-    show_matches: true,
-    allow_friend_requests: true,
-    allow_messages: true,
-  });
-
   const handleProfileUpdate = () => {
     // API call to update profile
     console.log('Updating profile:', profileData);
@@ -60,16 +88,17 @@ export default function SettingsPage() {
     console.log('Updating notifications:', notifications);
   };
 
-  const handlePrivacyUpdate = () => {
-    // API call to update privacy settings
-    console.log('Updating privacy:', privacy);
-  };
-
   return (
     <PageContainer title="Settings" description="Manage your account and preferences" maxWidth="5xl">
-      <Tabs aria-label="Settings tabs" size="lg" className="w-full">
+      <Tabs
+        aria-label="Settings tabs"
+        size="lg"
+        className="w-full"
+        selectedKey={selectedTab}
+        onSelectionChange={handleTabChange}
+      >
         <Tab
-          key="profile"
+          key={SettingsTab.PROFILE}
           title={
             <div className="flex items-center gap-2">
               <Icon icon="solar:user-bold" width={20} />
@@ -170,7 +199,7 @@ export default function SettingsPage() {
         </Tab>
 
         <Tab
-          key="notifications"
+          key={SettingsTab.NOTIFICATIONS}
           title={
             <div className="flex items-center gap-2">
               <Icon icon="solar:bell-bold" width={20} />
@@ -289,87 +318,19 @@ export default function SettingsPage() {
         </Tab>
 
         <Tab
-          key="privacy"
+          key={SettingsTab.PRIVACY}
           title={
             <div className="flex items-center gap-2">
-              <Icon icon="solar:shield-user-bold" width={20} />
-              <span>Privacy</span>
+              <Icon icon="solar:shield-check-bold" width={20} />
+              <span>Privacy & Data</span>
             </div>
           }
         >
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-bold">Privacy Settings</h2>
-            </CardHeader>
-            <Divider />
-            <CardBody className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Public Profile</div>
-                    <div className="text-sm text-default-500">Allow others to view your profile</div>
-                  </div>
-                  <Switch
-                    isSelected={privacy.profile_public}
-                    onValueChange={(value) => setPrivacy({ ...privacy, profile_public: value })}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Show Statistics</div>
-                    <div className="text-sm text-default-500">Display your stats on your profile</div>
-                  </div>
-                  <Switch
-                    isSelected={privacy.show_stats}
-                    onValueChange={(value) => setPrivacy({ ...privacy, show_stats: value })}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Show Match History</div>
-                    <div className="text-sm text-default-500">Allow others to see your recent matches</div>
-                  </div>
-                  <Switch
-                    isSelected={privacy.show_matches}
-                    onValueChange={(value) => setPrivacy({ ...privacy, show_matches: value })}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Allow Friend Requests</div>
-                    <div className="text-sm text-default-500">Let other players send you friend requests</div>
-                  </div>
-                  <Switch
-                    isSelected={privacy.allow_friend_requests}
-                    onValueChange={(value) => setPrivacy({ ...privacy, allow_friend_requests: value })}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium">Allow Direct Messages</div>
-                    <div className="text-sm text-default-500">Enable direct messaging from other players</div>
-                  </div>
-                  <Switch
-                    isSelected={privacy.allow_messages}
-                    onValueChange={(value) => setPrivacy({ ...privacy, allow_messages: value })}
-                  />
-                </div>
-              </div>
-
-              <Divider />
-
-              <div className="flex justify-end gap-2">
-                <Button variant="flat">Cancel</Button>
-                <Button color="primary" onPress={handlePrivacyUpdate}>
-                  Save Settings
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
+          <PrivacySettings />
         </Tab>
 
         <Tab
-          key="security"
+          key={SettingsTab.SECURITY}
           title={
             <div className="flex items-center gap-2">
               <Icon icon="solar:lock-password-bold" width={20} />
@@ -464,32 +425,32 @@ export default function SettingsPage() {
         </Tab>
 
         <Tab
-          key="subscription"
+          key={SettingsTab.BILLING}
           title={
             <div className="flex items-center gap-2">
-              <Icon icon="solar:crown-star-bold" width={20} />
-              <span>Subscription</span>
+              <Icon icon="solar:card-bold" width={20} />
+              <span>Billing</span>
             </div>
           }
         >
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-bold">Subscription & Billing</h2>
-            </CardHeader>
-            <Divider />
-            <CardBody className="space-y-6">
-              <div className="text-center py-8">
-                <Icon icon="solar:crown-star-bold" width={64} className="mx-auto mb-4 text-warning" />
-                <h3 className="text-xl font-semibold mb-2">You&apos;re on the Free Plan</h3>
-                <p className="text-default-600 mb-6">Upgrade to unlock premium features</p>
-                <Button color="primary" size="lg" onClick={() => (window.location.href = '/pricing')}>
-                  View Plans
-                </Button>
-              </div>
-            </CardBody>
-          </Card>
+          <div className="space-y-6">
+            <SubscriptionManagement />
+            <PaymentHistory />
+          </div>
         </Tab>
       </Tabs>
     </PageContainer>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner size="lg" label="Loading settings..." />
+      </div>
+    }>
+      <SettingsContent />
+    </Suspense>
   );
 }

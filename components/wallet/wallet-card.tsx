@@ -11,7 +11,7 @@ import { Card, CardBody, Button, Chip, Dropdown, DropdownTrigger, DropdownMenu, 
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { UserWallet, Currency } from '@/types/replay-api/wallet.types';
-import { formatAmount, formatEVMAddress } from '@/types/replay-api/wallet.types';
+import { formatAmount, formatEVMAddress, getAmountValue, getEVMAddressValue } from '@/types/replay-api/wallet.types';
 import { AnimatedCounter } from '@/components/ui/animated-counter';
 import { DepositModal } from '@/components/wallet/modals/deposit-modal';
 import { WithdrawModal } from '@/components/wallet/modals/withdraw-modal';
@@ -67,7 +67,7 @@ export function WalletCard({
     if (!wallet) return;
 
     try {
-      await navigator.clipboard.writeText(wallet.evm_address.address);
+      await navigator.clipboard.writeText(getEVMAddressValue(wallet.evm_address));
       setShowCopied(true);
       setTimeout(() => setShowCopied(false), 2000);
     } catch (error) {
@@ -108,8 +108,9 @@ export function WalletCard({
   }
 
   const currentBalance = wallet.balances[selectedCurrency];
+  const currentBalanceDollars = getAmountValue(currentBalance).dollars;
   const totalBalanceUSD = Object.values(wallet.balances).reduce(
-    (sum, balance) => sum + balance.dollars,
+    (sum, balance) => sum + getAmountValue(balance).dollars,
     0
   );
 
@@ -133,7 +134,7 @@ export function WalletCard({
               <span className="font-semibold text-foreground">My Wallet</span>
             </div>
 
-            {wallet.pending_transactions.length > 0 && (
+            {wallet.pending_transactions && wallet.pending_transactions.length > 0 && (
               <Chip
                 size="sm"
                 variant="flat"
@@ -173,7 +174,7 @@ export function WalletCard({
 
               <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600 dark:from-primary-400 dark:to-secondary-400">
                 <AnimatedCounter
-                  value={currentBalance.dollars}
+                  value={currentBalanceDollars}
                   prefix="$"
                   decimals={2}
                 />

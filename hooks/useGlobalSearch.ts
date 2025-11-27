@@ -114,43 +114,32 @@ export function useGlobalSearch(): UseGlobalSearchResult {
 
       const commonFetchInit: RequestInit = { signal: controller.signal };
 
-      // Search replays
-      try {
-        const replays = await sdk.replayFiles.searchReplayFiles({
-          search_term: searchTerm
-        });
-        if (replays && replays.length > 0) {
-          // Limit to 5 results
-          allResults.push(...transformReplays((replays as ReplayFile[]).slice(0, 5)));
-        }
-      } catch (err) {
-        logger.warn('Replay search failed:', err);
+      // Execute all searches in parallel for better performance
+      const [replaysResult, playersResult, squadsResult] = await Promise.allSettled([
+        sdk.replayFiles.searchReplayFiles({ search_term: searchTerm }),
+        sdk.playerProfiles.searchPlayerProfiles({ nickname: searchTerm }),
+        sdk.squads.searchSquads({ name: searchTerm }),
+      ]);
+
+      // Process replays
+      if (replaysResult.status === 'fulfilled' && replaysResult.value?.length > 0) {
+        allResults.push(...transformReplays((replaysResult.value as ReplayFile[]).slice(0, 5)));
+      } else if (replaysResult.status === 'rejected') {
+        logger.warn('Replay search failed:', replaysResult.reason);
       }
 
-      // Search players
-      try {
-        const players = await sdk.playerProfiles.searchPlayerProfiles({
-          nickname: searchTerm
-        });
-        if (players && players.length > 0) {
-          // Limit to 5 results
-          allResults.push(...transformPlayers(players.slice(0, 5)));
-        }
-      } catch (err) {
-        logger.warn('Player search failed:', err);
+      // Process players
+      if (playersResult.status === 'fulfilled' && playersResult.value?.length > 0) {
+        allResults.push(...transformPlayers(playersResult.value.slice(0, 5)));
+      } else if (playersResult.status === 'rejected') {
+        logger.warn('Player search failed:', playersResult.reason);
       }
 
-      // Search teams/squads
-      try {
-        const squads = await sdk.squads.searchSquads({
-          name: searchTerm
-        });
-        if (squads && squads.length > 0) {
-          // Limit to 5 results
-          allResults.push(...transformTeams(squads.slice(0, 5)));
-        }
-      } catch (err) {
-        logger.warn('Team search failed:', err);
+      // Process teams/squads
+      if (squadsResult.status === 'fulfilled' && squadsResult.value?.length > 0) {
+        allResults.push(...transformTeams(squadsResult.value.slice(0, 5)));
+      } else if (squadsResult.status === 'rejected') {
+        logger.warn('Team search failed:', squadsResult.reason);
       }
 
       setResults(allResults);

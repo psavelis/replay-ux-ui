@@ -5,7 +5,7 @@
  * Browse and register for competitive tournaments
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
@@ -18,9 +18,11 @@ import {
   Image,
   Progress,
   Divider,
+  Spinner,
 } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
-import { PageContainer } from '@/components/layouts/centered-content';
+import { PageContainer } from '@/components/layout/page-container';
+import { logger } from '@/lib/logger';
 
 interface Tournament {
   id: string;
@@ -128,13 +130,72 @@ const mockTournaments: Tournament[] = [
   },
 ];
 
+// Default seed data - used as fallback when API unavailable
+const SEED_TOURNAMENTS = mockTournaments;
+
 export default function TournamentsPage() {
   const [selectedTab, setSelectedTab] = useState<string>('all');
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch tournaments from API
+  useEffect(() => {
+    async function fetchTournaments() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/tournaments`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch tournaments: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        // Map API response to Tournament interface
+        const mappedTournaments: Tournament[] = (data || []).map((t: any) => ({
+          id: t.id,
+          name: t.name || 'Unnamed Tournament',
+          game: t.game_id?.toUpperCase() || 'CS2',
+          type: t.bracket_type || 'single-elimination',
+          status: t.status || 'upcoming',
+          image: t.image_url || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+          description: t.description || '',
+          prize_pool: t.prize_pool || 0,
+          entry_fee: t.entry_fee || 0,
+          max_teams: t.max_participants || 16,
+          registered_teams: t.current_participants || 0,
+          start_date: t.start_date || new Date().toISOString(),
+          end_date: t.end_date || new Date().toISOString(),
+          region: t.region || 'Global',
+          format: t.format || '5v5',
+          organizer: {
+            name: t.organizer_name || 'LeetGaming.PRO',
+            logo: t.organizer_logo,
+          },
+        }));
+
+        setTournaments(mappedTournaments.length > 0 ? mappedTournaments : SEED_TOURNAMENTS);
+      } catch (err: any) {
+        logger.error('Failed to fetch tournaments', err);
+        setError(err.message);
+        // Use seed data as fallback
+        setTournaments(SEED_TOURNAMENTS);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTournaments();
+  }, []);
 
   const filteredTournaments =
     selectedTab === 'all'
-      ? mockTournaments
-      : mockTournaments.filter((t) => t.status === selectedTab);
+      ? tournaments
+      : tournaments.filter((t) => t.status === selectedTab);
 
   const renderTournamentCard = (tournament: Tournament) => {
     const registrationProgress = (tournament.registered_teams / tournament.max_teams) * 100;
@@ -157,7 +218,7 @@ export default function TournamentsPage() {
       <Card
         key={tournament.id}
         isPressable
-        className="hover:scale-[1.02] transition-transform"
+        className="hover:shadow-lg hover:border-primary/50 transition-all"
         onPress={() => (window.location.href = `/tournaments/${tournament.id}`)}
       >
         <CardHeader className="absolute z-10 top-4 flex-col items-start bg-black/60 backdrop-blur-sm m-2 rounded-large">
@@ -258,17 +319,38 @@ export default function TournamentsPage() {
   };
 
   return (
-    <PageContainer
-      title="Tournaments"
-      description="Compete in competitive tournaments and win prizes"
-      maxWidth="7xl"
-    >
+    <PageContainer maxWidth="7xl">
+      {/* Page Header */}
+      <div className="mb-8 flex flex-col items-center gap-2 text-center">
+        <h1 className="text-4xl font-bold lg:text-5xl">Tournaments</h1>
+        <p className="text-lg text-default-600 max-w-2xl">
+          Compete in competitive tournaments and win prizes
+        </p>
+      </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center py-12">
+          <Spinner size="lg" label="Loading tournaments..." color="primary" />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <Card className="mb-4">
+          <CardBody className="text-center">
+            <p className="text-xs text-default-400">Using cached data - API unavailable</p>
+          </CardBody>
+        </Card>
+      )}
+
       {/* Stats Overview */}
+      {!loading && (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <Card>
           <CardBody className="text-center py-6">
             <Icon icon="solar:cup-star-bold" width={32} className="mx-auto mb-2 text-warning" />
-            <div className="text-2xl font-bold">{mockTournaments.length}</div>
+            <div className="text-2xl font-bold">{tournaments.length}</div>
             <div className="text-sm text-default-500">Total Tournaments</div>
           </CardBody>
         </Card>
@@ -276,7 +358,7 @@ export default function TournamentsPage() {
           <CardBody className="text-center py-6">
             <Icon icon="solar:ticket-bold" width={32} className="mx-auto mb-2 text-success" />
             <div className="text-2xl font-bold">
-              {mockTournaments.filter((t) => t.status === 'registration').length}
+              {tournaments.filter((t) => t.status === 'registration').length}
             </div>
             <div className="text-sm text-default-500">Open Registration</div>
           </CardBody>
@@ -285,7 +367,7 @@ export default function TournamentsPage() {
           <CardBody className="text-center py-6">
             <Icon icon="solar:play-circle-bold" width={32} className="mx-auto mb-2 text-warning" />
             <div className="text-2xl font-bold">
-              {mockTournaments.filter((t) => t.status === 'ongoing').length}
+              {tournaments.filter((t) => t.status === 'ongoing').length}
             </div>
             <div className="text-sm text-default-500">In Progress</div>
           </CardBody>
@@ -294,12 +376,13 @@ export default function TournamentsPage() {
           <CardBody className="text-center py-6">
             <Icon icon="solar:dollar-bold" width={32} className="mx-auto mb-2 text-primary" />
             <div className="text-2xl font-bold">
-              ${mockTournaments.reduce((sum, t) => sum + t.prize_pool, 0).toLocaleString()}
+              ${tournaments.reduce((sum, t) => sum + t.prize_pool, 0).toLocaleString()}
             </div>
             <div className="text-sm text-default-500">Total Prize Pool</div>
           </CardBody>
         </Card>
       </div>
+      )}
 
       {/* Filters */}
       <Tabs

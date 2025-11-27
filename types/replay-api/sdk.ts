@@ -11,6 +11,9 @@ import { OnboardingResponse } from './auth';
 import { WalletAPI } from './wallet.sdk';
 import { LobbyAPI } from './lobby.sdk';
 import { PrizePoolAPI } from './prize-pool.sdk';
+import { PaymentAPI } from './payment.sdk';
+import { MatchmakingAPI } from './matchmaking.sdk';
+import { TournamentAPI } from './tournament.sdk';
 
 /**
  * Onboarding API wrapper
@@ -108,6 +111,8 @@ export class SquadAPI {
     game_id?: string;
     name?: string;
     visibility?: string;
+    page?: number;
+    limit?: number;
   }): Promise<Squad[]> {
     const response = await this.client.post<Squad[]>('/squads/search', filters);
     return response.data || [];
@@ -272,6 +277,9 @@ export class ReplayAPISDK {
   public wallet: WalletAPI;
   public lobbies: LobbyAPI;
   public prizePools: PrizePoolAPI;
+  public payment: PaymentAPI;
+  public matchmaking: MatchmakingAPI;
+  public tournaments: TournamentAPI;
 
   constructor(settings: ReplayApiSettings, logger: Loggable) {
     this.client = new ReplayApiClient(settings, logger);
@@ -284,5 +292,8 @@ export class ReplayAPISDK {
     this.wallet = new WalletAPI(this.client);
     this.lobbies = new LobbyAPI(this.client);
     this.prizePools = new PrizePoolAPI(this.client);
+    this.payment = new PaymentAPI(this.client);
+    this.matchmaking = new MatchmakingAPI(this.client);
+    this.tournaments = new TournamentAPI(this.client);
   }
 }
