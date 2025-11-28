@@ -40,7 +40,7 @@ const MultiStepSidebar = React.forwardRef<HTMLDivElement, MultiStepSidebarProps>
     return (
       <div
         ref={ref}
-        className={cn("flex h-[calc(100vh_-_40px)] w-full gap-x-2", className)}
+        className={cn("flex h-[calc(100vh_-_40px)] w-full gap-x-2 overflow-x-hidden", className)}
         {...props}
       >
         {/* Sidebar - E-sports dark gradient with neon accent */}

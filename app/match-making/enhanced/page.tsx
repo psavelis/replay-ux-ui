@@ -34,7 +34,7 @@ import {
 } from '@/types/replay-api/matchmaking.types';
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
-const matchmakingSDK = new MatchmakingSDK(ReplayApiSettingsMock.baseUrl, logger);
+const matchmakingSDK = sdk.matchmaking;
 
 export default function EnhancedMatchmakingPage() {
   const { data: session } = useSession();
