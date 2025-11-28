@@ -75,3 +75,6 @@ export type {
   SessionStatusResponse,
   PoolStatsResponse,
 } from './matchmaking.types';
+
+// Alias for backward compatibility
+export { MatchmakingAPI as MatchmakingSDK };

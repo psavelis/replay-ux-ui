@@ -1,6 +1,7 @@
 /**
  * useLobby Hook
- * React hook for lobby operations with state management and polling
+ * React hook for lobby operations with state management
+ * Supports both WebSocket (real-time) and polling modes
  */
 
 'use client';
@@ -9,6 +10,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { ReplayAPISDK } from '@/types/replay-api/sdk';
 import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
 import { logger } from '@/lib/logger';
+import { useLobbyWebSocket } from './use-lobby-websocket';
 import type {
   MatchmakingLobby,
   LobbyStatus,
@@ -47,6 +49,13 @@ const getPlayerCount = (slots: PlayerSlot[]): number => {
 
 // --- Hook Types ---
 
+export interface UseLobbyOptions {
+  /** Use WebSocket for real-time updates instead of polling (recommended) */
+  useWebSocket?: boolean;
+  /** Polling interval in ms (only used if useWebSocket is false) */
+  pollIntervalMs?: number;
+}
+
 export interface UseLobbyResult {
   // State
   lobby: MatchmakingLobby | null;
@@ -54,6 +63,9 @@ export interface UseLobbyResult {
   stats: LobbyStats | null;
   isLoading: boolean;
   error: string | null;
+  // Connection state (WebSocket mode only)
+  isConnected: boolean;
+  connectionState: 'connecting' | 'connected' | 'disconnected' | 'error';
   // Computed
   isInLobby: boolean;
   isHost: boolean;
@@ -75,14 +87,34 @@ export interface UseLobbyResult {
   clearLobby: () => void;
 }
 
-export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLobbyResult {
-  const [lobby, setLobby] = useState<MatchmakingLobby | null>(null);
+export function useLobby(
+  currentPlayerId?: string,
+  options: UseLobbyOptions = {}
+): UseLobbyResult {
+  const { useWebSocket = true, pollIntervalMs = 2000 } = options;
+
+  const [lobbyState, setLobbyState] = useState<MatchmakingLobby | null>(null);
   const [lobbies, setLobbies] = useState<MatchmakingLobby[]>([]);
   const [stats, setStats] = useState<LobbyStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
+
+  // WebSocket hook for real-time updates
+  const {
+    connectionState,
+    isConnected,
+    lobby: wsLobby,
+    subscribeLobby,
+    unsubscribeLobby,
+  } = useLobbyWebSocket({
+    autoReconnect: true,
+    onError: (err) => setError(err.message),
+  });
+
+  // Use WebSocket lobby state if available and WebSocket mode is enabled
+  const lobby = useWebSocket && wsLobby ? wsLobby : lobbyState;
 
   const sdk = useMemo(() => {
     const baseUrl = getApiBaseUrl();
@@ -119,52 +151,63 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
     );
   }, [lobby, isHost]);
 
-  // Start polling for lobby status
-  const startPolling = useCallback(
+  // Start real-time updates (WebSocket or polling)
+  const startRealTimeUpdates = useCallback(
     (lobbyId: string) => {
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-      }
-
-      const poll = async () => {
-        try {
-          const result = await sdk.lobbies.getLobby(lobbyId);
-          if (result?.lobby) {
-            setLobby(result.lobby);
-            if (isLobbyTerminal(result.lobby.status)) {
-              stopPolling();
-            }
-          }
-        } catch (err) {
-          logger.error('[useLobby] Polling error:', err);
+      if (useWebSocket) {
+        // Use WebSocket for real-time updates
+        subscribeLobby(lobbyId);
+        logger.info('[useLobby] Started WebSocket subscription', { lobbyId });
+      } else {
+        // Fall back to polling
+        if (pollingRef.current) {
+          clearInterval(pollingRef.current);
         }
-      };
 
-      // Initial poll
-      poll();
+        const poll = async () => {
+          try {
+            const result = await sdk.lobbies.getLobby(lobbyId);
+            if (result?.lobby) {
+              setLobbyState(result.lobby);
+              if (isLobbyTerminal(result.lobby.status)) {
+                stopRealTimeUpdates();
+              }
+            }
+          } catch (err) {
+            logger.error('[useLobby] Polling error:', err);
+          }
+        };
 
-      // Set up interval
-      pollingRef.current = setInterval(poll, pollIntervalMs);
-      logger.info('[useLobby] Started polling', { lobbyId, intervalMs: pollIntervalMs });
+        // Initial poll
+        poll();
+
+        // Set up interval
+        pollingRef.current = setInterval(poll, pollIntervalMs);
+        logger.info('[useLobby] Started polling', { lobbyId, intervalMs: pollIntervalMs });
+      }
     },
-    [sdk, pollIntervalMs]
+    [sdk, pollIntervalMs, useWebSocket, subscribeLobby]
   );
 
-  // Stop polling
-  const stopPolling = useCallback(() => {
+  // Stop real-time updates (WebSocket or polling)
+  const stopRealTimeUpdates = useCallback(() => {
+    if (useWebSocket) {
+      unsubscribeLobby();
+      logger.info('[useLobby] Stopped WebSocket subscription');
+    }
     if (pollingRef.current) {
       clearInterval(pollingRef.current);
       pollingRef.current = null;
       logger.info('[useLobby] Stopped polling');
     }
-  }, []);
+  }, [useWebSocket, unsubscribeLobby]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      stopPolling();
+      stopRealTimeUpdates();
     };
-  }, [stopPolling]);
+  }, [stopRealTimeUpdates]);
 
   const createLobby = useCallback(
     async (request: CreateLobbyRequest): Promise<CreateLobbyResponse | null> => {
@@ -174,8 +217,8 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
       try {
         const result = await sdk.lobbies.createLobby(request);
         if (result) {
-          setLobby(result.lobby);
-          startPolling(result.lobby.id);
+          setLobbyState(result.lobby);
+          startRealTimeUpdates(result.lobby.id);
         } else {
           setError('Failed to create lobby');
         }
@@ -188,7 +231,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
         setIsLoading(false);
       }
     },
-    [sdk, startPolling]
+    [sdk, startRealTimeUpdates]
   );
 
   const joinLobby = useCallback(
@@ -199,8 +242,8 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
       try {
         const result = await sdk.lobbies.joinLobby(lobbyId, { player_id: playerId, player_mmr: playerMmr });
         if (result) {
-          setLobby(result.lobby);
-          startPolling(lobbyId);
+          setLobbyState(result.lobby);
+          startRealTimeUpdates(lobbyId);
         } else {
           setError('Failed to join lobby');
         }
@@ -213,7 +256,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
         setIsLoading(false);
       }
     },
-    [sdk, startPolling]
+    [sdk, startRealTimeUpdates]
   );
 
   const leaveLobby = useCallback(
@@ -225,8 +268,8 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
 
       try {
         await sdk.lobbies.leaveLobby(lobbyId, { player_id: currentPlayerId });
-        stopPolling();
-        setLobby(null);
+        stopRealTimeUpdates();
+        setLobbyState(null);
         return true;
       } catch (err: unknown) {
         logger.error('[useLobby] Error leaving lobby:', err);
@@ -236,7 +279,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
         setIsLoading(false);
       }
     },
-    [sdk, currentPlayerId, stopPolling]
+    [sdk, currentPlayerId, stopRealTimeUpdates]
   );
 
   const setReady = useCallback(
@@ -247,7 +290,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
       try {
         const result = await sdk.lobbies.setPlayerReady(lobbyId, { player_id: playerId, is_ready: isReady });
         if (result) {
-          setLobby(result.lobby);
+          setLobbyState(result.lobby);
         } else {
           setError('Failed to update ready status');
         }
@@ -271,7 +314,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
       try {
         const result = await sdk.lobbies.startMatch(lobbyId);
         if (result) {
-          setLobby(result.lobby);
+          setLobbyState(result.lobby);
         } else {
           setError('Failed to start match');
         }
@@ -294,8 +337,8 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
 
       try {
         await sdk.lobbies.cancelLobby(lobbyId);
-        stopPolling();
-        setLobby(null);
+        stopRealTimeUpdates();
+        setLobbyState(null);
         return true;
       } catch (err: unknown) {
         logger.error('[useLobby] Error cancelling lobby:', err);
@@ -305,7 +348,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
         setIsLoading(false);
       }
     },
-    [sdk, stopPolling]
+    [sdk, stopRealTimeUpdates]
   );
 
   const refreshLobby = useCallback(
@@ -313,7 +356,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
       try {
         const result = await sdk.lobbies.getLobby(lobbyId);
         if (result?.lobby) {
-          setLobby(result.lobby);
+          setLobbyState(result.lobby);
         }
       } catch (err: unknown) {
         logger.error('[useLobby] Error refreshing lobby:', err);
@@ -370,21 +413,27 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
   }, []);
 
   const clearLobby = useCallback(() => {
-    stopPolling();
-    setLobby(null);
-  }, [stopPolling]);
+    stopRealTimeUpdates();
+    setLobbyState(null);
+  }, [stopRealTimeUpdates]);
 
   return {
+    // State
     lobby,
     lobbies,
     stats,
     isLoading,
     error,
+    // Connection state (WebSocket mode)
+    isConnected: useWebSocket ? isConnected : true,
+    connectionState: useWebSocket ? connectionState : 'connected',
+    // Computed
     isInLobby,
     isHost,
     playerCount,
     readyCount,
     canStart,
+    // Actions
     createLobby,
     joinLobby,
     leaveLobby,
@@ -394,6 +443,7 @@ export function useLobby(currentPlayerId?: string, pollIntervalMs = 2000): UseLo
     refreshLobby,
     listLobbies,
     fetchStats,
+    // Helpers
     clearError,
     clearLobby,
   };
