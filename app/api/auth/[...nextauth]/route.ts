@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth'
 import SteamProvider from 'next-auth-steam'
 import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import crypto from 'crypto'
 
 import type { NextRequest } from 'next/server'
@@ -12,6 +13,10 @@ const mockSalt = process.env.STEAM_VHASH_SOURCE!
 const steamOnboardingApiRoute = `${process.env.REPLAY_API_URL}/onboarding/steam`;
 
 const googleOnboardingApiRoute = `${process.env.REPLAY_API_URL}/onboarding/google`;
+
+const emailOnboardingApiRoute = `${process.env.REPLAY_API_URL}/onboarding/email`;
+
+const emailLoginApiRoute = `${process.env.REPLAY_API_URL}/auth/login`;
 
 async function handler(
   req: NextRequest,
@@ -41,6 +46,75 @@ async function handler(
             access_type: "offline",
             response_type: "code"
           },
+        },
+      }),
+      CredentialsProvider({
+        id: 'email-password',
+        name: 'Email',
+        credentials: {
+          email: { label: "Email", type: "email" },
+          password: { label: "Password", type: "password" },
+          action: { label: "Action", type: "text" },
+          displayName: { label: "Display Name", type: "text" },
+        },
+        async authorize(credentials) {
+          if (!credentials?.email || !credentials?.password) {
+            throw new Error('Email and password are required');
+          }
+
+          const email = credentials.email;
+          const password = credentials.password;
+          const action = credentials.action || 'login';
+          const displayName = credentials.displayName || '';
+
+          // Generate v_hash (same pattern as Steam/Google)
+          const verificationHash = crypto
+            .createHash('sha256')
+            .update(`${email}${mockSalt}`)
+            .digest('hex');
+
+          const apiRoute = action === 'signup'
+            ? emailOnboardingApiRoute
+            : emailLoginApiRoute;
+
+          const body: Record<string, string> = {
+            email,
+            password,
+            v_hash: verificationHash,
+          };
+
+          if (action === 'signup' && displayName) {
+            body.display_name = displayName;
+          }
+
+          try {
+            const response = await fetch(apiRoute, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error('Email auth API error:', errorText);
+              throw new Error(response.status === 401 ? 'Invalid credentials' : 'Authentication failed');
+            }
+
+            const userData = await response.json();
+            const rid = response.headers.get('X-Resource-Owner-ID') ?? undefined;
+            const uid = userData.resource_owner?.user_id || userData.id;
+
+            return {
+              id: uid || email,
+              email,
+              name: userData.display_name || email.split('@')[0],
+              rid,
+              uid,
+            };
+          } catch (error) {
+            console.error('Email auth request failed:', error);
+            throw error;
+          }
         },
       }),
     ],
@@ -187,6 +261,22 @@ async function handler(
           } catch (error) {
             console.error('Error processing Google authentication:', error)
             // Continue with basic Google auth
+          }
+        }
+
+        // Handle email-password credentials provider
+        if (param?.account?.provider === 'email-password') {
+          // The authorize function already called the backend and got the RID
+          // We just need to copy the values from user to token
+          const user = param.user as any;
+          if (user?.rid) {
+            param.token.rid = user.rid;
+          }
+          if (user?.uid) {
+            param.token.uid = user.uid;
+          }
+          if (user?.email) {
+            param.token.email = user.email;
           }
         }
 

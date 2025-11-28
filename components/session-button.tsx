@@ -6,15 +6,13 @@ import {
   DropdownSection,
   DropdownTrigger,
 } from '@nextui-org/dropdown';
-import { Avatar, Badge, Button, Link, Spacer, User, Chip } from '@nextui-org/react';
+import { Avatar, Badge, Button, Link, Chip } from '@nextui-org/react';
 import { useSession, signOut } from 'next-auth/react';
-import { useTheme } from 'next-themes';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
 
 export default function SessionButton() {
   const { data: session } = useSession();
-  const { theme } = useTheme();
   const router = useRouter();
 
   const userImage = session?.user?.image || undefined;
@@ -36,11 +34,7 @@ export default function SessionButton() {
         as={Link}
         href="/match-making"
         size="sm"
-        className="hidden md:flex font-semibold"
-        style={{
-          background: 'linear-gradient(135deg, #DCFF37 0%, #B8D930 100%)',
-          color: '#1a1a1a',
-        }}
+        className="hidden md:flex font-semibold bg-gradient-to-br from-[#DCFF37] to-[#B8D930] text-zinc-900 shadow-md hover:shadow-lg transition-shadow"
         startContent={<Icon icon="solar:gamepad-bold" width={18} />}
       >
         Play

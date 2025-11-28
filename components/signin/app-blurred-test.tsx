@@ -6,13 +6,45 @@ import React from "react";
 import {Button, Input, Checkbox, Link, Divider} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { SteamIcon } from "../icons";
 import { GoogleIcon } from "./social";
 
 export default function SignInBlurreds() {
+  const router = useRouter();
   const [isVisible, setIsVisible] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
+
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const result = await signIn('email-password', {
+        email,
+        password,
+        action: 'login',
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(result.error === 'CredentialsSignin' ? 'Invalid email or password' : result.error);
+      } else if (result?.ok) {
+        router.push('/');
+        router.refresh();
+      }
+    } catch (err) {
+      setError('An unexpected error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const inputClasses: InputProps["classNames"] = {
     inputWrapper:
@@ -36,7 +68,12 @@ export default function SignInBlurreds() {
           <h1 className="text-2xl font-bold tracking-tight">Welcome Back</h1>
           <p className="text-sm text-foreground/60 mt-1">Sign in to your account</p>
         </div>
-        <form className="flex flex-col gap-3" onSubmit={(e) => e.preventDefault()}>
+        <form className="flex flex-col gap-3" onSubmit={handleEmailSignIn}>
+          {error && (
+            <div className="rounded-md bg-danger-50 dark:bg-danger-900/20 p-3 text-sm text-danger">
+              {error}
+            </div>
+          )}
           <Input
             classNames={inputClasses}
             label="Email Address"
@@ -44,6 +81,9 @@ export default function SignInBlurreds() {
             placeholder="Enter your email"
             type="email"
             variant="bordered"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            isDisabled={isLoading}
           />
           <Input
             classNames={inputClasses}
@@ -67,6 +107,9 @@ export default function SignInBlurreds() {
             placeholder="Enter your password"
             type={isVisible ? "text" : "password"}
             variant="bordered"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            isDisabled={isLoading}
           />
           <div className="flex items-center justify-between px-1 py-2">
             <Checkbox
@@ -87,8 +130,10 @@ export default function SignInBlurreds() {
             type="submit"
             size="lg"
             radius="md"
+            isLoading={isLoading}
+            isDisabled={isLoading || !email || !password}
           >
-            Log In
+            {isLoading ? 'Signing in...' : 'Log In'}
           </Button>
         </form>
         <div className="flex items-center gap-4 py-2">
