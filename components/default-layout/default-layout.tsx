@@ -58,7 +58,7 @@ export default function RootLayout({
       <head />
       <body
         className={clsx(
-          "min-h-screen bg-background bg-scroll blur-glow-pry-gh antialiased w-full",
+          "min-h-screen bg-background bg-scroll blur-glow-pry-gh antialiased w-full overflow-x-hidden",
           pressStart2P.className
         )}
       >{ domLoaded && <Box>

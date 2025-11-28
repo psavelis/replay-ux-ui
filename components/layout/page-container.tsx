@@ -4,52 +4,52 @@
  * Fixes the "content glued to left" issue across all pages
  */
 
-'use client';
+"use client";
 
-import React from 'react';
-import { motion } from 'framer-motion';
-import { pageTransitions, springs } from '@/lib/design/animations';
-import { useReducedMotion } from '@/hooks/use-reduced-motion';
+import React from "react";
+import { motion } from "framer-motion";
+import { pageTransitions, springs } from "@/lib/design/animations";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 interface PageContainerProps {
   children: React.ReactNode;
   className?: string;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '7xl' | 'full';
-  padding?: 'none' | 'sm' | 'md' | 'lg';
+  maxWidth?: "sm" | "md" | "lg" | "xl" | "2xl" | "7xl" | "full";
+  padding?: "none" | "sm" | "md" | "lg";
   center?: boolean;
   animate?: boolean;
-  animationVariant?: 'fade' | 'slideUp' | 'slideDown' | 'scale';
+  animationVariant?: "fade" | "slideUp" | "slideDown" | "scale";
 }
 
 export function PageContainer({
   children,
-  className = '',
-  maxWidth = 'xl',
-  padding = 'md',
+  className = "",
+  maxWidth = "xl",
+  padding = "md",
   center = true,
   animate = true,
-  animationVariant = 'fade',
+  animationVariant = "fade",
 }: PageContainerProps) {
   const prefersReducedMotion = useReducedMotion();
 
   const maxWidthClasses = {
-    sm: 'max-w-screen-sm', // 640px
-    md: 'max-w-screen-md', // 768px
-    lg: 'max-w-screen-lg', // 1024px
-    xl: 'max-w-screen-xl', // 1280px
-    '2xl': 'max-w-screen-2xl', // 1536px
-    '7xl': 'max-w-[1920px]',
-    full: 'max-w-full',
+    sm: "max-w-screen-sm", // 640px
+    md: "max-w-screen-md", // 768px
+    lg: "max-w-screen-lg", // 1024px
+    xl: "max-w-screen-xl", // 1280px
+    "2xl": "max-w-screen-2xl", // 1536px
+    "7xl": "max-w-[1920px]",
+    full: "max-w-full",
   };
 
   const paddingClasses = {
-    none: '',
-    sm: 'px-4 md:px-6',
-    md: 'px-4 md:px-6 lg:px-8',
-    lg: 'px-4 md:px-8 lg:px-12',
+    none: "",
+    sm: "px-4 md:px-6",
+    md: "px-4 md:px-6 lg:px-8",
+    lg: "px-4 md:px-8 lg:px-12",
   };
 
-  const centerClasses = center ? 'mx-auto' : '';
+  const centerClasses = center ? "mx-auto" : "";
 
   const containerClasses = `
     w-full
@@ -83,35 +83,35 @@ export function PageContainer({
 interface SectionProps {
   children: React.ReactNode;
   className?: string;
-  background?: 'default' | 'subtle' | 'transparent';
-  spacing?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  background?: "default" | "subtle" | "transparent";
+  spacing?: "none" | "sm" | "md" | "lg" | "xl";
   rounded?: boolean;
   id?: string;
 }
 
 export function Section({
   children,
-  className = '',
-  background = 'transparent',
-  spacing = 'md',
+  className = "",
+  background = "transparent",
+  spacing = "md",
   rounded = false,
   id,
 }: SectionProps) {
   const backgroundClasses = {
-    default: 'bg-background',
-    subtle: 'bg-default-50',
-    transparent: '',
+    default: "bg-background",
+    subtle: "bg-default-50",
+    transparent: "",
   };
 
   const spacingClasses = {
-    none: '',
-    sm: 'py-4',
-    md: 'py-8',
-    lg: 'py-12',
-    xl: 'py-16',
+    none: "",
+    sm: "py-4",
+    md: "py-8",
+    lg: "py-12",
+    xl: "py-16",
   };
 
-  const roundedClass = rounded ? 'rounded-lg' : '';
+  const roundedClass = rounded ? "rounded-lg" : "";
 
   return (
     <section
@@ -139,30 +139,30 @@ interface GridContainerProps {
     lg?: number;
     xl?: number;
   };
-  gap?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  gap?: "none" | "sm" | "md" | "lg" | "xl";
 }
 
 export function GridContainer({
   children,
-  className = '',
+  className = "",
   columns = { default: 1, md: 2, lg: 3, xl: 4 },
-  gap = 'md',
+  gap = "md",
 }: GridContainerProps) {
   const columnClasses = `
     grid
     grid-cols-${columns.default || 1}
-    ${columns.sm ? `sm:grid-cols-${columns.sm}` : ''}
-    ${columns.md ? `md:grid-cols-${columns.md}` : ''}
-    ${columns.lg ? `lg:grid-cols-${columns.lg}` : ''}
-    ${columns.xl ? `xl:grid-cols-${columns.xl}` : ''}
+    ${columns.sm ? `sm:grid-cols-${columns.sm}` : ""}
+    ${columns.md ? `md:grid-cols-${columns.md}` : ""}
+    ${columns.lg ? `lg:grid-cols-${columns.lg}` : ""}
+    ${columns.xl ? `xl:grid-cols-${columns.xl}` : ""}
   `.trim();
 
   const gapClasses = {
-    none: 'gap-0',
-    sm: 'gap-2',
-    md: 'gap-4',
-    lg: 'gap-6',
-    xl: 'gap-8',
+    none: "gap-0",
+    sm: "gap-2",
+    md: "gap-4",
+    lg: "gap-6",
+    xl: "gap-8",
   };
 
   return (
@@ -181,10 +181,10 @@ interface ContentWrapperProps {
 
 export function ContentWrapper({
   children,
-  className = '',
+  className = "",
   prose = false,
 }: ContentWrapperProps) {
-  const proseClass = prose ? 'prose prose-lg dark:prose-invert max-w-none' : '';
+  const proseClass = prose ? "prose prose-lg dark:prose-invert max-w-none" : "";
 
   return (
     <div className={`max-w-3xl mx-auto ${proseClass} ${className}`}>
@@ -202,13 +202,15 @@ interface CenteredContentProps {
 
 export function CenteredContent({
   children,
-  className = '',
+  className = "",
   verticalCenter = false,
 }: CenteredContentProps) {
-  const verticalClass = verticalCenter ? 'min-h-screen' : '';
+  const verticalClass = verticalCenter ? "min-h-screen" : "";
 
   return (
-    <div className={`flex flex-col items-center justify-center text-center ${verticalClass} ${className}`}>
+    <div
+      className={`flex flex-col items-center justify-center text-center ${verticalClass} ${className}`}
+    >
       {children}
     </div>
   );
@@ -218,49 +220,49 @@ export function CenteredContent({
 interface FlexContainerProps {
   children: React.ReactNode;
   className?: string;
-  direction?: 'row' | 'column';
-  align?: 'start' | 'center' | 'end' | 'stretch';
-  justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
-  gap?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  direction?: "row" | "column";
+  align?: "start" | "center" | "end" | "stretch";
+  justify?: "start" | "center" | "end" | "between" | "around" | "evenly";
+  gap?: "none" | "sm" | "md" | "lg" | "xl";
   wrap?: boolean;
 }
 
 export function FlexContainer({
   children,
-  className = '',
-  direction = 'row',
-  align = 'start',
-  justify = 'start',
-  gap = 'md',
+  className = "",
+  direction = "row",
+  align = "start",
+  justify = "start",
+  gap = "md",
   wrap = false,
 }: FlexContainerProps) {
-  const directionClass = direction === 'column' ? 'flex-col' : 'flex-row';
+  const directionClass = direction === "column" ? "flex-col" : "flex-row";
 
   const alignClasses = {
-    start: 'items-start',
-    center: 'items-center',
-    end: 'items-end',
-    stretch: 'items-stretch',
+    start: "items-start",
+    center: "items-center",
+    end: "items-end",
+    stretch: "items-stretch",
   };
 
   const justifyClasses = {
-    start: 'justify-start',
-    center: 'justify-center',
-    end: 'justify-end',
-    between: 'justify-between',
-    around: 'justify-around',
-    evenly: 'justify-evenly',
+    start: "justify-start",
+    center: "justify-center",
+    end: "justify-end",
+    between: "justify-between",
+    around: "justify-around",
+    evenly: "justify-evenly",
   };
 
   const gapClasses = {
-    none: 'gap-0',
-    sm: 'gap-2',
-    md: 'gap-4',
-    lg: 'gap-6',
-    xl: 'gap-8',
+    none: "gap-0",
+    sm: "gap-2",
+    md: "gap-4",
+    lg: "gap-6",
+    xl: "gap-8",
   };
 
-  const wrapClass = wrap ? 'flex-wrap' : '';
+  const wrapClass = wrap ? "flex-wrap" : "";
 
   return (
     <div
@@ -283,28 +285,26 @@ export function FlexContainer({
 interface StackProps {
   children: React.ReactNode;
   className?: string;
-  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  spacing?: "none" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
 }
 
 export function Stack({
   children,
-  className = '',
-  spacing = 'md',
+  className = "",
+  spacing = "md",
 }: StackProps) {
   const spacingClasses = {
-    none: 'space-y-0',
-    xs: 'space-y-1',
-    sm: 'space-y-2',
-    md: 'space-y-4',
-    lg: 'space-y-6',
-    xl: 'space-y-8',
-    '2xl': 'space-y-12',
+    none: "space-y-0",
+    xs: "space-y-1",
+    sm: "space-y-2",
+    md: "space-y-4",
+    lg: "space-y-6",
+    xl: "space-y-8",
+    "2xl": "space-y-12",
   };
 
   return (
-    <div className={`${spacingClasses[spacing]} ${className}`}>
-      {children}
-    </div>
+    <div className={`${spacingClasses[spacing]} ${className}`}>{children}</div>
   );
 }
 
@@ -312,29 +312,31 @@ export function Stack({
 interface InlineProps {
   children: React.ReactNode;
   className?: string;
-  spacing?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  spacing?: "none" | "xs" | "sm" | "md" | "lg" | "xl";
   wrap?: boolean;
 }
 
 export function Inline({
   children,
-  className = '',
-  spacing = 'md',
+  className = "",
+  spacing = "md",
   wrap = true,
 }: InlineProps) {
   const spacingClasses = {
-    none: 'gap-0',
-    xs: 'gap-1',
-    sm: 'gap-2',
-    md: 'gap-4',
-    lg: 'gap-6',
-    xl: 'gap-8',
+    none: "gap-0",
+    xs: "gap-1",
+    sm: "gap-2",
+    md: "gap-4",
+    lg: "gap-6",
+    xl: "gap-8",
   };
 
-  const wrapClass = wrap ? 'flex-wrap' : '';
+  const wrapClass = wrap ? "flex-wrap" : "";
 
   return (
-    <div className={`flex ${spacingClasses[spacing]} ${wrapClass} ${className}`}>
+    <div
+      className={`flex ${spacingClasses[spacing]} ${wrapClass} ${className}`}
+    >
       {children}
     </div>
   );

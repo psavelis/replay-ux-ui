@@ -48,16 +48,14 @@ export default function SearchInput() {
     }, []);
 
     return (
-        <div className='w-full'>
-            {/* <Button  color="secondary"  className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg shadow-indigo-500/50" endContent={<PlusIcon />}>
-              Upload
-            </Button> */}
+        <div className="w-full">
             <Input
                 aria-label="Search"
                 classNames={{
-                    inputWrapper: "bg-default-100",
-                    input: "text-sm radius-none text-default-500",
+                    inputWrapper: "bg-default-100 h-9",
+                    input: "text-sm text-default-500",
                 }}
+                size="sm"
                 onClick={onOpen}
                 // onFocus={onOpen}
                 // onInput={onOpen}

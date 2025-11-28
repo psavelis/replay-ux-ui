@@ -90,20 +90,11 @@ export const Navbar = () => {
                   "relative px-3 py-1.5 text-sm font-medium transition-all duration-200 rounded-lg",
                   "hover:bg-default-100 hover:text-foreground",
                   "data-[active=true]:text-primary data-[active=true]:bg-primary/10",
-                  electrolize.className
+                  electrolize.className,
+                  item.href === "/match-making" && "bg-gradient-to-br from-[#DCFF37] to-[#B8D930] text-zinc-900 font-semibold hover:shadow-md",
+                  item.href === "/cloud" && "bg-gradient-to-br from-zinc-600 to-zinc-700 text-zinc-100"
                 )}
                 href={item.href}
-                style={{
-                  ...(item.href === "/match-making" && {
-                    background: "linear-gradient(135deg, #DCFF37 0%, #B8D930 100%)",
-                    color: "#1a1a1a",
-                    fontWeight: "600",
-                  }),
-                  ...(item.href === "/cloud" && {
-                    background: "linear-gradient(135deg, #4A5568 0%, #2D3748 100%)",
-                    color: "#F5F5F5",
-                  }),
-                }}
               >
                 {item.label}
               </NextLink>
@@ -112,8 +103,10 @@ export const Navbar = () => {
         </ul>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" justify="end">
-        <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
+      <NavbarContent className="hidden sm:flex gap-2" justify="end">
+        <NavbarItem className="hidden lg:flex w-64 xl:w-80">
+          {searchInput}
+        </NavbarItem>
 
         <NavbarItem className="hidden sm:flex gap-1.5 items-center">
           <NotificationCenter enableRealtime={true} />

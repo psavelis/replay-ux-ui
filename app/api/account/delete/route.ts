@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
  * DELETE /api/account/delete
  * Cancel pending account deletion request
  */
-export async function DELETE(request: NextRequest) {
+export async function DELETE(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -117,7 +117,7 @@ export async function DELETE(request: NextRequest) {
  * GET /api/account/delete
  * Get deletion request status
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 

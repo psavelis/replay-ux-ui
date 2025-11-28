@@ -3,9 +3,9 @@
  * Premium transaction list with filtering, search, and infinite scroll
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   ModalContent,
@@ -21,33 +21,38 @@ import {
   Chip,
   Divider,
   Skeleton,
-} from '@nextui-org/react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Icon } from '@iconify/react';
-import { useReplayApi } from '@/hooks/use-replay-api';
-import { modalAnimations, springs } from '@/lib/design/animations';
+} from "@nextui-org/react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Icon } from "@iconify/react";
+import { useReplayApi } from "@/hooks/use-replay-api";
+import { modalAnimations, springs } from "@/lib/design/animations";
 import type {
   WalletTransaction,
   TransactionType,
   TransactionStatus,
   Currency,
-} from '@/types/replay-api/wallet.types';
-import { formatAmount } from '@/types/replay-api/wallet.types';
+} from "@/types/replay-api/wallet.types";
+import { formatAmount } from "@/types/replay-api/wallet.types";
 
 interface TransactionHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryModalProps) {
+export function TransactionHistoryModal({
+  isOpen,
+  onClose,
+}: TransactionHistoryModalProps) {
   const { sdk } = useReplayApi();
   const [transactions, setTransactions] = useState<WalletTransaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [offset, setOffset] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [typeFilter, setTypeFilter] = useState<TransactionType | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<TransactionStatus | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState<TransactionType | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<TransactionStatus | "all">(
+    "all"
+  );
 
   // Load transactions
   useEffect(() => {
@@ -63,17 +68,21 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
       const result = await sdk.wallet.getTransactions({
         limit: 20,
         offset: currentOffset,
-        type: typeFilter === 'all' ? undefined : typeFilter,
-        status: statusFilter === 'all' ? undefined : statusFilter,
+        type: typeFilter === "all" ? undefined : typeFilter,
+        status: statusFilter === "all" ? undefined : statusFilter,
       });
 
       if (result) {
-        setTransactions(reset ? result.transactions : [...transactions, ...result.transactions]);
+        setTransactions(
+          reset
+            ? result.transactions
+            : [...transactions, ...result.transactions]
+        );
         setHasMore(result.has_more ?? false);
         setOffset(currentOffset + result.transactions.length);
       }
     } catch (error) {
-      console.error('Failed to load transactions:', error);
+      console.error("Failed to load transactions:", error);
     } finally {
       setIsLoading(false);
     }
@@ -98,28 +107,39 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
 
   // Export transactions to CSV
   const exportToCSV = (transactions: WalletTransaction[]) => {
-    const headers = ['Date', 'Type', 'Amount', 'Currency', 'Status', 'Description', 'Transaction ID', 'Blockchain Hash'];
-    const rows = transactions.map(tx => [
+    const headers = [
+      "Date",
+      "Type",
+      "Amount",
+      "Currency",
+      "Status",
+      "Description",
+      "Transaction ID",
+      "Blockchain Hash",
+    ];
+    const rows = transactions.map((tx) => [
       new Date(tx.created_at).toISOString(),
       tx.type,
       tx.amount.toString(),
       tx.currency,
       tx.status,
-      tx.description || '',
+      tx.description || "",
       tx.id,
-      tx.blockchain_tx_hash || ''
+      tx.blockchain_tx_hash || "",
     ]);
 
     const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
-    ].join('\n');
+      headers.join(","),
+      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `transactions_${
+      new Date().toISOString().split("T")[0]
+    }.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -134,8 +154,8 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
       scrollBehavior="inside"
       placement="center"
       classNames={{
-        base: 'bg-background',
-        backdrop: 'bg-black/80 backdrop-blur-sm',
+        base: "bg-background",
+        backdrop: "bg-black/80 backdrop-blur-sm",
       }}
       motionProps={{
         variants: modalAnimations.center,
@@ -146,7 +166,10 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-primary-100 p-2 dark:bg-primary-900/30">
-                <Icon icon="solar:receipt-bold-duotone" className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+                <Icon
+                  icon="solar:receipt-bold-duotone"
+                  className="h-5 w-5 text-primary-600 dark:text-primary-400"
+                />
               </div>
               <div>
                 <h2 className="text-xl font-semibold">Transaction History</h2>
@@ -163,19 +186,28 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
               placeholder="Search transactions..."
               value={searchQuery}
               onValueChange={setSearchQuery}
-              startContent={<Icon icon="solar:magnifer-bold" className="h-4 w-4 text-default-400" />}
+              startContent={
+                <Icon
+                  icon="solar:magnifer-bold"
+                  className="h-4 w-4 text-default-400"
+                />
+              }
               classNames={{
-                base: 'flex-1',
+                base: "flex-1",
               }}
             />
             <div className="flex gap-2">
               <Select
                 placeholder="Type"
                 selectedKeys={typeFilter ? [typeFilter] : []}
-                onChange={(e) => setTypeFilter(e.target.value as TransactionType | 'all')}
-                startContent={<Icon icon="solar:filter-bold" className="h-4 w-4" />}
+                onChange={(e) =>
+                  setTypeFilter(e.target.value as TransactionType | "all")
+                }
+                startContent={
+                  <Icon icon="solar:filter-bold" className="h-4 w-4" />
+                }
                 classNames={{
-                  base: 'w-32',
+                  base: "w-32",
                 }}
                 size="sm"
               >
@@ -202,9 +234,11 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
               <Select
                 placeholder="Status"
                 selectedKeys={statusFilter ? [statusFilter] : []}
-                onChange={(e) => setStatusFilter(e.target.value as TransactionStatus | 'all')}
+                onChange={(e) =>
+                  setStatusFilter(e.target.value as TransactionStatus | "all")
+                }
                 classNames={{
-                  base: 'w-32',
+                  base: "w-32",
                 }}
                 size="sm"
               >
@@ -238,13 +272,22 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
             </div>
           ) : filteredTransactions.length === 0 ? (
             // Empty state
-            <EmptyState hasFilters={searchQuery !== '' || typeFilter !== 'all' || statusFilter !== 'all'} />
+            <EmptyState
+              hasFilters={
+                searchQuery !== "" ||
+                typeFilter !== "all" ||
+                statusFilter !== "all"
+              }
+            />
           ) : (
             // Transaction list
             <div className="space-y-2">
               <AnimatePresence mode="popLayout">
                 {filteredTransactions.map((transaction) => (
-                  <TransactionItem key={transaction.id} transaction={transaction} />
+                  <TransactionItem
+                    key={transaction.id}
+                    transaction={transaction}
+                  />
                 ))}
               </AnimatePresence>
 
@@ -269,7 +312,12 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
           </Button>
           <Button
             color="primary"
-            startContent={<Icon icon="solar:download-minimalistic-bold" className="h-4 w-4" />}
+            startContent={
+              <Icon
+                icon="solar:download-minimalistic-bold"
+                className="h-4 w-4"
+              />
+            }
             onPress={() => exportToCSV(filteredTransactions)}
             isDisabled={filteredTransactions.length === 0}
           >
@@ -283,8 +331,12 @@ export function TransactionHistoryModal({ isOpen, onClose }: TransactionHistoryM
 
 // Transaction Item Component
 function TransactionItem({ transaction }: { transaction: WalletTransaction }) {
-  const isCredit = transaction.type === 'deposit' || transaction.type === 'prize_payout' || transaction.type === 'refund';
-  const isDebit = transaction.type === 'withdrawal' || transaction.type === 'entry_fee';
+  const isCredit =
+    transaction.type === "deposit" ||
+    transaction.type === "prize_payout" ||
+    transaction.type === "refund";
+  const isDebit =
+    transaction.type === "withdrawal" || transaction.type === "entry_fee";
 
   return (
     <motion.div
@@ -302,22 +354,26 @@ function TransactionItem({ transaction }: { transaction: WalletTransaction }) {
               <div
                 className={`rounded-lg p-2 ${
                   isCredit
-                    ? 'bg-success-100 dark:bg-success-900/30'
-                    : 'bg-warning-100 dark:bg-warning-900/30'
+                    ? "bg-success-100 dark:bg-success-900/30"
+                    : "bg-warning-100 dark:bg-warning-900/30"
                 }`}
               >
                 {isCredit ? (
                   <Icon
                     icon="solar:alt-arrow-down-bold"
                     className={`h-5 w-5 ${
-                      isCredit ? 'text-success-600 dark:text-success-400' : 'text-warning-600 dark:text-warning-400'
+                      isCredit
+                        ? "text-success-600 dark:text-success-400"
+                        : "text-warning-600 dark:text-warning-400"
                     }`}
                   />
                 ) : (
                   <Icon
                     icon="solar:alt-arrow-up-bold"
                     className={`h-5 w-5 ${
-                      isDebit ? 'text-warning-600 dark:text-warning-400' : 'text-default-600'
+                      isDebit
+                        ? "text-warning-600 dark:text-warning-400"
+                        : "text-default-600"
                     }`}
                   />
                 )}
@@ -326,16 +382,22 @@ function TransactionItem({ transaction }: { transaction: WalletTransaction }) {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <p className="font-semibold capitalize">
-                    {transaction.type.replace('_', ' ')}
+                    {transaction.type.replace("_", " ")}
                   </p>
-                  {transaction.status && <TransactionStatusBadge status={transaction.status} />}
+                  {transaction.status && (
+                    <TransactionStatusBadge status={transaction.status} />
+                  )}
                 </div>
                 {transaction.description && (
-                  <p className="text-sm text-default-600">{transaction.description}</p>
+                  <p className="text-sm text-default-600">
+                    {transaction.description}
+                  </p>
                 )}
                 <div className="mt-1 flex items-center gap-2 text-xs text-default-500">
                   <Icon icon="solar:calendar-bold" className="h-3 w-3" />
-                  <span>{new Date(transaction.created_at).toLocaleString()}</span>
+                  <span>
+                    {new Date(transaction.created_at).toLocaleString()}
+                  </span>
                 </div>
                 {transaction.blockchain_tx_hash && (
                   <p className="mt-1 font-mono text-xs text-default-400">
@@ -349,29 +411,33 @@ function TransactionItem({ transaction }: { transaction: WalletTransaction }) {
             <div className="text-right">
               <p
                 className={`text-xl font-bold ${
-                  isCredit ? 'text-success-600' : 'text-warning-600'
+                  isCredit ? "text-success-600" : "text-warning-600"
                 }`}
               >
-                {isCredit ? '+' : '-'}{formatAmount(transaction.amount)}
+                {isCredit ? "+" : "-"}
+                {formatAmount(transaction.amount)}
               </p>
               <p className="text-xs text-default-500">{transaction.currency}</p>
             </div>
           </div>
 
           {/* Metadata (if exists) */}
-          {transaction.metadata && Object.keys(transaction.metadata).length > 0 && (
-            <>
-              <Divider />
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                {Object.entries(transaction.metadata).map(([key, value]) => (
-                  <div key={key}>
-                    <span className="text-default-500">{key.replace(/_/g, ' ')}: </span>
-                    <span className="font-medium">{String(value)}</span>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+          {transaction.metadata &&
+            Object.keys(transaction.metadata).length > 0 && (
+              <>
+                <Divider />
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  {Object.entries(transaction.metadata).map(([key, value]) => (
+                    <div key={key}>
+                      <span className="text-default-500">
+                        {key.replace(/_/g, " ")}:{" "}
+                      </span>
+                      <span className="font-medium">{String(value)}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
         </CardBody>
       </Card>
     </motion.div>
@@ -382,24 +448,24 @@ function TransactionItem({ transaction }: { transaction: WalletTransaction }) {
 function TransactionStatusBadge({ status }: { status: TransactionStatus }) {
   const config = {
     pending: {
-      color: 'warning' as const,
-      icon: 'solar:clock-circle-bold',
-      label: 'Pending',
+      color: "warning" as const,
+      icon: "solar:clock-circle-bold",
+      label: "Pending",
     },
     confirmed: {
-      color: 'success' as const,
-      icon: 'solar:check-circle-bold',
-      label: 'Confirmed',
+      color: "success" as const,
+      icon: "solar:check-circle-bold",
+      label: "Confirmed",
     },
     failed: {
-      color: 'danger' as const,
-      icon: 'solar:close-circle-bold',
-      label: 'Failed',
+      color: "danger" as const,
+      icon: "solar:close-circle-bold",
+      label: "Failed",
     },
     cancelled: {
-      color: 'default' as const,
-      icon: 'solar:danger-circle-bold',
-      label: 'Cancelled',
+      color: "default" as const,
+      icon: "solar:danger-circle-bold",
+      label: "Cancelled",
     },
   }[status];
 
@@ -449,16 +515,19 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
       className="flex flex-col items-center justify-center gap-4 py-12"
     >
       <div className="rounded-full bg-default-100 p-6 dark:bg-default-50">
-        <Icon icon="solar:receipt-bold-duotone" className="h-12 w-12 text-default-400" />
+        <Icon
+          icon="solar:receipt-bold-duotone"
+          className="h-12 w-12 text-default-400"
+        />
       </div>
       <div className="text-center">
         <h3 className="text-lg font-semibold">
-          {hasFilters ? 'No Matching Transactions' : 'No Transactions Yet'}
+          {hasFilters ? "No Matching Transactions" : "No Transactions Yet"}
         </h3>
         <p className="text-sm text-default-500">
           {hasFilters
-            ? 'Try adjusting your filters or search query'
-            : 'Your transaction history will appear here'}
+            ? "Try adjusting your filters or search query"
+            : "Your transaction history will appear here"}
         </p>
       </div>
     </motion.div>

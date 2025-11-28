@@ -1,14 +1,14 @@
-import pino from 'pino';
-import { IncomingMessage } from 'http';
+import pino from "pino";
+import { IncomingMessage } from "http";
 
-const isProd = process.env.NODE_ENV === 'production'
+const isProd = process.env.NODE_ENV === "production";
 
 // TODO: remove tight cloupling
 export type Loggable = pino.Logger & {
   withRequest(req: IncomingMessage): pino.Logger;
 };
 
-const logLevel = isProd ? 'info' : 'debug';
+const logLevel = isProd ? "info" : "debug";
 
 // Only use pino-pretty in development, not in production builds
 const pinoConfig: pino.LoggerOptions = {
@@ -24,4 +24,3 @@ export const logger: any = pino(pinoConfig);
 logger.withRequest = (req: any) => {
   return req ? logger.child({ req }) : logger;
 };
-

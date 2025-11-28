@@ -15,7 +15,7 @@ const BACKEND_URL = process.env.REPLAY_API_URL || 'http://localhost:30800';
  * POST /api/account/data-export
  * Request a new data export
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
  * GET /api/account/data-export
  * Get current data export request status
  */
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 

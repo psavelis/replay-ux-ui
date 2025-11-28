@@ -1,11 +1,18 @@
 import React from "react";
-import {Button} from "@nextui-org/react";
-import { cl } from "@/components/cl";
+import { Button } from "@nextui-org/react";
+import clsx from "clsx";
 
-export default function App(props: any) {
+interface BattleButtonProps extends React.ComponentProps<typeof Button> {
+  children?: React.ReactNode;
+}
+
+export default function BattleButton({ className, children, ...props }: BattleButtonProps) {
   return (
-    <div>
-        <Button  radius="full" {...props} className="battle-button" />
-    </div>
+    <Button
+      {...props}
+      className={clsx("battle-button", className)}
+    >
+      {children}
+    </Button>
   );
 }
