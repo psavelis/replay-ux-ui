@@ -2,24 +2,14 @@
 
 > Next.js 14+ application for the LeetGaming competitive gaming platform
 
+**Last Updated**: November 29, 2025
+
 ## Quick Links
 
-- [Architecture Overview](./architecture/OVERVIEW.md) - System design and patterns
-- [SDK Pattern](./architecture/SDK_PATTERN.md) - TypeScript SDK architecture
-- [Pages Reference](./pages/IMPLEMENTED.md) - All implemented routes
-- [Component Library](./components/LIBRARY.md) - UI component catalog
-- [Development Setup](./development/SETUP.md) - Local environment setup
-- [E2E Testing](./development/E2E_TESTING.md) - Playwright test guide
-
----
-
-## Related Documentation
-
-| Repository | Description | Link |
-|------------|-------------|------|
-| Root | Project overview | [docs/README.md](../../docs/README.md) |
-| replay-api | Backend API | [replay-api/docs/README.md](../../replay-api/docs/README.md) |
-| k8s | Infrastructure | [docs/architecture/DEPLOYMENT.md](../../docs/architecture/DEPLOYMENT.md) |
+- [Status Report](./STATUS_REPORT.md) - Current implementation status
+- [Implementation Plan](./IMPLEMENTATION_PLAN.md) - Development roadmap
+- [UX Implementation](./UX_IMPLEMENTATION.md) - UI/UX documentation
+- [Next Steps](./NEXT_STEPS.md) - Immediate priorities
 
 ---
 
@@ -28,20 +18,27 @@
 ```
 leetgaming-pro-web/
 ├── app/                    # Next.js App Router pages
-│   ├── (auth)/            # Auth-required routes
 │   ├── api/               # API routes (proxy to backend)
-│   └── [feature]/         # Feature pages
+│   ├── match-making/      # Matchmaking wizard
+│   ├── tournaments/       # Tournament pages
+│   ├── teams/             # Team/squad management
+│   ├── players/           # Player profiles
+│   ├── replays/           # Replay management
+│   ├── wallet/            # Wallet/payments
+│   ├── ranked/            # Ranked mode
+│   ├── leaderboards/      # Global rankings
+│   └── [other pages]/     # Additional routes
 ├── components/            # React components
-│   ├── ui/               # Base UI components
-│   ├── wallet/           # Wallet-related components
-│   ├── checkout/         # Payment flow components
-│   ├── match-making/     # Matchmaking wizard
-│   ├── tournaments/      # Tournament UI
-│   └── replay/           # Replay viewer components
+│   ├── match-making/      # Matchmaking wizard components
+│   ├── tournaments/       # Tournament components
+│   ├── teams/             # Team components
+│   ├── players/           # Player components
+│   ├── wallet/            # Wallet components
+│   └── ui/                # Base UI components
 ├── hooks/                 # Custom React hooks
 ├── lib/                   # Utility libraries
 ├── types/                 # TypeScript type definitions
-│   └── replay-api/       # Backend API types & SDK
+│   └── replay-api/        # Backend API types & SDK
 ├── config/               # Configuration files
 ├── public/               # Static assets
 └── e2e/                  # Playwright E2E tests
@@ -60,28 +57,49 @@ leetgaming-pro-web/
 | NextUI | 2.x | Component library |
 | NextAuth.js | 4.x | Authentication |
 | Playwright | 1.x | E2E testing |
-| Jest | 29.x | Unit testing |
 
 ---
 
 ## Key Features
 
-### Implemented
+### Implemented ✅
 
 - **Authentication**: Steam OAuth, Google OAuth via NextAuth
 - **Wallet System**: Balance display, transaction history
 - **Checkout Flow**: Stripe integration, payment processing
-- **Matchmaking Wizard**: Multi-step lobby creation
+- **Matchmaking Wizard**: Multi-step lobby creation with real SDK
+- **Tournament System**: Bracket display, listing, details
+- **Player Profiles**: Search, view, creation modal
+- **Team Management**: Create, search, join squads
 - **Replay Management**: Upload, list, view replays
-- **Tournament View**: Bracket display, registration
-- **Player Profiles**: Search, view player stats
-- **Team Management**: Create, manage squads
+- **Ranked Mode**: Rating display, match history
+- **Leaderboards**: Player and team rankings
 
-### In Development
+### SDK Integration ✅
 
-- **Real-time Lobby**: WebSocket updates
-- **Analytics Dashboard**: Performance charts
-- **Replay Player**: Timeline, event viewer
+All major pages now use real SDK integration:
+- `MatchmakingAPI` - Queue management with polling
+- `SquadAPI` - Squad CRUD operations
+- `PlayerProfileAPI` - Player management
+- `TournamentAPI` - Tournament operations
+- `WalletAPI` - Financial operations
+
+---
+
+## E2E Test Coverage
+
+| Test Suite | Status | Tests |
+|------------|--------|-------|
+| Homepage | ✅ | Basic smoke tests |
+| Auth | ✅ | Login/logout flows |
+| Matchmaking | ✅ | Wizard flow tests |
+| Tournaments | ✅ | Listing, details, registration |
+| Teams | ✅ | Search, create, filters |
+| Players | ✅ | Search, profiles |
+| Ranked | ✅ | Stats, match history |
+| Leaderboards | ✅ | Rankings, filters |
+| Payments | ✅ | Checkout flows |
+| Replays | ✅ | Upload, listing |
 
 ---
 
@@ -94,10 +112,9 @@ npm install
 # Start development server
 npm run dev
 
-# Open http://localhost:3000
+# Run E2E tests
+npm run e2e
 ```
-
-See [Development Setup](./development/SETUP.md) for detailed instructions.
 
 ---
 
@@ -107,20 +124,11 @@ Required variables in `.env.local`:
 
 ```env
 # Backend API
-NEXT_PUBLIC_REPLAY_API_URL=http://localhost:30800
+NEXT_PUBLIC_REPLAY_API_URL=http://localhost:8080
 
 # Authentication
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-secret-key
-
-# OAuth Providers
-GOOGLE_CLIENT_ID=...
-GOOGLE_CLIENT_SECRET=...
-STEAM_API_KEY=...
-
-# Stripe
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
 ```
 
 ---
@@ -131,12 +139,6 @@ STRIPE_SECRET_KEY=sk_test_...
 |---------|-------------|
 | `npm run dev` | Start development server |
 | `npm run build` | Production build |
-| `npm run start` | Start production server |
 | `npm run lint` | Run ESLint |
-| `npm run test` | Run Jest tests |
 | `npm run e2e` | Run Playwright E2E tests |
-| `npm run type-check` | TypeScript check |
-
----
-
-**Last Updated**: November 2025
+| `npm run e2e:ui` | Run E2E with UI |
