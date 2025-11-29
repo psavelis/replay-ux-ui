@@ -14,8 +14,8 @@ test.describe('Players Page', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000);
 
-    // Verify page has players heading
-    const playersHeading = page.getByRole('heading', { name: /players/i });
+    // Verify page has Player Profiles heading
+    const playersHeading = page.getByRole('heading', { name: /player profiles/i });
     await expect(playersHeading).toBeVisible({ timeout: 10000 });
   });
 
@@ -80,7 +80,7 @@ test.describe('Players Page', () => {
     await page.waitForTimeout(5000);
 
     // Check that page content is visible on mobile
-    const playersHeading = page.getByRole('heading', { name: /players/i });
+    const playersHeading = page.getByRole('heading', { name: /player profiles/i });
     const hasHeading = await playersHeading.isVisible().catch(() => false);
     expect(hasHeading).toBe(true);
   });
