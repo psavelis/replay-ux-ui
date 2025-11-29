@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import {
   Modal,
   ModalContent,
@@ -30,10 +31,16 @@ import {
 } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
 import AvatarUploader from '@/components/avatar/avatar-uploader';
+import { ReplayAPISDK } from '@/types/replay-api/sdk';
+import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
+import { logger } from '@/lib/logger';
+
+const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
 interface PlayerCreationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: (profile: any) => void;
 }
 
 const GAMES = [
@@ -57,10 +64,12 @@ const RANKS = {
   default: ['Beginner', 'Intermediate', 'Advanced', 'Expert', 'Pro'],
 };
 
-export function PlayerCreationModal({ isOpen, onClose }: PlayerCreationModalProps) {
+export function PlayerCreationModal({ isOpen, onClose, onSuccess }: PlayerCreationModalProps) {
+  const router = useRouter();
   const { data: session } = useSession();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -130,12 +139,27 @@ export function PlayerCreationModal({ isOpen, onClose }: PlayerCreationModalProp
     if (!validateStep(step)) return;
 
     setIsSubmitting(true);
-    try {
-      // TODO: Submit to API
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
+    setSubmitError(null);
 
-      console.log('Player profile created:', formData);
-      onClose();
+    try {
+      // Create player profile via SDK
+      const profile = await sdk.playerProfiles.createPlayerProfile({
+        game_id: formData.game,
+        nickname: formData.displayName,
+        slug_uri: formData.slug,
+        roles: formData.role ? [formData.role] : undefined,
+        description: formData.bio,
+      });
+
+      if (!profile) {
+        throw new Error('Failed to create player profile');
+      }
+
+      logger.info('Player profile created successfully', {
+        profileId: profile.id,
+        nickname: formData.displayName
+      });
+
       // Reset form
       setStep(1);
       setFormData({
@@ -154,8 +178,15 @@ export function PlayerCreationModal({ isOpen, onClose }: PlayerCreationModalProp
         twitchUsername: '',
         twitterUsername: '',
       });
-    } catch (error) {
-      console.error('Failed to create profile:', error);
+
+      onSuccess?.(profile);
+      onClose();
+
+      // Navigate to the new profile
+      router.push(`/players/${formData.slug}`);
+    } catch (error: any) {
+      logger.error('Failed to create player profile', error);
+      setSubmitError(error.message || 'Failed to create profile. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

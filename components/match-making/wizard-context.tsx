@@ -151,6 +151,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         player_mmr: 1500,
       });
 
+      if (!response) {
+        throw new Error("Failed to join matchmaking queue");
+      }
+
       setState((prev) => ({
         ...prev,
         matchmaking: {

@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "@nextui-org/react";
+import { Button, ButtonProps } from "@nextui-org/react";
 import clsx from "clsx";
 
-interface BattleButtonProps extends React.ComponentProps<typeof Button> {
+interface BattleButtonProps extends ButtonProps {
   children?: React.ReactNode;
 }
 
