@@ -12,6 +12,8 @@ import type {
 } from './matchmaking.types';
 
 export class MatchmakingAPI {
+  private pollingInterval: NodeJS.Timeout | null = null;
+
   constructor(private client: ReplayApiClient) {}
 
   /**
@@ -24,6 +26,29 @@ export class MatchmakingAPI {
       return null;
     }
     return response.data || null;
+  }
+
+  /**
+   * Start polling for session status updates
+   */
+  startPolling(sessionId: string, callback: (status: SessionStatusResponse) => void, intervalMs: number = 2000): void {
+    this.stopPolling();
+    this.pollingInterval = setInterval(async () => {
+      const status = await this.getSessionStatus(sessionId);
+      if (status) {
+        callback(status);
+      }
+    }, intervalMs);
+  }
+
+  /**
+   * Stop polling for session status
+   */
+  stopPolling(): void {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
+    }
   }
 
   /**
@@ -65,6 +90,26 @@ export class MatchmakingAPI {
       return null;
     }
     return response.data || null;
+  }
+
+  /**
+   * Subscribe to real-time pool statistics updates
+   * Returns unsubscribe function
+   */
+  subscribeToPoolUpdates(
+    gameId: string,
+    callback: (stats: PoolStatsResponse) => void,
+    intervalMs: number = 5000
+  ): () => void {
+    const interval = setInterval(async () => {
+      const stats = await this.getPoolStats(gameId);
+      if (stats) {
+        callback(stats);
+      }
+    }, intervalMs);
+
+    // Return unsubscribe function
+    return () => clearInterval(interval);
   }
 }
 

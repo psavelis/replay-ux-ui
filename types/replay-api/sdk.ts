@@ -117,6 +117,31 @@ export class SquadAPI {
     const response = await this.client.post<Squad[]>('/squads/search', filters);
     return response.data || [];
   }
+
+  /**
+   * Get team leaderboard - top squads sorted by rating
+   */
+  async getLeaderboard(filters: {
+    game_id?: string;
+    region?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<Squad[]> {
+    const params = new URLSearchParams();
+    if (filters.game_id) params.append('game_id', filters.game_id);
+    if (filters.region) params.append('region', filters.region);
+    params.append('sort', 'rating');
+    params.append('order', 'desc');
+    params.append('limit', String(filters.limit || 20));
+    if (filters.offset) params.append('offset', String(filters.offset));
+
+    const response = await this.client.post<Squad[]>('/squads/search', {
+      game_id: filters.game_id,
+      limit: filters.limit || 20,
+      offset: filters.offset || 0,
+    });
+    return response.data || [];
+  }
 }
 
 /**
@@ -164,6 +189,27 @@ export class PlayerProfileAPI {
     nickname?: string;
   }): Promise<PlayerProfile[]> {
     const response = await this.client.post<PlayerProfile[]>('/players/search', filters);
+    return response.data || [];
+  }
+
+  /**
+   * Get player leaderboard - top players sorted by rating
+   */
+  async getLeaderboard(filters: {
+    game_id?: string;
+    region?: string;
+    limit?: number;
+    offset?: number;
+  }): Promise<PlayerProfile[]> {
+    const params = new URLSearchParams();
+    if (filters.game_id) params.append('game_id', filters.game_id);
+    if (filters.region) params.append('region', filters.region);
+    params.append('sort', 'rating');
+    params.append('order', 'desc');
+    params.append('limit', String(filters.limit || 50));
+    if (filters.offset) params.append('offset', String(filters.offset));
+
+    const response = await this.client.get<PlayerProfile[]>(`/players?${params.toString()}`);
     return response.data || [];
   }
 }

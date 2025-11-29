@@ -84,6 +84,24 @@ function transformTeams(teams: any[]): GlobalSearchResult[] {
 }
 
 /**
+ * Transform matches to search results
+ */
+function transformMatches(matches: any[]): GlobalSearchResult[] {
+  return matches.map((match) => ({
+    type: 'match' as const,
+    id: match.id || match.match_id,
+    title: match.title || `Match ${match.id?.substring(0, 8) || 'Unknown'}`,
+    description: `${match.game_id?.toUpperCase() || 'CS2'} • ${match.status || 'Completed'} • ${match.played_at ? new Date(match.played_at).toLocaleDateString() : 'N/A'}`,
+    href: `/match/${match.id || match.match_id}`,
+    metadata: {
+      gameId: match.game_id,
+      status: match.status,
+      playedAt: match.played_at,
+    },
+  }));
+}
+
+/**
  * Global search hook
  */
 export function useGlobalSearch(): UseGlobalSearchResult {
@@ -115,10 +133,11 @@ export function useGlobalSearch(): UseGlobalSearchResult {
       const commonFetchInit: RequestInit = { signal: controller.signal };
 
       // Execute all searches in parallel for better performance
-      const [replaysResult, playersResult, squadsResult] = await Promise.allSettled([
+      const [replaysResult, playersResult, squadsResult, matchesResult] = await Promise.allSettled([
         sdk.replayFiles.searchReplayFiles({ search_term: searchTerm }),
         sdk.playerProfiles.searchPlayerProfiles({ nickname: searchTerm }),
         sdk.squads.searchSquads({ name: searchTerm }),
+        sdk.matches.searchMatches('cs2', { search_term: searchTerm }),
       ]);
 
       // Process replays
@@ -140,6 +159,13 @@ export function useGlobalSearch(): UseGlobalSearchResult {
         allResults.push(...transformTeams(squadsResult.value.slice(0, 5)));
       } else if (squadsResult.status === 'rejected') {
         logger.warn('Team search failed:', squadsResult.reason);
+      }
+
+      // Process matches
+      if (matchesResult.status === 'fulfilled' && matchesResult.value?.length > 0) {
+        allResults.push(...transformMatches(matchesResult.value.slice(0, 5)));
+      } else if (matchesResult.status === 'rejected') {
+        logger.warn('Match search failed:', matchesResult.reason);
       }
 
       setResults(allResults);
