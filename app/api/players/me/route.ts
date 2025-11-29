@@ -8,6 +8,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]/options';
 import { forwardAuthenticatedRequest } from '@/lib/auth/server-auth';
 
+export const dynamic = 'force-dynamic';
+
 const BACKEND_URL = process.env.REPLAY_API_URL || 'http://localhost:30800';
 
 /**
