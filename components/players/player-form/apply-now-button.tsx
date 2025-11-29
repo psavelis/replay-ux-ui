@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Modal,
   ModalContent,
@@ -22,6 +25,7 @@ import { Icon } from "@iconify/react";
 import AvatarUploader from "@/components/avatar/avatar-uploader";
 import { UserIcon } from "@/components/icons";
 import { useSession } from "next-auth/react";
+import { logger } from "@/lib/logger";
 
 const games = [
   { id: 1, name: "Counter-Strike: Global Offensive", icon: "https://avatars.githubusercontent.com/u/168373383" },
@@ -35,17 +39,24 @@ const games = [
 const headingClasses = "flex w-full sticky top-1 z-10 py-1.5 px-2 pt-4 bg-default-100 shadow-small rounded-small";
 
 export default function App() {
+  const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { data: session } = useSession();
   const [displayName, setDisplayName] = useState("");
   const [slug, setSlug] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const handleOpen = () => {
     if (!session) {
-      window.location.href = '/signin';
+      router.push('/signin');
     } else {
       onOpen();
     }
+  };
+
+  const handleAvatarUpload = (file: File) => {
+    setAvatarFile(file);
+    logger.info("Avatar selected", { fileName: file.name, size: file.size });
   };
 
   const onSubmit = (e: any) => {
@@ -102,7 +113,7 @@ export default function App() {
                   </div>
                   <div className="flex w-full gap-4">
                     <div className="flex flex-col gap-1 w-1/2">
-                      <AvatarUploader onUpload={(file) => console.log(file)} />
+                      <AvatarUploader onUpload={handleAvatarUpload} />
                     </div>
 
                     <div className="flex flex-col gap-1 w-full">

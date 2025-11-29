@@ -1,30 +1,41 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link, Dropdown, Select, Chip, SelectItem, Avatar, Textarea, Tabs, Tab } from "@nextui-org/react";
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Input, Select, Chip, SelectItem, Avatar, Textarea, Tabs, Tab } from "@nextui-org/react";
 import { Form } from "@nextui-org/form";
 import { Icon } from "@iconify/react";
 import AvatarUploader from "@/components/avatar/avatar-uploader";
-import AddMemberButton from "./add-member-button";
 import PlayerSearchInput from "@/components/players/player-search-input/player-search-modal";
 import { useSession } from "next-auth/react";
+import { logger } from "@/lib/logger";
 
 const games = [
-  { id: 1, name: "Counter-Strike: Global Offensive", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 2, name: "Valorant", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 3, name: "League of Legends", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 4, name: "Dota 2", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 5, name: "Overwatch", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 6, name: "Rainbow Six Siege", icon: "https://avatars.githubusercontent.com/u/168373383" },
+  { id: 1, name: "Counter-Strike 2", icon: "https://i.pravatar.cc/150?img=1" },
+  { id: 2, name: "Valorant", icon: "https://i.pravatar.cc/150?img=2" },
+  { id: 3, name: "League of Legends", icon: "https://i.pravatar.cc/150?img=3" },
+  { id: 4, name: "Dota 2", icon: "https://i.pravatar.cc/150?img=4" },
+  { id: 5, name: "Overwatch 2", icon: "https://i.pravatar.cc/150?img=5" },
+  { id: 6, name: "Rainbow Six Siege", icon: "https://i.pravatar.cc/150?img=6" },
 ];
 
 export default function App() {
+  const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { data: session } = useSession();
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
 
   const handleOpen = () => {
     if (!session) {
-      window.location.href = '/signin';
+      router.push('/signin');
     } else {
       onOpen();
     }
+  };
+
+  const handleAvatarUpload = (file: File) => {
+    setAvatarFile(file);
+    logger.info("Squad avatar selected", { fileName: file.name, size: file.size });
   };
 
   const onSubmit = (e: any) => {
@@ -95,7 +106,7 @@ export default function App() {
                       </div>
                       <div className="flex w-full gap-4">
                         <div className="flex flex-col gap-1 w-1/2">
-                          <AvatarUploader onUpload={(file) => console.log(file)} />
+                          <AvatarUploader onUpload={handleAvatarUpload} />
                         </div>
 
                         <div className="flex flex-col gap-1 w-full">

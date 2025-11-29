@@ -26,145 +26,138 @@ import { logger } from "@/lib/logger";
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+// Featured esports teams with realistic data
 const Teams: Team[] = [
   {
-    name: "Et3rn1ty*",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    tag: "ETNY",
+    name: "Phoenix Rising",
+    avatar: "https://i.pravatar.cc/150?img=68",
+    tag: "PHNX",
     squad: {
-        title: "CS 1.5",
-        description: "Legacy counter-strike players from the early 2000s.",
-        members: [
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-        ],
+      title: "CS2",
+      description: "North American Counter-Strike 2 Champions",
+      members: [
+        { nickname: "Blaze", avatar: "https://i.pravatar.cc/150?img=11" },
+        { nickname: "Frost", avatar: "https://i.pravatar.cc/150?img=12" },
+        { nickname: "Storm", avatar: "https://i.pravatar.cc/150?img=13" },
+        { nickname: "Shadow", avatar: "https://i.pravatar.cc/150?img=14" },
+        { nickname: "Viper", avatar: "https://i.pravatar.cc/150?img=15" },
+      ],
     },
-    bio: "Legacy counter-strike players from the early 2000s.",
+    bio: "2024 NA Regional Champions. Known for aggressive playstyle and exceptional coordination. Currently ranked #3 in North America.",
     social: {
-      twitter: "@et3rn1ty-clan",
-      linkedin: "@et3rn1ty-clan",
-      github: "@et3rn1ty-clan",
+      twitter: "@PhoenixRisingGG",
+      linkedin: "phoenixrisinggg",
+      github: "@phoenixrising",
     },
   },
   {
-    name: "1337gg",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    tag: "1337",
+    name: "Arctic Wolves",
+    avatar: "https://i.pravatar.cc/150?img=52",
+    tag: "ARWF",
     squad: {
-        title: "CS:2",
-        description: "Counter-Strike 2",
-        members: [
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-        ],
+      title: "CS2",
+      description: "European Counter-Strike 2 Elite",
+      members: [
+        { nickname: "Glacier", avatar: "https://i.pravatar.cc/150?img=21" },
+        { nickname: "Tundra", avatar: "https://i.pravatar.cc/150?img=22" },
+        { nickname: "Polar", avatar: "https://i.pravatar.cc/150?img=23" },
+        { nickname: "Avalanche", avatar: "https://i.pravatar.cc/150?img=24" },
+        { nickname: "Frostbite", avatar: "https://i.pravatar.cc/150?img=25" },
+      ],
     },
-    bio: "Our Featured Elite Counter-Strike players. The dream team sponsored by LeetGamingPRO.",
+    bio: "EU powerhouse with a strategic approach. Winners of 3 major LAN events in 2024. Known for their incredible AWP plays.",
     social: {
-      twitter: "@1337gamingpro",
-      linkedin: "@1337gamingpro",
-      github: "@1337gamingpro",
+      twitter: "@ArcticWolvesGG",
+      linkedin: "arcticwolvesgg",
+      github: "@arcticwolves",
     },
   },
   {
-    name: "M14UZ*",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    tag: "M14U",
+    name: "Neon Dynasty",
+    avatar: "https://i.pravatar.cc/150?img=60",
+    tag: "NEON",
     squad: {
-        title: "VLRNT",
-        description: "Valorant",
-        members: [
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-        ],
+      title: "Valorant",
+      description: "APAC Valorant Masters",
+      members: [
+        { nickname: "Pulse", avatar: "https://i.pravatar.cc/150?img=31" },
+        { nickname: "Circuit", avatar: "https://i.pravatar.cc/150?img=32" },
+        { nickname: "Voltage", avatar: "https://i.pravatar.cc/150?img=33" },
+        { nickname: "Spark", avatar: "https://i.pravatar.cc/150?img=34" },
+        { nickname: "Amp", avatar: "https://i.pravatar.cc/150?img=35" },
+      ],
     },
-    bio: "Lets have some fun and play some Valorant.",
+    bio: "Rising stars from the APAC region. Known for innovative agent compositions and clutch performances. VCT Challengers finalists.",
     social: {
-      twitter: "@m14uz1nh0s",
-      linkedin: "m14uz1nh0s",
-      github: "@m14uz1nh0s",
+      twitter: "@NeonDynastyGG",
+      linkedin: "neondynasty",
+      github: "@neondynasty",
     },
   },
   {
-    name: "HOLYvESSELS",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    tag: "HVVS",
+    name: "Shadow Legion",
+    avatar: "https://i.pravatar.cc/150?img=57",
+    tag: "SHDW",
     squad: {
-        title: "Warframe",
-        description: "Warframe",
-        members: [
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-          {
-            nickname: "et3rn1ty",
-            avatar: "https://avatars.githubusercontent.com/u/168373383",
-          },
-        ],
+      title: "Valorant",
+      description: "Americas Valorant Elite",
+      members: [
+        { nickname: "Phantom", avatar: "https://i.pravatar.cc/150?img=41" },
+        { nickname: "Specter", avatar: "https://i.pravatar.cc/150?img=42" },
+        { nickname: "Wraith", avatar: "https://i.pravatar.cc/150?img=43" },
+        { nickname: "Shade", avatar: "https://i.pravatar.cc/150?img=44" },
+        { nickname: "Eclipse", avatar: "https://i.pravatar.cc/150?img=45" },
+      ],
     },
-    bio: "...",
+    bio: "Tactical excellence meets raw mechanical skill. Multiple tournament wins across NA and SA regions. Masters in utility usage.",
     social: {
-      twitter: "@x",
-      linkedin: "x",
-      github: "@x",
+      twitter: "@ShadowLegionGG",
+      linkedin: "shadowlegion",
+      github: "@shadowlegion",
+    },
+  },
+  {
+    name: "Crimson Tide",
+    avatar: "https://i.pravatar.cc/150?img=65",
+    tag: "CRMS",
+    squad: {
+      title: "CS2",
+      description: "LATAM Counter-Strike 2 Champions",
+      members: [
+        { nickname: "Inferno", avatar: "https://i.pravatar.cc/150?img=51" },
+        { nickname: "Ember", avatar: "https://i.pravatar.cc/150?img=53" },
+        { nickname: "Blitz", avatar: "https://i.pravatar.cc/150?img=54" },
+        { nickname: "Thunder", avatar: "https://i.pravatar.cc/150?img=55" },
+        { nickname: "Riot", avatar: "https://i.pravatar.cc/150?img=56" },
+      ],
+    },
+    bio: "LATAM's pride. Explosive gameplay and passionate fanbase. 2024 South American Championship winners with an undefeated streak.",
+    social: {
+      twitter: "@CrimsonTideGG",
+      linkedin: "crimsontidegg",
+      github: "@crimsontide",
+    },
+  },
+  {
+    name: "Quantum Force",
+    avatar: "https://i.pravatar.cc/150?img=67",
+    tag: "QNTM",
+    squad: {
+      title: "Valorant",
+      description: "EMEA Valorant Contenders",
+      members: [
+        { nickname: "Neutrino", avatar: "https://i.pravatar.cc/150?img=61" },
+        { nickname: "Quark", avatar: "https://i.pravatar.cc/150?img=62" },
+        { nickname: "Photon", avatar: "https://i.pravatar.cc/150?img=63" },
+        { nickname: "Ion", avatar: "https://i.pravatar.cc/150?img=64" },
+        { nickname: "Proton", avatar: "https://i.pravatar.cc/150?img=66" },
+      ],
+    },
+    bio: "Precision meets creativity. This EMEA squad is known for unconventional strategies that catch opponents off-guard every time.",
+    social: {
+      twitter: "@QuantumForceGG",
+      linkedin: "quantumforce",
+      github: "@quantumforce",
     },
   },
 ];
