@@ -31,6 +31,11 @@ import {
 import { Icon } from '@iconify/react';
 import { PageContainer } from '@/components/layouts/centered-content';
 import { ShareButton } from '@/components/share/share-button';
+import { ReplayAPISDK } from '@/types/replay-api/sdk';
+import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
+import { logger } from '@/lib/logger';
+
+const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
 interface TeamMember {
   id: string;
@@ -80,112 +85,121 @@ export default function TeamDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Mock data for fallback
+  const getMockTeam = (): TeamProfile => ({
+    id: teamId,
+    name: 'Elite Gamers',
+    tag: '[EG]',
+    logo: `https://i.pravatar.cc/200?u=team-${teamId}`,
+    description:
+      'Competitive CS2 team looking to dominate the esports scene. We focus on strategy, teamwork, and continuous improvement.',
+    founded: '2023-03-15',
+    region: 'North America',
+    status: 'recruiting',
+    members: [
+      {
+        id: '1',
+        nickname: 'Captain_Alpha',
+        avatar: 'https://i.pravatar.cc/100?u=1',
+        role: 'Captain / IGL',
+        join_date: '2023-03-15',
+        stats: { matches: 156, wins: 98, kd: 1.32 },
+      },
+      {
+        id: '2',
+        nickname: 'FragMaster',
+        avatar: 'https://i.pravatar.cc/100?u=2',
+        role: 'Entry Fragger',
+        join_date: '2023-03-20',
+        stats: { matches: 142, wins: 89, kd: 1.45 },
+      },
+      {
+        id: '3',
+        nickname: 'AWP_God',
+        avatar: 'https://i.pravatar.cc/100?u=3',
+        role: 'AWPer',
+        join_date: '2023-04-01',
+        stats: { matches: 138, wins: 84, kd: 1.28 },
+      },
+      {
+        id: '4',
+        nickname: 'Support_Pro',
+        avatar: 'https://i.pravatar.cc/100?u=4',
+        role: 'Support',
+        join_date: '2023-04-10',
+        stats: { matches: 135, wins: 82, kd: 1.12 },
+      },
+    ],
+    stats: {
+      matches_played: 156,
+      wins: 98,
+      losses: 58,
+      win_streak: 5,
+      ranking: 42,
+      rating: 1825,
+    },
+    recent_matches: [
+      { id: '1', date: '2024-01-15', opponent: 'Team Fortress', result: 'win', score: '16-12', map: 'de_inferno' },
+      { id: '2', date: '2024-01-14', opponent: 'Cyber Warriors', result: 'win', score: '16-10', map: 'de_mirage' },
+      { id: '3', date: '2024-01-13', opponent: 'Pro Legends', result: 'loss', score: '14-16', map: 'de_dust2' },
+      { id: '4', date: '2024-01-12', opponent: 'Night Hawks', result: 'win', score: '16-8', map: 'de_nuke' },
+      { id: '5', date: '2024-01-11', opponent: 'Steel Titans', result: 'win', score: '16-13', map: 'de_ancient' },
+    ],
+  });
+
   useEffect(() => {
     async function fetchTeamProfile() {
       try {
-        // Mock data for now
-        const mockTeam: TeamProfile = {
-          id: teamId,
-          name: 'Elite Gamers',
-          tag: '[EG]',
-          logo: `https://i.pravatar.cc/200?u=team-${teamId}`,
-          description:
-            'Competitive CS2 team looking to dominate the esports scene. We focus on strategy, teamwork, and continuous improvement.',
-          founded: '2023-03-15',
-          region: 'North America',
-          status: 'recruiting',
-          members: [
-            {
-              id: '1',
-              nickname: 'Captain_Alpha',
-              avatar: 'https://i.pravatar.cc/100?u=1',
-              role: 'Captain / IGL',
-              join_date: '2023-03-15',
-              stats: { matches: 156, wins: 98, kd: 1.32 },
-            },
-            {
-              id: '2',
-              nickname: 'FragMaster',
-              avatar: 'https://i.pravatar.cc/100?u=2',
-              role: 'Entry Fragger',
-              join_date: '2023-03-20',
-              stats: { matches: 142, wins: 89, kd: 1.45 },
-            },
-            {
-              id: '3',
-              nickname: 'AWP_God',
-              avatar: 'https://i.pravatar.cc/100?u=3',
-              role: 'AWPer',
-              join_date: '2023-04-01',
-              stats: { matches: 138, wins: 84, kd: 1.28 },
-            },
-            {
-              id: '4',
-              nickname: 'Support_Pro',
-              avatar: 'https://i.pravatar.cc/100?u=4',
-              role: 'Support',
-              join_date: '2023-04-10',
-              stats: { matches: 135, wins: 82, kd: 1.12 },
-            },
-          ],
-          stats: {
-            matches_played: 156,
-            wins: 98,
-            losses: 58,
-            win_streak: 5,
-            ranking: 42,
-            rating: 1825,
-          },
-          recent_matches: [
-            {
-              id: '1',
-              date: '2024-01-15',
-              opponent: 'Team Fortress',
-              result: 'win',
-              score: '16-12',
-              map: 'de_inferno',
-            },
-            {
-              id: '2',
-              date: '2024-01-14',
-              opponent: 'Cyber Warriors',
-              result: 'win',
-              score: '16-10',
-              map: 'de_mirage',
-            },
-            {
-              id: '3',
-              date: '2024-01-13',
-              opponent: 'Pro Legends',
-              result: 'loss',
-              score: '14-16',
-              map: 'de_dust2',
-            },
-            {
-              id: '4',
-              date: '2024-01-12',
-              opponent: 'Night Hawks',
-              result: 'win',
-              score: '16-8',
-              map: 'de_nuke',
-            },
-            {
-              id: '5',
-              date: '2024-01-11',
-              opponent: 'Steel Titans',
-              result: 'win',
-              score: '16-13',
-              map: 'de_ancient',
-            },
-          ],
-        };
+        setLoading(true);
+        setError(null);
 
-        setTimeout(() => {
-          setTeam(mockTeam);
-          setLoading(false);
-        }, 500);
-      } catch (err) {
+        // Fetch squad from API
+        const squadData = await sdk.squads.getSquad(teamId);
+
+        if (squadData) {
+          // Map API response to TeamProfile interface
+          const apiTeam: TeamProfile = {
+            id: squadData.squad_id || teamId,
+            name: squadData.name || 'Unknown Team',
+            tag: squadData.tag || `[${squadData.name?.slice(0, 3).toUpperCase()}]`,
+            logo: squadData.logo_uri || `https://i.pravatar.cc/200?u=team-${teamId}`,
+            description: squadData.description || 'A competitive esports team.',
+            founded: squadData.created_at || new Date().toISOString(),
+            region: squadData.region || 'Global',
+            status: squadData.visibility === 'public' ? 'recruiting' : 'full',
+            members: (squadData.members || []).map((m: any, idx: number) => ({
+              id: m.player_id || `member-${idx}`,
+              nickname: m.nickname || m.name || `Player ${idx + 1}`,
+              avatar: m.avatar_uri || `https://i.pravatar.cc/100?u=${m.player_id || idx}`,
+              role: m.role || 'Member',
+              join_date: m.joined_at || squadData.created_at || new Date().toISOString(),
+              stats: {
+                matches: m.stats?.matches || 0,
+                wins: m.stats?.wins || 0,
+                kd: m.stats?.kd_ratio || 1.0,
+              },
+            })),
+            stats: {
+              matches_played: squadData.stats?.matches_played || 0,
+              wins: squadData.stats?.wins || 0,
+              losses: squadData.stats?.losses || 0,
+              win_streak: squadData.stats?.win_streak || 0,
+              ranking: squadData.stats?.ranking || 0,
+              rating: squadData.rating || 1500,
+            },
+            recent_matches: getMockTeam().recent_matches, // Match history would need separate API
+          };
+          setTeam(apiTeam);
+        } else {
+          // Fallback to mock data
+          setTeam(getMockTeam());
+        }
+      } catch (err: any) {
+        logger.error('Failed to load team profile', err);
         setError('Failed to load team profile');
+        // Fallback to mock data on error
+        setTeam(getMockTeam());
+      } finally {
         setLoading(false);
       }
     }

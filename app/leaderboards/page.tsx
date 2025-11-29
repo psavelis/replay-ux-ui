@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -17,11 +17,15 @@ import {
   CardBody,
   Select,
   SelectItem,
-  Input,
+  Spinner,
 } from "@nextui-org/react";
 import { Icon } from "@iconify/react";
 import { title, subtitle } from "@/components/primitives";
-import { SearchIcon } from "@/components/icons";
+import { ReplayAPISDK } from "@/types/replay-api/sdk";
+import { ReplayApiSettingsMock } from "@/types/replay-api/settings";
+import { logger } from "@/lib/logger";
+
+const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
 interface LeaderboardPlayer {
   rank: number;
@@ -263,7 +267,96 @@ export default function LeaderboardsPage() {
   const [selectedTab, setSelectedTab] = useState("players");
   const [selectedRegion, setSelectedRegion] = useState("global");
   const [selectedGame, setSelectedGame] = useState("cs2");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [playerLeaderboard, setPlayerLeaderboard] = useState<LeaderboardPlayer[]>([]);
+  const [teamLeaderboard, setTeamLeaderboard] = useState<typeof TEAM_LEADERBOARD>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch leaderboard data from API
+  useEffect(() => {
+    async function fetchLeaderboards() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const gameId = selectedGame === "all" ? undefined : selectedGame;
+        const region = selectedRegion === "global" ? undefined : selectedRegion;
+
+        // Fetch player leaderboard
+        const players = await sdk.playerProfiles.getLeaderboard({
+          game_id: gameId,
+          region,
+          limit: 50,
+        });
+
+        // Map API data to leaderboard interface
+        const mappedPlayers: LeaderboardPlayer[] = players.map((p: any, index: number) => ({
+          rank: index + 1,
+          previousRank: index + 1, // API would need to track this
+          name: p.nickname || p.name || "Unknown",
+          avatar: p.avatar_uri || `https://i.pravatar.cc/150?u=${p.player_id}`,
+          rating: p.rating || 0,
+          wins: p.stats?.wins || 0,
+          losses: p.stats?.losses || 0,
+          winRate: p.stats?.win_rate || 0,
+          kd: p.stats?.kd_ratio || 0,
+          tier: getTierFromRating(p.rating || 0),
+          country: p.country || "XX",
+        }));
+
+        // Fetch team leaderboard
+        const teams = await sdk.squads.getLeaderboard({
+          game_id: gameId,
+          region,
+          limit: 20,
+        });
+
+        // Map API data to team leaderboard interface
+        const mappedTeams = teams.map((t: any, index: number) => ({
+          rank: index + 1,
+          previousRank: index + 1,
+          name: t.name || "Unknown Team",
+          avatar: t.logo_uri || "https://avatars.githubusercontent.com/u/168373383",
+          rating: t.rating || 0,
+          wins: t.stats?.wins || 0,
+          losses: t.stats?.losses || 0,
+          winRate: t.stats?.win_rate || 0,
+          members: t.members?.length || 5,
+          country: t.region || "XX",
+        }));
+
+        // Use API data or fallback to mock if empty
+        setPlayerLeaderboard(mappedPlayers.length > 0 ? mappedPlayers : MOCK_LEADERBOARD_DATA);
+        setTeamLeaderboard(mappedTeams.length > 0 ? mappedTeams : TEAM_LEADERBOARD);
+      } catch (err: any) {
+        logger.error("Failed to fetch leaderboards", err);
+        setError(err.message || "Failed to load leaderboards");
+        // Fallback to mock data on error
+        setPlayerLeaderboard(MOCK_LEADERBOARD_DATA);
+        setTeamLeaderboard(TEAM_LEADERBOARD);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchLeaderboards();
+  }, [selectedGame, selectedRegion]);
+
+  // Helper function to determine tier from rating
+  function getTierFromRating(rating: number): string {
+    if (rating >= 4500) return "Challenger";
+    if (rating >= 4000) return "Grandmaster";
+    if (rating >= 3500) return "Master";
+    if (rating >= 3000) return "Diamond";
+    if (rating >= 2500) return "Platinum";
+    if (rating >= 2000) return "Gold";
+    if (rating >= 1500) return "Silver";
+    return "Bronze";
+  }
+
+  // Use unfiltered leaderboards (global search in navbar handles searching)
+  const filteredPlayerLeaderboard = playerLeaderboard;
+  const filteredTeamLeaderboard = teamLeaderboard;
 
   const getRankChangeIcon = (current: number, previous: number) => {
     if (current < previous) {
@@ -295,15 +388,7 @@ export default function LeaderboardsPage() {
       {/* Filters */}
       <Card className="w-full max-w-7xl">
         <CardBody>
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            <Input
-              placeholder="Search players or teams..."
-              startContent={<SearchIcon size={18} />}
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              className="flex-1"
-              variant="bordered"
-            />
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
             <Select
               label="Game"
               selectedKeys={[selectedGame]}
@@ -328,11 +413,34 @@ export default function LeaderboardsPage() {
               <SelectItem key="asia" value="asia">Asia</SelectItem>
               <SelectItem key="sa" value="sa">South America</SelectItem>
             </Select>
+            <p className="text-tiny text-default-400 hidden md:block">
+              Use ⌘+` to search players or teams
+            </p>
           </div>
         </CardBody>
       </Card>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="w-full max-w-7xl flex justify-center py-12">
+          <Spinner size="lg" label="Loading leaderboards..." color="primary" />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <Card className="w-full max-w-md">
+          <CardBody className="text-center">
+            <Icon icon="mdi:alert-circle" className="text-danger mx-auto mb-4" width={48} />
+            <p className="text-danger font-semibold mb-2">Error loading leaderboards</p>
+            <p className="text-default-500 mb-4">{error}</p>
+            <p className="text-xs text-default-400">Showing cached data</p>
+          </CardBody>
+        </Card>
+      )}
+
       {/* Leaderboard Tabs */}
+      {!loading && (
       <div className="w-full max-w-7xl">
         <Tabs
           selectedKey={selectedTab}
@@ -350,7 +458,7 @@ export default function LeaderboardsPage() {
             title={
               <div className="flex items-center gap-2">
                 <Icon icon="mdi:account" width={20} />
-                <span>Players</span>
+                <span>Players ({filteredPlayerLeaderboard.length})</span>
               </div>
             }
           >
@@ -372,8 +480,8 @@ export default function LeaderboardsPage() {
                     <TableColumn className="text-center hidden lg:table-cell">K/D</TableColumn>
                     <TableColumn className="text-center">TIER</TableColumn>
                   </TableHeader>
-                  <TableBody>
-                    {MOCK_LEADERBOARD_DATA.map((player) => (
+                  <TableBody emptyContent="No players found">
+                    {filteredPlayerLeaderboard.map((player) => (
                       <TableRow key={player.rank} className="hover:bg-default-50">
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -459,7 +567,7 @@ export default function LeaderboardsPage() {
             title={
               <div className="flex items-center gap-2">
                 <Icon icon="mdi:account-group" width={20} />
-                <span>Teams</span>
+                <span>Teams ({filteredTeamLeaderboard.length})</span>
               </div>
             }
           >
@@ -480,8 +588,8 @@ export default function LeaderboardsPage() {
                     <TableColumn className="text-center hidden md:table-cell">WIN RATE</TableColumn>
                     <TableColumn className="text-center hidden lg:table-cell">MEMBERS</TableColumn>
                   </TableHeader>
-                  <TableBody>
-                    {TEAM_LEADERBOARD.map((team) => (
+                  <TableBody emptyContent="No teams found">
+                    {filteredTeamLeaderboard.map((team) => (
                       <TableRow key={team.rank} className="hover:bg-default-50">
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -546,6 +654,7 @@ export default function LeaderboardsPage() {
           </Tab>
         </Tabs>
       </div>
+      )}
 
       {/* Info Card */}
       <Card className="w-full max-w-7xl bg-gradient-to-r from-primary-50 to-secondary-50">

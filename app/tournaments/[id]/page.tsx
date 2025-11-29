@@ -30,6 +30,7 @@ import {
 import { Icon } from '@iconify/react';
 import { PageContainer } from '@/components/layouts/centered-content';
 import { TournamentBracket, BracketMatch } from '@/components/tournaments/tournament-bracket';
+import { logger } from '@/lib/logger';
 
 interface TournamentDetail {
   id: string;
@@ -70,57 +71,98 @@ export default function TournamentDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Mock data helper
+  const getMockTournament = (): TournamentDetail => ({
+    id: tournamentId,
+    name: 'LeetGaming Pro Series - Winter 2024',
+    game: 'CS2',
+    type: 'single-elimination',
+    status: 'ongoing',
+    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200',
+    description:
+      'Premium CS2 tournament featuring 16 of the best teams. Battle through single-elimination bracket for a $10,000 prize pool.',
+    prize_pool: 10000,
+    prize_distribution: [
+      { place: '1st Place', amount: 5000 },
+      { place: '2nd Place', amount: 3000 },
+      { place: '3rd-4th Place', amount: 1000 },
+    ],
+    entry_fee: 50,
+    max_teams: 16,
+    registered_teams: 16,
+    start_date: '2024-01-20',
+    end_date: '2024-01-22',
+    region: 'North America',
+    format: '5v5',
+    rules: [
+      'All matches are Best of 3 (BO3)',
+      'Finals are Best of 5 (BO5)',
+      'Map pool: Inferno, Mirage, Dust2, Nuke, Ancient, Overpass, Anubis',
+      'Team roster lock 24 hours before tournament start',
+      'Maximum 1 substitute per team',
+      'No cheating or exploits allowed',
+      'All players must be registered on LeetGaming.PRO',
+    ],
+    organizer: {
+      name: 'LeetGaming.PRO',
+      logo: '/logo.png',
+    },
+    participants: generateMockParticipants(),
+    matches: generateMockMatches(),
+    rounds: 4,
+  });
+
   useEffect(() => {
     async function fetchTournament() {
       try {
-        // In production, fetch from API
-        // Mock data for now
-        const mockTournament: TournamentDetail = {
-          id: tournamentId,
-          name: 'LeetGaming Pro Series - Winter 2024',
-          game: 'CS2',
-          type: 'single-elimination',
-          status: 'ongoing',
-          image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200',
-          description:
-            'Premium CS2 tournament featuring 16 of the best teams. Battle through single-elimination bracket for a $10,000 prize pool.',
-          prize_pool: 10000,
-          prize_distribution: [
-            { place: '1st Place', amount: 5000 },
-            { place: '2nd Place', amount: 3000 },
-            { place: '3rd-4th Place', amount: 1000 },
-          ],
-          entry_fee: 50,
-          max_teams: 16,
-          registered_teams: 16,
-          start_date: '2024-01-20',
-          end_date: '2024-01-22',
-          region: 'North America',
-          format: '5v5',
-          rules: [
-            'All matches are Best of 3 (BO3)',
-            'Finals are Best of 5 (BO5)',
-            'Map pool: Inferno, Mirage, Dust2, Nuke, Ancient, Overpass, Anubis',
-            'Team roster lock 24 hours before tournament start',
-            'Maximum 1 substitute per team',
-            'No cheating or exploits allowed',
-            'All players must be registered on LeetGaming.PRO',
-          ],
-          organizer: {
-            name: 'LeetGaming.PRO',
-            logo: '/logo.png',
-          },
-          participants: generateMockParticipants(),
-          matches: generateMockMatches(),
-          rounds: 4, // 16 teams = 4 rounds
-        };
+        setLoading(true);
+        setError(null);
 
-        setTimeout(() => {
-          setTournament(mockTournament);
-          setLoading(false);
-        }, 500);
-      } catch (err) {
+        // Fetch tournament from API
+        const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/tournaments/${tournamentId}`);
+
+        if (response.ok) {
+          const data = await response.json();
+
+          // Map API response to TournamentDetail interface
+          const apiTournament: TournamentDetail = {
+            id: data.id || tournamentId,
+            name: data.name || 'Unnamed Tournament',
+            game: data.game_id?.toUpperCase() || 'CS2',
+            type: data.bracket_type || 'single-elimination',
+            status: data.status || 'upcoming',
+            image: data.image_url || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200',
+            description: data.description || '',
+            prize_pool: data.prize_pool || 0,
+            prize_distribution: data.prize_distribution || getMockTournament().prize_distribution,
+            entry_fee: data.entry_fee || 0,
+            max_teams: data.max_participants || 16,
+            registered_teams: data.current_participants || 0,
+            start_date: data.start_date || new Date().toISOString(),
+            end_date: data.end_date || new Date().toISOString(),
+            region: data.region || 'Global',
+            format: data.format || '5v5',
+            rules: data.rules || getMockTournament().rules,
+            organizer: {
+              name: data.organizer_name || 'LeetGaming.PRO',
+              logo: data.organizer_logo,
+            },
+            participants: data.participants || generateMockParticipants(),
+            matches: data.matches || generateMockMatches(),
+            rounds: data.rounds || 4,
+          };
+          setTournament(apiTournament);
+        } else {
+          // Fallback to mock data
+          setTournament(getMockTournament());
+        }
+      } catch (err: any) {
+        logger.error('Failed to load tournament', err);
         setError('Failed to load tournament');
+        // Fallback to mock data on error
+        setTournament(getMockTournament());
+      } finally {
         setLoading(false);
       }
     }

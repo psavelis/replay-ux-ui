@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import {
   Card,
   CardBody,
@@ -13,9 +14,15 @@ import {
   Tab,
   Spacer,
   Divider,
+  Spinner,
 } from "@nextui-org/react";
 import { Icon } from "@iconify/react";
 import { title, subtitle } from "@/components/primitives";
+import { ReplayAPISDK } from "@/types/replay-api/sdk";
+import { ReplayApiSettingsMock } from "@/types/replay-api/settings";
+import { logger } from "@/lib/logger";
+
+const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
 interface RankTier {
   name: string;
@@ -70,8 +77,88 @@ const RECENT_MATCHES = [
 ];
 
 export default function RankedPage() {
+  const { data: session } = useSession();
   const [selectedTab, setSelectedTab] = useState("overview");
-  const stats = MOCK_PLAYER_STATS;
+  const [stats, setStats] = useState<PlayerRankStats>(MOCK_PLAYER_STATS);
+  const [recentMatches, setRecentMatches] = useState(RECENT_MATCHES);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Helper to get tier from rating
+  function getTierFromRating(rating: number): RankTier {
+    for (let i = RANK_TIERS.length - 1; i >= 0; i--) {
+      if (rating >= RANK_TIERS[i].minRating) {
+        return RANK_TIERS[i];
+      }
+    }
+    return RANK_TIERS[0];
+  }
+
+  // Helper to get next tier info
+  function getNextTierInfo(rating: number): { nextTier: RankTier | null; progress: number } {
+    const currentTierIndex = RANK_TIERS.findIndex(t => t.minRating > rating) - 1;
+    const nextTierIndex = currentTierIndex + 1;
+
+    if (nextTierIndex >= RANK_TIERS.length) {
+      return { nextTier: null, progress: 100 };
+    }
+
+    const currentTier = RANK_TIERS[Math.max(0, currentTierIndex)];
+    const nextTier = RANK_TIERS[nextTierIndex];
+    const ratingInTier = rating - currentTier.minRating;
+    const tierRange = nextTier.minRating - currentTier.minRating;
+    const progress = Math.min(100, Math.round((ratingInTier / tierRange) * 100));
+
+    return { nextTier, progress };
+  }
+
+  // Fetch player ranked data
+  useEffect(() => {
+    async function fetchRankedData() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch player profile data from API
+        const players = await sdk.playerProfiles.getLeaderboard({
+          limit: 1,
+        });
+
+        // For now, use first player in leaderboard as example (would use logged-in user's data in production)
+        if (players && players.length > 0) {
+          const player = players[0] as any;
+          const rating = player.rating || 0;
+          const wins = player.stats?.wins || 0;
+          const losses = player.stats?.losses || 0;
+          const totalMatches = wins + losses;
+          const winRate = totalMatches > 0 ? (wins / totalMatches) * 100 : 0;
+
+          const tier = getTierFromRating(rating);
+          const { nextTier, progress } = getNextTierInfo(rating);
+
+          setStats({
+            currentRating: rating,
+            tier,
+            wins,
+            losses,
+            totalMatches,
+            winRate: Math.round(winRate * 10) / 10,
+            ratingChange: player.rating_change || 0,
+            nextTierRating: nextTier?.minRating || rating,
+            progressToNext: progress,
+          });
+        }
+      } catch (err: any) {
+        logger.error("Failed to fetch ranked data", err);
+        setError(err.message || "Failed to load ranked data");
+        // Keep mock data on error
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchRankedData();
+  }, [session]);
 
   return (
     <div className="flex w-full flex-col items-center gap-8 px-4 py-8 lg:px-24">
@@ -83,6 +170,25 @@ export default function RankedPage() {
           Compete against players of similar skill level. Climb the ranks and prove your worth in competitive matches.
         </p>
       </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="w-full max-w-6xl flex justify-center py-12">
+          <Spinner size="lg" label="Loading ranked data..." color="primary" />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <Card className="w-full max-w-md">
+          <CardBody className="text-center">
+            <Icon icon="mdi:alert-circle" className="text-danger mx-auto mb-4" width={48} />
+            <p className="text-danger font-semibold mb-2">Error loading ranked data</p>
+            <p className="text-default-500 mb-4">{error}</p>
+            <p className="text-xs text-default-400">Showing cached data</p>
+          </CardBody>
+        </Card>
+      )}
 
       {/* Current Rank Card */}
       <Card className="w-full max-w-6xl bg-gradient-to-br from-default-100 to-default-50">
@@ -190,7 +296,7 @@ export default function RankedPage() {
                 </CardHeader>
                 <Divider />
                 <CardBody className="gap-3">
-                  {RECENT_MATCHES.map((match) => (
+                  {recentMatches.map((match) => (
                     <div
                       key={match.id}
                       className="flex items-center justify-between p-3 rounded-lg bg-default-100 hover:bg-default-200 transition-colors"

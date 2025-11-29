@@ -10,7 +10,6 @@ import {
   Avatar,
   Chip,
   Button,
-  Input,
   Select,
   SelectItem,
   Divider,
@@ -18,7 +17,6 @@ import {
 } from "@nextui-org/react";
 import { Icon } from "@iconify/react";
 import { title, subtitle } from "@/components/primitives";
-import { SearchIcon } from "@/components/icons";
 import { ReplayAPISDK } from "@/types/replay-api/sdk";
 import { ReplayApiSettingsMock } from "@/types/replay-api/settings";
 import { logger } from "@/lib/logger";
@@ -216,36 +214,21 @@ export default function PlayersPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedGame, setSelectedGame] = useState("all");
   const [selectedRole, setSelectedRole] = useState("all");
   const [showOnlyLFT, setShowOnlyLFT] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 12;
 
-  // Debounce search query to reduce API calls
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-      setCurrentPage(1); // Reset to first page on search
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
   useEffect(() => {
     async function fetchPlayers() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const filters: any = {};
         if (selectedGame !== "all") {
           filters.game_id = selectedGame;
-        }
-        if (debouncedSearchQuery) {
-          filters.nickname = debouncedSearchQuery;
         }
 
         const playersData = await sdk.playerProfiles.searchPlayerProfiles(filters);
@@ -283,19 +266,19 @@ export default function PlayersPage() {
     }
 
     fetchPlayers();
-  }, [selectedGame, debouncedSearchQuery]);
+  }, [selectedGame]);
 
   // Memoize filtered players to avoid re-computing on every render
+  // Global search (navbar) handles text search - page only filters by dropdowns
   const filteredPlayers = React.useMemo(() => {
     return players.filter((player) => {
-      const matchesSearch = player.name.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesGame = selectedGame === "all" || player.game.toLowerCase() === selectedGame.toLowerCase();
       const matchesRole = selectedRole === "all" || player.role.toLowerCase() === selectedRole.toLowerCase();
       const matchesLFT = !showOnlyLFT || player.isLookingForTeam;
 
-      return matchesSearch && matchesGame && matchesRole && matchesLFT;
+      return matchesGame && matchesRole && matchesLFT;
     });
-  }, [players, searchQuery, selectedGame, selectedRole, showOnlyLFT]);
+  }, [players, selectedGame, selectedRole, showOnlyLFT]);
 
   // Paginate filtered results
   const totalPages = Math.ceil(filteredPlayers.length / ITEMS_PER_PAGE);
@@ -324,15 +307,7 @@ export default function PlayersPage() {
         {/* Filters */}
         <Card className="w-full max-w-7xl">
         <CardBody>
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            <Input
-              placeholder="Search players..."
-              startContent={<SearchIcon size={18} />}
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              className="flex-1"
-              variant="bordered"
-            />
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
             <Select
               label="Game"
               selectedKeys={[selectedGame]}
@@ -369,6 +344,9 @@ export default function PlayersPage() {
             >
               Looking for Team
             </Button>
+            <p className="text-tiny text-default-400 hidden md:block">
+              Use ⌘+` to search players
+            </p>
           </div>
         </CardBody>
       </Card>
