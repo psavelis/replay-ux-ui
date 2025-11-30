@@ -99,6 +99,7 @@ export default function WalletPage() {
       const interval = setInterval(fetchWallet, 15000); // Refresh every 15s
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [status]);
 
   const handleDepositSuccess = () => {

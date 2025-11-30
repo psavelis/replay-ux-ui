@@ -20,9 +20,20 @@ import { Icon } from "@iconify/react";
 import { title, subtitle } from "@/components/primitives";
 import { ReplayAPISDK } from "@/types/replay-api/sdk";
 import { ReplayApiSettingsMock } from "@/types/replay-api/settings";
+import { PlayerProfile } from "@/types/replay-api/entities.types";
 import { logger } from "@/lib/logger";
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
+
+/** Extended player profile with stats from API */
+interface PlayerProfileWithStats extends PlayerProfile {
+  rating?: number;
+  rating_change?: number;
+  stats?: {
+    wins?: number;
+    losses?: number;
+  };
+}
 
 interface RankTier {
   name: string;
@@ -115,7 +126,7 @@ export default function RankedPage() {
 
         // For now, use first player in leaderboard as example (would use logged-in user's data in production)
         if (players && players.length > 0) {
-          const player = players[0] as any;
+          const player = players[0] as PlayerProfileWithStats;
           const rating = player.rating || 0;
           const wins = player.stats?.wins || 0;
           const losses = player.stats?.losses || 0;
@@ -137,9 +148,10 @@ export default function RankedPage() {
             progressToNext: progress,
           });
         }
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load ranked data";
         logger.error("Failed to fetch ranked data", err);
-        setError(err.message || "Failed to load ranked data");
+        setError(errorMessage);
         // Show empty state on error - no mock data fallback
         setStats(null);
         setRecentMatches([]);

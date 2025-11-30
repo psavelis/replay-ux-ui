@@ -36,11 +36,11 @@ export async function GET(
         'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/squads/${params.id}] Error fetching squad`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch squad',
+      error: (error instanceof Error ? error.message : 'Failed to fetch squad'),
     }, { status: 500 });
   }
 }
@@ -74,11 +74,11 @@ export async function PUT(
       success: true,
       data: squad,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/squads/${params.id}] Error updating squad`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to update squad',
+      error: (error instanceof Error ? error.message : 'Failed to update squad'),
     }, { status: 500 });
   }
 }
@@ -110,11 +110,11 @@ export async function DELETE(
       success: true,
       message: 'Squad deleted successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/squads/${params.id}] Error deleting squad`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to delete squad',
+      error: (error instanceof Error ? error.message : 'Failed to delete squad'),
     }, { status: 500 });
   }
 }

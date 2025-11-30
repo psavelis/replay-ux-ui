@@ -41,11 +41,11 @@ export async function PUT(
       success: true,
       data: result,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/lobbies/${params.lobby_id}/ready] Error updating ready status`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to update ready status',
+      error: (error instanceof Error ? error.message : 'Failed to update ready status'),
     }, { status: 500 });
   }
 }

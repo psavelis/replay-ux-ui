@@ -50,7 +50,14 @@ export default function CheckoutPage() {
 
   // Get wallet ID from session or use placeholder
   // In production, this would come from the user's profile
-  const walletId = (session?.user as any)?.walletId || 'default-wallet';
+  interface ExtendedUser {
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+    walletId?: string;
+  }
+  const user = session?.user as ExtendedUser | undefined;
+  const walletId = user?.walletId || 'default-wallet';
 
   return (
     <div className="py-8">

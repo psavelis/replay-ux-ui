@@ -37,11 +37,11 @@ export async function GET(
         'Cache-Control': 'public, s-maxage=5, stale-while-revalidate=10',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/lobbies/${params.lobby_id}] Error fetching lobby`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch lobby',
+      error: (error instanceof Error ? error.message : 'Failed to fetch lobby'),
     }, { status: 500 });
   }
 }
@@ -69,11 +69,11 @@ export async function DELETE(
       success: true,
       message: 'Lobby cancelled successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/lobbies/${params.lobby_id}] Error cancelling lobby`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to cancel lobby',
+      error: (error instanceof Error ? error.message : 'Failed to cancel lobby'),
     }, { status: 500 });
   }
 }

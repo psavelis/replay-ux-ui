@@ -31,6 +31,31 @@ import { logger } from '@/lib/logger';
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+import { PlayerProfile as PlayerProfileBase } from '@/types/replay-api/entities.types';
+
+/** Extended player profile from API response - uses Omit to avoid type conflicts with base Date properties */
+interface PlayerAPIResponse extends Omit<PlayerProfileBase, 'created_at' | 'updated_at'> {
+  player_id?: string;
+  name?: string;
+  steam_id?: string;
+  discord_id?: string;
+  country?: string;
+  created_at?: string;
+  updated_at?: string;
+  rating?: number;
+  stats?: {
+    matches_played?: number;
+    wins?: number;
+    losses?: number;
+    kills?: number;
+    deaths?: number;
+    assists?: number;
+    headshot_percentage?: number;
+    accuracy?: number;
+    adr?: number;
+  };
+}
+
 interface PlayerProfile {
   id: string;
   nickname: string;
@@ -124,10 +149,15 @@ export default function PlayerDetailPage() {
         setError(null);
 
         // Fetch player from API
-        const playerData = await sdk.playerProfiles.getPlayerProfile(playerId);
+        const response = await sdk.playerProfiles.getPlayerProfile(playerId);
+        const playerData = response as PlayerAPIResponse | null;
 
         if (playerData) {
           // Map API response to PlayerProfile interface
+          const createdAt = playerData.created_at
+            ? (typeof playerData.created_at === 'string' ? playerData.created_at : new Date(playerData.created_at).toISOString())
+            : new Date().toISOString();
+
           const apiPlayer: PlayerProfile = {
             id: playerData.player_id || playerId,
             nickname: playerData.nickname || playerData.name || 'Unknown Player',
@@ -137,7 +167,7 @@ export default function PlayerDetailPage() {
             steam_id: playerData.steam_id,
             discord_id: playerData.discord_id,
             country: playerData.country || 'Global',
-            join_date: playerData.created_at || new Date().toISOString(),
+            join_date: createdAt,
             stats: {
               matches_played: playerData.stats?.matches_played || 0,
               wins: playerData.stats?.wins || 0,
@@ -158,9 +188,10 @@ export default function PlayerDetailPage() {
           // Fallback to mock data
           setPlayer(getMockPlayer());
         }
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load player profile';
         logger.error('Failed to load player profile', err);
-        setError('Failed to load player profile');
+        setError(errorMessage);
         // Fallback to mock data on error
         setPlayer(getMockPlayer());
       } finally {

@@ -1,8 +1,17 @@
-// @ts-nocheck
 "use client";
 import * as React from "react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import pkg from "../../package.json";
+
+interface PerformanceMemory {
+  jsHeapSizeLimit?: number;
+  totalJSHeapSize?: number;
+  usedJSHeapSize?: number;
+}
+
+interface ExtendedPerformance extends Performance {
+  memory?: PerformanceMemory;
+}
 
 // Simple types for metrics
 interface FetchMetric {
@@ -66,16 +75,17 @@ export default function DebugPage() {
     const projectedRequestsNextHour = basisMinutes ? Math.round((recentFetches.length / basisMinutes) * 60) : recentFetches.length;
 
     const env: Record<string, string | undefined> = {
-      NEXT_PUBLIC_API_URL: (globalThis as any)?.process?.env?.NEXT_PUBLIC_API_URL,
-      NODE_ENV: (globalThis as any)?.process?.env?.NODE_ENV,
-      VERSION: (pkg as any)?.version,
+      NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+      NODE_ENV: process.env.NODE_ENV,
+      VERSION: pkg.version,
     };
 
-    const memory = (performance as any)?.memory
+    const extPerf = performance as ExtendedPerformance;
+    const memory = extPerf.memory
       ? {
-          jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
-          totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
-          usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
+          jsHeapSizeLimit: extPerf.memory.jsHeapSizeLimit,
+          totalJSHeapSize: extPerf.memory.totalJSHeapSize,
+          usedJSHeapSize: extPerf.memory.usedJSHeapSize,
         }
       : undefined;
 
@@ -116,10 +126,10 @@ export default function DebugPage() {
         metric.duration = metric.end - metric.start;
         metric.status = resp.status;
         return resp;
-      } catch (err: any) {
+      } catch (err) {
         metric.end = performance.now();
         metric.duration = metric.end - metric.start;
-        metric.error = err?.message || String(err);
+        metric.error = err instanceof Error ? err.message : String(err);
         throw err;
       } finally {
         setTick((t: number) => t + 1);
@@ -134,8 +144,8 @@ export default function DebugPage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const orig = { log: console.log, warn: console.warn, error: console.error };
-    const wrap = (level: string, fn: (...a: any[]) => void) => {
-      return (...args: any[]) => {
+    const wrap = (level: string, fn: (...a: unknown[]) => void) => {
+      return (...args: unknown[]) => {
         logsRef.current.push({ level, message: args.map(a => (typeof a === "string" ? a : JSON.stringify(a))).join(" "), ts: Date.now() });
         fn(...args);
         setTick((t: number) => t + 1);

@@ -41,7 +41,7 @@ export async function GET(
       logger.error('[API /api/match-making/pools/:game_id] Backend error', { status: response.status, error, game_id });
       return NextResponse.json({
         success: false,
-        error: error.message || 'Failed to get pool stats',
+        error: (error instanceof Error ? error.message : 'Failed to get pool stats'),
       }, { status: response.status });
     }
 
@@ -56,11 +56,11 @@ export async function GET(
         'Cache-Control': 'public, s-maxage=5, stale-while-revalidate=10',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/match-making/pools/${params.game_id}] Error getting pool stats`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to get pool stats',
+      error: (error instanceof Error ? error.message : 'Failed to get pool stats'),
     }, { status: 500 });
   }
 }

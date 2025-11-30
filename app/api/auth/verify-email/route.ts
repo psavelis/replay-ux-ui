@@ -63,10 +63,10 @@ export async function POST(request: NextRequest) {
       message: 'Verification email sent',
       expiresAt: data.expires_at,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/auth/verify-email] Error sending verification email', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to send verification email' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to send verification email') },
       { status: 500 }
     );
   }
@@ -123,10 +123,10 @@ export async function PUT(request: NextRequest) {
       message: 'Email verified successfully',
       verified: true,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/auth/verify-email] Error verifying email', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to verify email' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to verify email') },
       { status: 500 }
     );
   }

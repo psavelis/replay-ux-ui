@@ -76,11 +76,12 @@ export async function POST(request: NextRequest) {
       success: true,
       data,
     }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/payments] Error creating payment intent', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create payment intent';
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to create payment intent',
+      error: errorMessage,
     }, { status: 500 });
   }
 }
@@ -124,11 +125,12 @@ export async function GET(request: NextRequest) {
       success: true,
       data,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/payments] Error getting payments', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to get payments';
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to get payments',
+      error: errorMessage,
     }, { status: 500 });
   }
 }

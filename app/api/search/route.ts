@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
         total: data.total || 0,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Search error:', error);
     // Return empty results on error (frontend will use mock data)
     return NextResponse.json({

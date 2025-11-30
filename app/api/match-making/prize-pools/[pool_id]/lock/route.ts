@@ -44,11 +44,11 @@ export async function POST(
       success: true,
       data: result,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/prize-pools/${params.pool_id}/lock] Error locking prize pool`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to lock prize pool',
+      error: (error instanceof Error ? error.message : 'Failed to lock prize pool'),
     }, { status: 500 });
   }
 }

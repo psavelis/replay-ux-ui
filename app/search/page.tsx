@@ -35,8 +35,9 @@ export default function AdvancedSearchPage() {
       // naive text filter against id
       const filtered = response.filter(r => !query || r.id.includes(query));
       setResults(filtered.map(r => ({ id: r.id, gameId: r.gameId, createdAt: r.createdAt, status: r.status, size: r.size })));
-    } catch (e: any) {
-      setError(e?.message || "Search failed");
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : "Search failed";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

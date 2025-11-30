@@ -94,12 +94,12 @@ export async function GET(
       success: true,
       data,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/match-making/session] Error getting session status', error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to get session status',
+        error: (error instanceof Error ? error.message : 'Failed to get session status'),
       },
       { status: 500 }
     );
@@ -171,12 +171,12 @@ export async function DELETE(
       success: true,
       message: 'Session cancelled successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/match-making/session] Error cancelling session', error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to cancel session',
+        error: (error instanceof Error ? error.message : 'Failed to cancel session'),
       },
       { status: 500 }
     );

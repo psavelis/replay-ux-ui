@@ -73,12 +73,12 @@ export async function GET(request: NextRequest) {
       },
     });
     
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/replays] Error fetching replays', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch replays',
+      error: (error instanceof Error ? error.message : 'Failed to fetch replays'),
     }, {
       status: 500,
     });
@@ -119,12 +119,12 @@ export async function POST(request: NextRequest) {
       message: 'Upload endpoint - to be implemented with file handling',
     });
     
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/replays] Error creating replay', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to create replay',
+      error: (error instanceof Error ? error.message : 'Failed to create replay'),
     }, {
       status: 500,
     });

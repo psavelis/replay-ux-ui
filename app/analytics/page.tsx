@@ -30,8 +30,9 @@ export default function AnalyticsDashboardPage() {
         setIngestSeries(sortedDays.map(d => ({ ts: d, value: byDay[d] })));
         // Simulate processing lag metric
         setProcessingSeries(sortedDays.map(d => ({ ts: d, value: Math.max(0, byDay[d] - Math.floor(byDay[d] * 0.2)) })));
-      } catch (e: any) {
-        setError(e?.message || "Failed loading metrics");
+      } catch (e) {
+        const errorMessage = e instanceof Error ? e.message : "Failed loading metrics";
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }

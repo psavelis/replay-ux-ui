@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       { success: response.ok, data: data },
       { status: response.status }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Players search error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to search players' },
@@ -84,10 +84,10 @@ export async function POST(request: NextRequest) {
       { success: true, data },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Create player error:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to create player profile' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to create player profile') },
       { status: 500 }
     );
   }

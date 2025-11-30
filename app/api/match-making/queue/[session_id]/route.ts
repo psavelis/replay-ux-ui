@@ -31,11 +31,11 @@ export async function DELETE(
       success: true,
       message: 'Successfully left queue',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/queue/${params.session_id}] Error leaving queue`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to leave queue',
+      error: (error instanceof Error ? error.message : 'Failed to leave queue'),
     }, { status: 500 });
   }
 }

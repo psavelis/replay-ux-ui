@@ -37,6 +37,39 @@ import { logger } from '@/lib/logger';
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+import { Squad as SquadBase, SquadMembership } from '@/types/replay-api/entities.types';
+
+/** Extended squad response from API */
+interface SquadAPIResponse extends SquadBase {
+  squad_id?: string;
+  tag?: string;
+  region?: string;
+  visibility?: string;
+  rating?: number;
+  stats?: {
+    matches_played?: number;
+    wins?: number;
+    losses?: number;
+    win_streak?: number;
+    ranking?: number;
+  };
+}
+
+/** Member from API response */
+interface SquadMemberAPIResponse {
+  player_id?: string;
+  nickname?: string;
+  name?: string;
+  avatar_uri?: string;
+  role?: string;
+  joined_at?: string;
+  stats?: {
+    matches?: number;
+    wins?: number;
+    kd_ratio?: number;
+  };
+}
+
 interface TeamMember {
   id: string;
   nickname: string;
@@ -154,9 +187,24 @@ export default function TeamDetailPage() {
         setError(null);
 
         // Fetch squad from API
-        const squadData = await sdk.squads.getSquad(teamId);
+        const response = await sdk.squads.getSquad(teamId);
+        const squadData = response as SquadAPIResponse | null;
 
         if (squadData) {
+          // Convert created_at to string
+          const createdAt = squadData.created_at
+            ? (typeof squadData.created_at === 'string' ? squadData.created_at : new Date(squadData.created_at as unknown as Date).toISOString())
+            : new Date().toISOString();
+
+          // Convert members Record to array
+          const membersArray: SquadMemberAPIResponse[] = squadData.members
+            ? Object.entries(squadData.members).map(([userId, membership]) => ({
+                player_id: userId,
+                nickname: membership.roles?.[0] || 'Member',
+                role: membership.roles?.[0] || 'Member',
+              }))
+            : [];
+
           // Map API response to TeamProfile interface
           const apiTeam: TeamProfile = {
             id: squadData.squad_id || teamId,
@@ -164,15 +212,15 @@ export default function TeamDetailPage() {
             tag: squadData.tag || `[${squadData.name?.slice(0, 3).toUpperCase()}]`,
             logo: squadData.logo_uri || `https://i.pravatar.cc/200?u=team-${teamId}`,
             description: squadData.description || 'A competitive esports team.',
-            founded: squadData.created_at || new Date().toISOString(),
+            founded: createdAt,
             region: squadData.region || 'Global',
             status: squadData.visibility === 'public' ? 'recruiting' : 'full',
-            members: (squadData.members || []).map((m: any, idx: number) => ({
+            members: membersArray.map((m: SquadMemberAPIResponse, idx: number) => ({
               id: m.player_id || `member-${idx}`,
               nickname: m.nickname || m.name || `Player ${idx + 1}`,
               avatar: m.avatar_uri || `https://i.pravatar.cc/100?u=${m.player_id || idx}`,
               role: m.role || 'Member',
-              join_date: m.joined_at || squadData.created_at || new Date().toISOString(),
+              join_date: m.joined_at || createdAt,
               stats: {
                 matches: m.stats?.matches || 0,
                 wins: m.stats?.wins || 0,
@@ -194,9 +242,10 @@ export default function TeamDetailPage() {
           // Fallback to mock data
           setTeam(getMockTeam());
         }
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load team profile';
         logger.error('Failed to load team profile', err);
-        setError('Failed to load team profile');
+        setError(errorMessage);
         // Fallback to mock data on error
         setTeam(getMockTeam());
       } finally {

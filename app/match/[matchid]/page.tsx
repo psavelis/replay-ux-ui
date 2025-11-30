@@ -7,13 +7,10 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
   Chip,
   Avatar,
   Button,
   Spinner,
-  Divider,
-  Progress,
   Tabs,
   Tab,
   Table,
@@ -33,12 +30,54 @@ import { logger } from "@/lib/logger";
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+/** Player stats within a match */
+interface MatchPlayer {
+  id?: string;
+  name?: string;
+  avatar?: string;
+  kills?: number;
+  deaths?: number;
+  assists?: number;
+  rating?: number;
+}
+
+/** Team within a match */
+interface MatchTeam {
+  name: string;
+  logo?: string;
+  score: number;
+  players?: MatchPlayer[];
+}
+
+/** Round within a match */
+interface MatchRound {
+  winner?: string;
+  reason?: string;
+  duration?: string;
+}
+
+/** Match data from API */
+interface MatchData {
+  id?: string;
+  title?: string;
+  status?: string;
+  game_id?: string;
+  map_name?: string;
+  created_at?: string;
+  duration?: string;
+  total_rounds?: number;
+  total_kills?: number;
+  mvp?: string;
+  teams?: MatchTeam[];
+  rounds?: MatchRound[];
+}
+
 export default function MatchDetailPage() {
   const params = useParams();
   const { data: session } = useSession();
   const matchId = params.matchid as string;
 
-  const [match, setMatch] = useState<any>(null);
+  const [match, setMatch] = useState<MatchData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState("overview");
@@ -48,19 +87,20 @@ export default function MatchDetailPage() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const gameId = "cs2"; // Get from query param or default
         const matchData = await sdk.matches.getMatch(gameId, matchId);
-        
+
         if (!matchData) {
           setError("Match not found");
           return;
         }
-        
-        setMatch(matchData);
-      } catch (err: any) {
+
+        setMatch(matchData as MatchData);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load match";
         logger.error("Failed to fetch match", err);
-        setError(err.message || "Failed to load match");
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -234,7 +274,7 @@ export default function MatchDetailPage() {
                     <TableColumn>Rating</TableColumn>
                   </TableHeader>
                   <TableBody>
-                    {(teamA.players || []).map((player: any, idx: number) => (
+                    {(teamA.players || []).map((player: MatchPlayer, idx: number) => (
                       <TableRow key={idx}>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -272,7 +312,7 @@ export default function MatchDetailPage() {
                     <TableColumn>Rating</TableColumn>
                   </TableHeader>
                   <TableBody>
-                    {(teamB.players || []).map((player: any, idx: number) => (
+                    {(teamB.players || []).map((player: MatchPlayer, idx: number) => (
                       <TableRow key={idx}>
                         <TableCell>
                           <div className="flex items-center gap-2">
@@ -330,7 +370,7 @@ export default function MatchDetailPage() {
           <Card>
             <CardBody>
               <Accordion variant="splitted">
-                {(match.rounds || []).map((round: any, idx: number) => (
+                {(match.rounds || []).map((round: MatchRound, idx: number) => (
                   <AccordionItem
                     key={idx}
                     title={

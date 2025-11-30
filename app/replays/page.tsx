@@ -68,9 +68,12 @@ export default function Component() {
         .sortDesc(sortBy === 'most_recent' ? 'created_at' : 'created_at')
         .paginate(page, 20);
 
-      // Apply visibility filter
-      if (selectedVisibility !== 'all') {
-        searchBuilder.withResourceVisibilities(selectedVisibility as any);
+      // Apply visibility filter - only add filter for non-all values
+      if (selectedVisibility !== 'all' && selectedVisibility !== 'public' && selectedVisibility !== 'private' && selectedVisibility !== 'shared') {
+        // Skip invalid visibility values
+      } else if (selectedVisibility !== 'all') {
+        // Use raw string since SDK handles conversion
+        searchBuilder.withResourceVisibilities(selectedVisibility);
       }
 
       // Apply team filter if selected
@@ -89,12 +92,13 @@ export default function Component() {
         page,
         hasMore: response.length === 20,
       }));
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load replays';
       logger.error('[ReplaysPage] Failed to fetch replays', error);
       setState(prev => ({
         ...prev,
         loading: false,
-        error: error.message || 'Failed to load replays',
+        error: errorMessage,
       }));
     }
   };
@@ -289,7 +293,8 @@ export default function Component() {
                     <Card
                       key={replay.id}
                       isPressable
-                      onPress={() => window.location.href = `/replays/${replay.id}`}
+                      as="a"
+                      href={`/replays/${replay.id}`}
                       className="hover:scale-105 transition-transform"
                     >
                       <CardBody className="p-4">

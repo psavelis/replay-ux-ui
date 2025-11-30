@@ -31,11 +31,11 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/squads] Error searching squads', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to search squads',
+      error: (error instanceof Error ? error.message : 'Failed to search squads'),
     }, { status: 500 });
   }
 }
@@ -79,11 +79,11 @@ export async function POST(request: NextRequest) {
       success: true,
       data: squad,
     }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/squads] Error creating squad', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to create squad',
+      error: (error instanceof Error ? error.message : 'Failed to create squad'),
     }, { status: 500 });
   }
 }

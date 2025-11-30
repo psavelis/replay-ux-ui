@@ -62,8 +62,9 @@ export default function ReplayPlayerPage() {
         setKillfeed([]);
         setTotalTicks(0);
       }
-    } catch (e: any) {
-      setError(e?.message || "Failed to load replay");
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : "Failed to load replay";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -17,7 +17,7 @@ interface SharedContent {
   token: string;
   expires_at: string;
   created_at: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export default function SharedContentPage() {
@@ -44,8 +44,9 @@ export default function SharedContentPage() {
 
         const data = await response.json();
         setContent(data);
-      } catch (err: any) {
-        setError(err.message || 'Failed to load shared content');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load shared content';
+        setError(errorMessage);
         // Show error state - no mock data fallback
         setContent(null);
       } finally {
@@ -129,7 +130,7 @@ export default function SharedContentPage() {
                   <div>
                     <h1 className="text-2xl font-bold">Shared Replay</h1>
                     <p className="text-sm text-default-600">
-                      {content.metadata?.title || `Replay #${content.content_id}`}
+                      {(content.metadata?.title as string) || `Replay #${content.content_id}`}
                     </p>
                   </div>
                 </div>

@@ -51,11 +51,11 @@ export async function GET(
       success: true,
       data,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/payments/${params.payment_id}] Error getting payment`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to get payment',
+      error: (error instanceof Error ? error.message : 'Failed to get payment'),
     }, { status: 500 });
   }
 }

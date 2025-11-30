@@ -42,12 +42,12 @@ export async function GET(
       },
     });
     
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/replays/[id]] Error fetching replay', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch replay',
+      error: (error instanceof Error ? error.message : 'Failed to fetch replay'),
     }, {
       status: 500,
     });
@@ -82,12 +82,12 @@ export async function DELETE(
       message: 'Replay deleted successfully',
     });
     
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/replays/[id]] Error deleting replay', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to delete replay',
+      error: (error instanceof Error ? error.message : 'Failed to delete replay'),
     }, {
       status: 500,
     });

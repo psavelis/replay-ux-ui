@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       logger.error('[API /api/match-making/queue] Backend error', { status: response.status, error });
       return NextResponse.json({
         success: false,
-        error: error.message || 'Failed to join queue',
+        error: (error instanceof Error ? error.message : 'Failed to join queue'),
       }, { status: response.status });
     }
 
@@ -64,11 +64,11 @@ export async function POST(request: NextRequest) {
       success: true,
       data,
     }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/match-making/queue] Error joining queue', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to join queue',
+      error: (error instanceof Error ? error.message : 'Failed to join queue'),
     }, { status: 500 });
   }
 }
@@ -109,7 +109,7 @@ export async function DELETE(request: NextRequest) {
       logger.error('[API /api/match-making/queue] Backend error', { status: response.status, error, session_id: sessionId });
       return NextResponse.json({
         success: false,
-        error: error.message || 'Failed to leave queue',
+        error: (error instanceof Error ? error.message : 'Failed to leave queue'),
       }, { status: response.status });
     }
 
@@ -119,11 +119,11 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'Left queue successfully',
     }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/match-making/queue] Error leaving queue', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to leave queue',
+      error: (error instanceof Error ? error.message : 'Failed to leave queue'),
     }, { status: 500 });
   }
 }

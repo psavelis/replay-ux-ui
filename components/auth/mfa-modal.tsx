@@ -51,6 +51,7 @@ export function MFAModal({
       const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [cooldown]);
 
   // Reset state when modal closes
