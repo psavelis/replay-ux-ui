@@ -88,7 +88,7 @@ export interface TierBenefits {
   features: string[];
   waitTimeReduction: number;
   priorityMultiplier: number;
-  color: string;
+  color: 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
   icon: string;
 }
 

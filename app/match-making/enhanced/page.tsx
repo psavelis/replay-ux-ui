@@ -227,7 +227,7 @@ export default function EnhancedMatchmakingPage() {
                       <div className="flex items-center justify-between">
                         <Icon icon={tier.icon} width={32} className="text-primary" />
                         {tier.price > 0 && (
-                          <Chip size="sm" variant="flat" color={tier.color as any}>
+                          <Chip size="sm" variant="flat" color={tier.color}>
                             ${tier.price}/mo
                           </Chip>
                         )}

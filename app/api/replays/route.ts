@@ -43,8 +43,10 @@ export async function GET(request: NextRequest) {
     }
     
     // Apply visibility filter
-    if (visibility !== 'all') {
-      searchBuilder.withResourceVisibilities(visibility as any);
+    type VisibilityType = 'public' | 'private' | 'shared' | 'unlisted';
+    const validVisibilities: VisibilityType[] = ['public', 'private', 'shared', 'unlisted'];
+    if (visibility !== 'all' && validVisibilities.includes(visibility as VisibilityType)) {
+      searchBuilder.withResourceVisibilities(visibility as VisibilityType);
     }
     
     // Apply user filter if authenticated and requesting private replays

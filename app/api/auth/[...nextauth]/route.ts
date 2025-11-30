@@ -125,7 +125,8 @@ async function handler(
           try {
             param.token.steam = param.profile as SteamUserProfile | undefined
 
-            const steamId = (param.profile as any)?.steamid
+            const steamProfile = param.profile as SteamUserProfile
+            const steamId = steamProfile?.steamid
 
             if (!steamId) {
               console.error('No steam_id found in profile', param.profile)
@@ -133,9 +134,8 @@ async function handler(
               return param.token
             }
 
-            const steamProfile = param.profile as SteamUserProfile
-            const profileCopy = { ...steamProfile }
-            delete (profileCopy as any).steamid
+            // Create a copy without steamid for the backend
+            const { steamid: _omitSteamId, ...profileWithoutSteamId } = steamProfile
 
             const verificationHash = crypto
               .createHash('sha256')
@@ -146,19 +146,19 @@ async function handler(
               v_hash: verificationHash,
               steam: {
                 id: steamId,
-                communityvisibilitystate: profileCopy.communityvisibilitystate,
-                profilestate: profileCopy.profilestate,
-                personaname: profileCopy.personaname,
-                profileurl: profileCopy.profileurl,
-                avatar: profileCopy.avatar,
-                avatarmedium: profileCopy.avatarmedium,
-                avatarfull: profileCopy.avatarfull,
-                avatarhash: profileCopy.avatarhash,
-                personastate: profileCopy.personastate,
-                realname: profileCopy.realname,
-                primaryclanid: profileCopy.primaryclanid,
-                personastateflags: profileCopy.personastateflags,
-                timecreated: new Date(profileCopy.timecreated * 1000).toISOString()
+                communityvisibilitystate: profileWithoutSteamId.communityvisibilitystate,
+                profilestate: profileWithoutSteamId.profilestate,
+                personaname: profileWithoutSteamId.personaname,
+                profileurl: profileWithoutSteamId.profileurl,
+                avatar: profileWithoutSteamId.avatar,
+                avatarmedium: profileWithoutSteamId.avatarmedium,
+                avatarfull: profileWithoutSteamId.avatarfull,
+                avatarhash: profileWithoutSteamId.avatarhash,
+                personastate: profileWithoutSteamId.personastate,
+                realname: profileWithoutSteamId.realname,
+                primaryclanid: profileWithoutSteamId.primaryclanid,
+                personastateflags: profileWithoutSteamId.personastateflags,
+                timecreated: new Date(profileWithoutSteamId.timecreated * 1000).toISOString()
               },
             })
 
@@ -204,12 +204,13 @@ async function handler(
 
         if (param?.account?.provider === 'google') {
           try {
-            param.token.google = param.profile as GoogleProfile
+            const googleProfileFull = param.profile as GoogleProfile
+            param.token.google = googleProfileFull
 
-            const googleProfile = { ...(param.profile as GoogleProfile) }
-            delete (googleProfile as any).sub
+            // Create a copy without sub for the backend
+            const { sub: _omitSub, ...googleProfile } = googleProfileFull
 
-            const googleId = (param.profile as any).email!
+            const googleId = googleProfileFull.email
 
             if (!googleId) {
               console.error('No email found in Google profile', param.profile)
@@ -268,7 +269,13 @@ async function handler(
         if (param?.account?.provider === 'email-password') {
           // The authorize function already called the backend and got the RID
           // We just need to copy the values from user to token
-          const user = param.user as any;
+          interface CredentialsUser {
+            id: string;
+            rid?: string;
+            uid?: string;
+            email?: string;
+          }
+          const user = param.user as CredentialsUser;
           if (user?.rid) {
             param.token.rid = user.rid;
           }

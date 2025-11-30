@@ -7,9 +7,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/options';
-import { forwardAuthenticatedRequest } from '@/lib/auth/server-auth';
-
-const BACKEND_URL = process.env.REPLAY_API_URL || 'http://localhost:30800';
+import { ReplayAPISDK } from '@/types/replay-api/sdk';
+import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
+import { logger } from '@/lib/logger';
 
 /**
  * GET /api/players
@@ -17,27 +17,28 @@ const BACKEND_URL = process.env.REPLAY_API_URL || 'http://localhost:30800';
  */
 export async function GET(request: NextRequest) {
   try {
+    const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
     const { searchParams } = new URL(request.url);
-    const queryString = searchParams.toString();
 
-    const response = await fetch(
-      `${BACKEND_URL}/players${queryString ? `?${queryString}` : ''}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const filters: {
+      game_id?: string;
+      nickname?: string;
+    } = {};
 
-    const data = await response.json();
+    const gameId = searchParams.get('game_id');
+    const nickname = searchParams.get('nickname') || searchParams.get('q');
+
+    if (gameId) filters.game_id = gameId;
+    if (nickname) filters.nickname = nickname;
+
+    const players = await sdk.playerProfiles.searchPlayerProfiles(filters);
 
     return NextResponse.json(
-      { success: response.ok, data: data },
-      { status: response.status }
+      { success: true, data: players },
+      { status: 200 }
     );
   } catch (error) {
-    console.error('[API] Players search error:', error);
+    logger.error('[API /api/players] Players search error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to search players' },
       { status: 500 }
@@ -60,32 +61,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
     const body = await request.json();
 
-    const response = await forwardAuthenticatedRequest(
-      `${BACKEND_URL}/players`,
-      {
-        method: 'POST',
-        body: JSON.stringify(body),
-      },
-      session
-    );
+    const profile = await sdk.playerProfiles.createPlayerProfile({
+      game_id: body.game_id,
+      nickname: body.nickname,
+      slug_uri: body.slug_uri,
+      avatar_uri: body.avatar_uri,
+      roles: body.roles,
+      description: body.description,
+    });
 
-    const data = await response.json();
-
-    if (!response.ok) {
+    if (!profile) {
       return NextResponse.json(
-        { success: false, error: data.error || data.message || 'Failed to create player profile' },
-        { status: response.status }
+        { success: false, error: 'Failed to create player profile' },
+        { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { success: true, data },
+      { success: true, data: profile },
       { status: 201 }
     );
   } catch (error) {
-    console.error('[API] Create player error:', error);
+    logger.error('[API /api/players] Create player error:', error);
     return NextResponse.json(
       { success: false, error: (error instanceof Error ? error.message : 'Failed to create player profile') },
       { status: 500 }

@@ -310,6 +310,43 @@ export class ShareTokenAPI {
 }
 
 /**
+ * Search result group structure
+ */
+interface SearchResultGroup {
+  category: string;
+  items: Array<{
+    id: string;
+    name: string;
+    type: string;
+    [key: string]: unknown;
+  }>;
+}
+
+/**
+ * Global Search API wrapper
+ */
+export class SearchAPI {
+  constructor(private client: ReplayApiClient) {}
+
+  /**
+   * Global search across all entities
+   */
+  async search(query: string, options?: {
+    category?: string;
+    limit?: number;
+  }): Promise<{ groups: SearchResultGroup[]; total: number }> {
+    const params = new URLSearchParams({ q: query });
+    if (options?.category) params.append('category', options.category);
+    if (options?.limit) params.append('limit', String(options.limit));
+
+    const response = await this.client.get<{ groups: SearchResultGroup[]; total: number }>(
+      `/search?${params.toString()}`
+    );
+    return response.data || { groups: [], total: 0 };
+  }
+}
+
+/**
  * Unified SDK wrapper providing access to all API endpoints
  */
 export class ReplayAPISDK {
@@ -326,6 +363,7 @@ export class ReplayAPISDK {
   public payment: PaymentAPI;
   public matchmaking: MatchmakingAPI;
   public tournaments: TournamentAPI;
+  public search: SearchAPI;
 
   constructor(settings: ReplayApiSettings, logger: Loggable) {
     this.client = new ReplayApiClient(settings, logger);
@@ -341,5 +379,6 @@ export class ReplayAPISDK {
     this.payment = new PaymentAPI(this.client);
     this.matchmaking = new MatchmakingAPI(this.client);
     this.tournaments = new TournamentAPI(this.client);
+    this.search = new SearchAPI(this.client);
   }
 }
