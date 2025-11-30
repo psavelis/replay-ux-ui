@@ -6,7 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   Card,
   CardHeader,
@@ -126,6 +126,7 @@ const mapAPIToTournamentDetail = (t: APITournament): TournamentDetail => ({
 
 export default function TournamentDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const tournamentId = params.id as string;
   const [tournament, setTournament] = useState<TournamentDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -179,7 +180,7 @@ export default function TournamentDetailPage() {
           <CardBody className="text-center py-12">
             <Icon icon="solar:cup-linear" width={64} className="mx-auto mb-4 text-danger" />
             <p className="text-lg text-danger">{error || 'Tournament not found'}</p>
-            <Button className="mt-4" color="primary" onClick={() => (window.location.href = '/tournaments')}>
+            <Button className="mt-4" color="primary" onPress={() => router.push('/tournaments')}>
               Back to Tournaments
             </Button>
           </CardBody>
@@ -278,7 +279,7 @@ export default function TournamentDetailPage() {
                 type={tournament.type}
                 rounds={tournament.rounds}
                 title="Tournament Bracket"
-                onMatchClick={(match) => console.log('Match clicked:', match)}
+                onMatchClick={(match) => logger.debug('Match clicked', match)}
               />
             </CardBody>
           </Card>

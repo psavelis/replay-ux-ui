@@ -41,6 +41,23 @@ const notificationColors: Record<
   message: 'primary',
 };
 
+// Pre-defined Tailwind classes for dynamic color support
+const colorBgClasses: Record<string, string> = {
+  primary: 'bg-primary/10',
+  secondary: 'bg-secondary/10',
+  success: 'bg-success/10',
+  warning: 'bg-warning/10',
+  danger: 'bg-danger/10',
+};
+
+const colorTextClasses: Record<string, string> = {
+  primary: 'text-primary',
+  secondary: 'text-secondary',
+  success: 'text-success',
+  warning: 'text-warning',
+  danger: 'text-danger',
+};
+
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -150,9 +167,9 @@ export default function NotificationsPage() {
         <CardBody className="p-4">
           <div className="flex items-start gap-4">
             <div
-              className={`w-12 h-12 bg-${color}/10 rounded-full flex items-center justify-center flex-shrink-0`}
+              className={`w-12 h-12 ${colorBgClasses[color]} rounded-full flex items-center justify-center flex-shrink-0`}
             >
-              <Icon icon={icon} width={24} className={`text-${color}`} />
+              <Icon icon={icon} width={24} className={colorTextClasses[color]} />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-3 mb-2">

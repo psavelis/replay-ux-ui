@@ -28,6 +28,7 @@ import { PageContainer } from '@/components/layouts/centered-content';
 import { PrivacySettings } from '@/components/account/privacy-settings';
 import { SubscriptionManagement } from '@/components/checkout/subscription-management';
 import { PaymentHistory } from '@/components/checkout/payment-history';
+import { logger } from '@/lib/logger';
 
 /**
  * Settings tab keys - matches URL query params
@@ -78,14 +79,30 @@ function SettingsContent() {
     push_messages: true,
   });
 
-  const handleProfileUpdate = () => {
-    // API call to update profile
-    console.log('Updating profile:', profileData);
+  const handleProfileUpdate = async () => {
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profileData),
+      });
+      if (!response.ok) throw new Error('Failed to update profile');
+    } catch (error) {
+      logger.error('Failed to update profile', error);
+    }
   };
 
-  const handleNotificationUpdate = () => {
-    // API call to update notification settings
-    console.log('Updating notifications:', notifications);
+  const handleNotificationUpdate = async () => {
+    try {
+      const response = await fetch('/api/user/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(notifications),
+      });
+      if (!response.ok) throw new Error('Failed to update notifications');
+    } catch (error) {
+      logger.error('Failed to update notification settings', error);
+    }
   };
 
   return (

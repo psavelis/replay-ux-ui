@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardBody, CardFooter, Image, Button, Chip, Input, Spinner } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
 import { PageContainer } from '@/components/layouts/centered-content';
@@ -87,6 +88,7 @@ const categoryColors: Record<string, 'primary' | 'secondary' | 'success' | 'warn
 };
 
 export default function BlogPage() {
+  const router = useRouter();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -182,7 +184,7 @@ export default function BlogPage() {
                 key={post.id}
                 isPressable
                 className="hover:scale-[1.02] transition-transform"
-                onPress={() => (window.location.href = `/blog/${post.slug}`)}
+                onPress={() => router.push(`/blog/${post.slug}`)}
               >
                 <CardHeader className="absolute z-10 top-4 flex-col items-start bg-black/60 backdrop-blur-sm m-2 rounded-large">
                   <Chip size="sm" color={categoryColors[post.category] || 'default'} variant="flat">
@@ -280,7 +282,7 @@ export default function BlogPage() {
                 key={post.id}
                 isPressable
                 className="hover:scale-[1.02] transition-transform"
-                onPress={() => (window.location.href = `/blog/${post.slug}`)}
+                onPress={() => router.push(`/blog/${post.slug}`)}
               >
                 <CardHeader className="pb-0 pt-4 px-4 flex-col items-start">
                   <Chip size="sm" color={categoryColors[post.category] || 'default'} variant="flat" className="mb-2">

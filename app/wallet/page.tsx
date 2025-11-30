@@ -38,6 +38,7 @@ import { AnimatedCounter } from '@/components/ui/animated-counter';
 import { DepositModal } from '@/components/wallet/modals/deposit-modal';
 import { WithdrawModal } from '@/components/wallet/modals/withdraw-modal';
 import { TransactionHistoryModal } from '@/components/wallet/modals/transaction-history-modal';
+import { logger } from '@/lib/logger';
 
 export default function WalletPage() {
   const { data: session, status } = useSession();
@@ -73,7 +74,7 @@ export default function WalletPage() {
         setWallet(data);
       }
     } catch (error) {
-      console.error('Failed to fetch wallet:', error);
+      logger.error('Failed to fetch wallet', error);
     }
   };
 
@@ -85,7 +86,7 @@ export default function WalletPage() {
         setTransactions(data.transactions || []);
       }
     } catch (error) {
-      console.error('Failed to fetch transactions:', error);
+      logger.error('Failed to fetch transactions', error);
     } finally {
       setIsLoading(false);
     }
@@ -117,7 +118,7 @@ export default function WalletPage() {
       setShowCopied(true);
       setTimeout(() => setShowCopied(false), 2000);
     } catch (error) {
-      console.error('Failed to copy address:', error);
+      logger.error('Failed to copy address', error);
     }
   };
 
