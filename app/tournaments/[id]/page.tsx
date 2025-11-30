@@ -16,21 +16,17 @@ import {
   Tabs,
   Tab,
   Divider,
-  Progress,
   Skeleton,
   Image,
   Avatar,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
 } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
 import { PageContainer } from '@/components/layouts/centered-content';
 import { TournamentBracket, BracketMatch } from '@/components/tournaments/tournament-bracket';
 import { logger } from '@/lib/logger';
+import { ReplayAPISDK } from '@/types/replay-api/sdk';
+import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
+import type { Tournament as APITournament, TournamentStatus as APITournamentStatus } from '@/types/replay-api/tournament.types';
 
 interface TournamentDetail {
   id: string;
@@ -64,6 +60,70 @@ interface TournamentDetail {
   rounds: number;
 }
 
+// Map API status to UI status
+const mapAPIStatusToUI = (status: APITournamentStatus): TournamentDetail['status'] => {
+  const statusMap: Record<APITournamentStatus, TournamentDetail['status']> = {
+    'draft': 'upcoming',
+    'registration': 'registration',
+    'ready': 'upcoming',
+    'in_progress': 'ongoing',
+    'completed': 'completed',
+    'cancelled': 'completed',
+  };
+  return statusMap[status] || 'upcoming';
+};
+
+// Map format to bracket type
+const mapFormatToBracketType = (format: string): TournamentDetail['type'] => {
+  const formatMap: Record<string, TournamentDetail['type']> = {
+    'single_elimination': 'single-elimination',
+    'double_elimination': 'double-elimination',
+  };
+  return formatMap[format] || 'single-elimination';
+};
+
+// Map API tournament to TournamentDetail
+const mapAPIToTournamentDetail = (t: APITournament): TournamentDetail => ({
+  id: t.id,
+  name: t.name,
+  game: t.game_id?.toUpperCase() || 'CS2',
+  type: mapFormatToBracketType(t.format),
+  status: mapAPIStatusToUI(t.status),
+  image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200',
+  description: t.description || '',
+  prize_pool: t.prize_pool || 0,
+  prize_distribution: [],
+  entry_fee: t.entry_fee || 0,
+  max_teams: t.max_participants || 16,
+  registered_teams: t.participants?.length || 0,
+  start_date: t.start_time || new Date().toISOString(),
+  end_date: t.end_time || new Date().toISOString(),
+  region: t.region || 'Global',
+  format: t.game_mode || '5v5',
+  rules: t.rules?.map_pool || [],
+  organizer: {
+    name: 'LeetGaming.PRO',
+    logo: '/logo.png',
+  },
+  participants: t.participants?.map(p => ({
+    id: p.player_id,
+    name: p.display_name,
+    members: [],
+  })) || [],
+  matches: t.matches?.map(m => ({
+    id: m.match_id,
+    round: m.round,
+    position: 1,
+    team1: { id: m.player1_id, name: m.player1_id },
+    team2: { id: m.player2_id, name: m.player2_id },
+    winner: m.winner_id,
+    status: m.status === 'completed' ? 'completed' : m.status === 'in_progress' ? 'ongoing' : 'pending',
+    scheduledAt: m.scheduled_at,
+    playedAt: m.completed_at,
+  })) || [],
+  rounds: 4,
+});
+
 export default function TournamentDetailPage() {
   const params = useParams();
   const tournamentId = params.id as string;
@@ -71,97 +131,28 @@ export default function TournamentDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data helper
-  const getMockTournament = (): TournamentDetail => ({
-    id: tournamentId,
-    name: 'LeetGaming Pro Series - Winter 2024',
-    game: 'CS2',
-    type: 'single-elimination',
-    status: 'ongoing',
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200',
-    description:
-      'Premium CS2 tournament featuring 16 of the best teams. Battle through single-elimination bracket for a $10,000 prize pool.',
-    prize_pool: 10000,
-    prize_distribution: [
-      { place: '1st Place', amount: 5000 },
-      { place: '2nd Place', amount: 3000 },
-      { place: '3rd-4th Place', amount: 1000 },
-    ],
-    entry_fee: 50,
-    max_teams: 16,
-    registered_teams: 16,
-    start_date: '2024-01-20',
-    end_date: '2024-01-22',
-    region: 'North America',
-    format: '5v5',
-    rules: [
-      'All matches are Best of 3 (BO3)',
-      'Finals are Best of 5 (BO5)',
-      'Map pool: Inferno, Mirage, Dust2, Nuke, Ancient, Overpass, Anubis',
-      'Team roster lock 24 hours before tournament start',
-      'Maximum 1 substitute per team',
-      'No cheating or exploits allowed',
-      'All players must be registered on LeetGaming.PRO',
-    ],
-    organizer: {
-      name: 'LeetGaming.PRO',
-      logo: '/logo.png',
-    },
-    participants: generateMockParticipants(),
-    matches: generateMockMatches(),
-    rounds: 4,
-  });
-
   useEffect(() => {
     async function fetchTournament() {
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch tournament from API
-        const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
-        const response = await fetch(`${baseUrl}/tournaments/${tournamentId}`);
+        // Fetch tournament using SDK
+        const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
+        const apiTournament = await sdk.tournaments.getTournament(tournamentId);
 
-        if (response.ok) {
-          const data = await response.json();
-
-          // Map API response to TournamentDetail interface
-          const apiTournament: TournamentDetail = {
-            id: data.id || tournamentId,
-            name: data.name || 'Unnamed Tournament',
-            game: data.game_id?.toUpperCase() || 'CS2',
-            type: data.bracket_type || 'single-elimination',
-            status: data.status || 'upcoming',
-            image: data.image_url || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200',
-            description: data.description || '',
-            prize_pool: data.prize_pool || 0,
-            prize_distribution: data.prize_distribution || getMockTournament().prize_distribution,
-            entry_fee: data.entry_fee || 0,
-            max_teams: data.max_participants || 16,
-            registered_teams: data.current_participants || 0,
-            start_date: data.start_date || new Date().toISOString(),
-            end_date: data.end_date || new Date().toISOString(),
-            region: data.region || 'Global',
-            format: data.format || '5v5',
-            rules: data.rules || getMockTournament().rules,
-            organizer: {
-              name: data.organizer_name || 'LeetGaming.PRO',
-              logo: data.organizer_logo,
-            },
-            participants: data.participants || generateMockParticipants(),
-            matches: data.matches || generateMockMatches(),
-            rounds: data.rounds || 4,
-          };
-          setTournament(apiTournament);
+        if (apiTournament) {
+          const mappedTournament = mapAPIToTournamentDetail(apiTournament);
+          setTournament(mappedTournament);
         } else {
-          // Fallback to mock data
-          setTournament(getMockTournament());
+          setError('Tournament not found');
+          setTournament(null);
         }
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load tournament';
         logger.error('Failed to load tournament', err);
-        setError('Failed to load tournament');
-        // Fallback to mock data on error
-        setTournament(getMockTournament());
+        setError(errorMessage);
+        setTournament(null);
       } finally {
         setLoading(false);
       }
@@ -427,70 +418,3 @@ export default function TournamentDetailPage() {
   );
 }
 
-// Helper functions to generate mock data
-function generateMockParticipants() {
-  return Array.from({ length: 16 }, (_, i) => ({
-    id: `team-${i + 1}`,
-    name: `Team ${i + 1}`,
-    logo: `https://i.pravatar.cc/100?u=team-${i + 1}`,
-    members: Array.from({ length: 5 }, (_, j) => `Player ${j + 1}`),
-  }));
-}
-
-function generateMockMatches(): BracketMatch[] {
-  const matches: BracketMatch[] = [];
-
-  // Round 1 - 8 matches
-  for (let i = 0; i < 8; i++) {
-    matches.push({
-      id: `r1-m${i + 1}`,
-      round: 1,
-      position: i + 1,
-      team1: { id: `team-${i * 2 + 1}`, name: `Team ${i * 2 + 1}`, score: Math.random() > 0.5 ? 2 : 0 },
-      team2: { id: `team-${i * 2 + 2}`, name: `Team ${i * 2 + 2}`, score: Math.random() > 0.5 ? 2 : 0 },
-      winner: Math.random() > 0.5 ? `team-${i * 2 + 1}` : `team-${i * 2 + 2}`,
-      status: 'completed',
-      playedAt: new Date().toISOString(),
-    });
-  }
-
-  // Round 2 - 4 matches
-  for (let i = 0; i < 4; i++) {
-    matches.push({
-      id: `r2-m${i + 1}`,
-      round: 2,
-      position: i + 1,
-      team1: { id: `team-w${i * 2 + 1}`, name: `Winner R1-${i * 2 + 1}`, score: Math.random() > 0.5 ? 2 : 1 },
-      team2: { id: `team-w${i * 2 + 2}`, name: `Winner R1-${i * 2 + 2}`, score: Math.random() > 0.5 ? 2 : 1 },
-      winner: Math.random() > 0.5 ? `team-w${i * 2 + 1}` : `team-w${i * 2 + 2}`,
-      status: i < 2 ? 'completed' : 'ongoing',
-      scheduledAt: new Date().toISOString(),
-    });
-  }
-
-  // Round 3 - 2 matches (Semi-finals)
-  for (let i = 0; i < 2; i++) {
-    matches.push({
-      id: `r3-m${i + 1}`,
-      round: 3,
-      position: i + 1,
-      team1: { id: `team-sf${i * 2 + 1}`, name: `SF Team ${i * 2 + 1}` },
-      team2: { id: `team-sf${i * 2 + 2}`, name: `SF Team ${i * 2 + 2}` },
-      status: 'pending',
-      scheduledAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-    });
-  }
-
-  // Round 4 - 1 match (Final)
-  matches.push({
-    id: 'r4-m1',
-    round: 4,
-    position: 1,
-    team1: undefined,
-    team2: undefined,
-    status: 'pending',
-    scheduledAt: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
-  });
-
-  return matches;
-}

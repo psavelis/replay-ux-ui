@@ -58,13 +58,15 @@ export default function NotificationsPage() {
       const response = await fetch('/api/notifications');
       if (response.ok) {
         const data = await response.json();
-        setNotifications(data.notifications || mockNotifications);
+        setNotifications(data.notifications || []);
       } else {
-        setNotifications(mockNotifications);
+        // Show empty state when API fails
+        setNotifications([]);
       }
     } catch (error) {
       console.error('Failed to load notifications:', error);
-      setNotifications(mockNotifications);
+      // Show empty state on error - no mock data fallback
+      setNotifications([]);
     } finally {
       setLoading(false);
     }
@@ -393,72 +395,3 @@ function formatTimestamp(timestamp: string): string {
   });
 }
 
-// Mock notifications for development
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'match',
-    title: 'Match Result',
-    message:
-      'Your competitive match on de_inferno has ended. Congratulations on your victory! Final score: 16-14.',
-    timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-    read: false,
-    actionUrl: '/matches/1',
-  },
-  {
-    id: '2',
-    type: 'team',
-    title: 'Team Invitation',
-    message:
-      'Elite Gamers [EG] has invited you to join their competitive CS2 roster. They are looking for an entry fragger.',
-    timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
-    read: false,
-    actionUrl: '/teams/1',
-  },
-  {
-    id: '3',
-    type: 'friend',
-    title: 'Friend Request',
-    message: 'ProGamer_2024 sent you a friend request.',
-    timestamp: new Date(Date.now() - 2 * 3600000).toISOString(),
-    read: false,
-    actionUrl: '/friends',
-  },
-  {
-    id: '4',
-    type: 'achievement',
-    title: 'Achievement Unlocked!',
-    message:
-      'Congratulations! You earned the "First Blood King" achievement by getting the first kill in 100 matches.',
-    timestamp: new Date(Date.now() - 24 * 3600000).toISOString(),
-    read: true,
-    actionUrl: '/profile/achievements',
-  },
-  {
-    id: '5',
-    type: 'message',
-    title: 'New Message',
-    message: 'Captain_Alpha sent you a message: "Great game yesterday! Want to team up again?"',
-    timestamp: new Date(Date.now() - 3 * 24 * 3600000).toISOString(),
-    read: true,
-    actionUrl: '/messages',
-  },
-  {
-    id: '6',
-    type: 'match',
-    title: 'Match Ready',
-    message: 'Your matchmaking queue has found a game. Click to join the match lobby.',
-    timestamp: new Date(Date.now() - 5 * 24 * 3600000).toISOString(),
-    read: true,
-    actionUrl: '/match-making',
-  },
-  {
-    id: '7',
-    type: 'system',
-    title: 'Premium Subscription Expiring',
-    message: 'Your Premium subscription will expire in 7 days. Renew now to keep your benefits.',
-    timestamp: new Date(Date.now() - 7 * 24 * 3600000).toISOString(),
-    read: true,
-    actionUrl: '/settings?tab=subscription',
-  },
-];

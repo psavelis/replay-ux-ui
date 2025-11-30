@@ -56,31 +56,20 @@ const RANK_TIERS: RankTier[] = [
   { name: "Challenger", division: "I", icon: "mdi:trophy", color: "#DCFF37", minRating: 4500 },
 ];
 
-const MOCK_PLAYER_STATS: PlayerRankStats = {
-  currentRating: 2350,
-  tier: { name: "Gold", division: "III", icon: "mdi:shield-star", color: "#FFD700", minRating: 2000 },
-  wins: 127,
-  losses: 98,
-  totalMatches: 225,
-  winRate: 56.4,
-  ratingChange: +45,
-  nextTierRating: 2500,
-  progressToNext: 70,
-};
-
-const RECENT_MATCHES = [
-  { id: 1, result: "win", ratingChange: +25, map: "Dust2", kda: "24/12/8", date: "2 hours ago" },
-  { id: 2, result: "win", ratingChange: +22, map: "Mirage", kda: "18/14/6", date: "5 hours ago" },
-  { id: 3, result: "loss", ratingChange: -18, map: "Inferno", kda: "12/18/4", date: "1 day ago" },
-  { id: 4, result: "win", ratingChange: +20, map: "Nuke", kda: "20/15/7", date: "1 day ago" },
-  { id: 5, result: "loss", ratingChange: -16, map: "Overpass", kda: "15/19/5", date: "2 days ago" },
-];
+interface RecentMatch {
+  id: number;
+  result: string;
+  ratingChange: number;
+  map: string;
+  kda: string;
+  date: string;
+}
 
 export default function RankedPage() {
   const { data: session } = useSession();
   const [selectedTab, setSelectedTab] = useState("overview");
-  const [stats, setStats] = useState<PlayerRankStats>(MOCK_PLAYER_STATS);
-  const [recentMatches, setRecentMatches] = useState(RECENT_MATCHES);
+  const [stats, setStats] = useState<PlayerRankStats | null>(null);
+  const [recentMatches, setRecentMatches] = useState<RecentMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -151,7 +140,9 @@ export default function RankedPage() {
       } catch (err: any) {
         logger.error("Failed to fetch ranked data", err);
         setError(err.message || "Failed to load ranked data");
-        // Keep mock data on error
+        // Show empty state on error - no mock data fallback
+        setStats(null);
+        setRecentMatches([]);
       } finally {
         setLoading(false);
       }
@@ -190,7 +181,25 @@ export default function RankedPage() {
         </Card>
       )}
 
+      {/* No Data State */}
+      {!loading && !stats && (
+        <Card className="w-full max-w-6xl">
+          <CardBody className="text-center py-12">
+            <Icon icon="mdi:chart-timeline-variant" className="text-6xl text-default-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">No Ranked Data Available</h3>
+            <p className="text-default-500 mb-4">
+              Play ranked matches to see your stats and climb the leaderboards.
+            </p>
+            <Button color="primary" variant="shadow">
+              <Icon icon="mdi:sword-cross" width={20} />
+              Find Match
+            </Button>
+          </CardBody>
+        </Card>
+      )}
+
       {/* Current Rank Card */}
+      {stats && (
       <Card className="w-full max-w-6xl bg-gradient-to-br from-default-100 to-default-50">
         <CardBody className="p-8">
           <div className="flex flex-col md:flex-row items-center gap-8">
@@ -271,8 +280,10 @@ export default function RankedPage() {
           </div>
         </CardBody>
       </Card>
+      )}
 
       {/* Tabs Section */}
+      {stats && (
       <div className="w-full max-w-6xl">
         <Tabs
           selectedKey={selectedTab}
@@ -425,6 +436,7 @@ export default function RankedPage() {
           </Tab>
         </Tabs>
       </div>
+      )}
     </div>
   );
 }

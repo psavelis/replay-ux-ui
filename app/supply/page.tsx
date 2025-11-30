@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardBody,
@@ -15,10 +15,20 @@ import {
   Tabs,
   Tab,
   Divider,
+  Spinner,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@nextui-org/react";
 import { Icon } from "@iconify/react";
 import { title, subtitle } from "@/components/primitives";
 import { SearchIcon } from "@/components/icons";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { logger } from "@/lib/logger";
 
 interface MarketItem {
   id: string;
@@ -39,157 +49,160 @@ interface MarketItem {
   sales: number;
 }
 
-const MOCK_MARKET_ITEMS: MarketItem[] = [
-  {
-    id: "1",
-    name: "AK-47 | Redline (Field-Tested)",
-    description: "Classic AK-47 skin with clean red design",
-    image: "https://placehold.co/400x300/FF4654/FFF?text=AK-47+Redline",
-    price: 45.99,
-    currency: "usd",
-    category: "skins",
-    rarity: "epic",
-    seller: {
-      name: "SkinTrader_Pro",
-      avatar: "https://i.pravatar.cc/150?img=20",
-      rating: 4.8,
-      verified: true,
-    },
-    stock: 3,
-    sales: 127,
+// API response types
+interface APIMarketItem {
+  id: string;
+  name: string;
+  description: string;
+  image_url?: string;
+  price?: number;
+  currency?: string;
+  category: string;
+  rarity?: string;
+  seller?: {
+    name?: string;
+    avatar_url?: string;
+    rating?: number;
+    verified?: boolean;
+  };
+  seller_id?: string;
+  stock?: number;
+  sales_count?: number;
+}
+
+interface APIMarketResponse {
+  data?: APIMarketItem[];
+}
+
+// Map API response to MarketItem
+const mapAPIToMarketItem = (item: APIMarketItem): MarketItem => ({
+  id: item.id,
+  name: item.name,
+  description: item.description,
+  image: item.image_url || `https://placehold.co/400x300/34445C/FFF?text=${encodeURIComponent(item.name)}`,
+  price: item.price || 0,
+  currency: (item.currency as MarketItem['currency']) || 'usd',
+  category: item.category as MarketItem['category'],
+  rarity: item.rarity as MarketItem['rarity'],
+  seller: {
+    name: item.seller?.name || 'Unknown Seller',
+    avatar: item.seller?.avatar_url || `https://i.pravatar.cc/150?u=${item.seller_id}`,
+    rating: item.seller?.rating || 0,
+    verified: item.seller?.verified || false,
   },
-  {
-    id: "2",
-    name: "AWP | Dragon Lore (Minimal Wear)",
-    description: "Rare and sought-after AWP skin",
-    image: "https://placehold.co/400x300/FFD700/000?text=AWP+Dragon+Lore",
-    price: 2499.99,
-    currency: "usd",
-    category: "skins",
-    rarity: "legendary",
-    seller: {
-      name: "LegendarySkins",
-      avatar: "https://i.pravatar.cc/150?img=21",
-      rating: 5.0,
-      verified: true,
-    },
-    stock: 1,
-    sales: 45,
-  },
-  {
-    id: "3",
-    name: "Pro CS2 Coaching - 2 Hours",
-    description: "One-on-one coaching with professional CS2 player",
-    image: "https://placehold.co/400x300/DCFF37/000?text=Pro+Coaching",
-    price: 75.0,
-    currency: "usd",
-    category: "coaching",
-    seller: {
-      name: "ProCoach_s1mple",
-      avatar: "https://i.pravatar.cc/150?img=1",
-      rating: 4.9,
-      verified: true,
-    },
-    stock: 5,
-    sales: 89,
-  },
-  {
-    id: "4",
-    name: "Replay Analysis Service",
-    description: "Expert analysis of your gameplay with detailed feedback",
-    image: "https://placehold.co/400x300/34445C/FFF?text=Replay+Analysis",
-    price: 25.0,
-    currency: "usd",
-    category: "services",
-    seller: {
-      name: "AnalysisExpert",
-      avatar: "https://i.pravatar.cc/150?img=22",
-      rating: 4.7,
-      verified: true,
-    },
-    stock: 10,
-    sales: 234,
-  },
-  {
-    id: "5",
-    name: "M4A4 | Howl (Factory New)",
-    description: "Contraband skin, no longer available in drops",
-    image: "https://placehold.co/400x300/FF6B6B/FFF?text=M4A4+Howl",
-    price: 3800.0,
-    currency: "usd",
-    category: "skins",
-    rarity: "legendary",
-    seller: {
-      name: "RareCollector",
-      avatar: "https://i.pravatar.cc/150?img=23",
-      rating: 4.9,
-      verified: true,
-    },
-    stock: 1,
-    sales: 12,
-  },
-  {
-    id: "6",
-    name: "Knife | Karambit Fade",
-    description: "Beautiful fade pattern on karambit knife",
-    image: "https://placehold.co/400x300/9B59B6/FFF?text=Karambit+Fade",
-    price: 1250.0,
-    currency: "usd",
-    category: "skins",
-    rarity: "legendary",
-    seller: {
-      name: "KnifeMaster",
-      avatar: "https://i.pravatar.cc/150?img=24",
-      rating: 4.8,
-      verified: true,
-    },
-    stock: 2,
-    sales: 67,
-  },
-  {
-    id: "7",
-    name: "Valorant VOD Review",
-    description: "Professional VOD review for Valorant competitive matches",
-    image: "https://placehold.co/400x300/F31260/FFF?text=Valorant+VOD",
-    price: 30.0,
-    currency: "usd",
-    category: "services",
-    seller: {
-      name: "ValCoach",
-      avatar: "https://i.pravatar.cc/150?img=25",
-      rating: 4.6,
-      verified: false,
-    },
-    stock: 8,
-    sales: 156,
-  },
-  {
-    id: "8",
-    name: "Glock-18 | Fade (Factory New)",
-    description: "Clean fade pattern pistol skin",
-    image: "https://placehold.co/400x300/E74C3C/FFF?text=Glock+Fade",
-    price: 280.0,
-    currency: "usd",
-    category: "skins",
-    rarity: "rare",
-    seller: {
-      name: "PistolPro",
-      avatar: "https://i.pravatar.cc/150?img=26",
-      rating: 4.5,
-      verified: true,
-    },
-    stock: 4,
-    sales: 98,
-  },
-];
+  stock: item.stock || 0,
+  sales: item.sales_count || 0,
+});
 
 export default function SupplyPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { isOpen: isListOpen, onOpen: onListOpen, onClose: onListClose } = useDisclosure();
+  const { isOpen: isBuyOpen, onOpen: onBuyOpen, onClose: onBuyClose } = useDisclosure();
+
+  const [marketItems, setMarketItems] = useState<MarketItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedRarity, setSelectedRarity] = useState("all");
   const [sortBy, setSortBy] = useState("popular");
+  const [selectedItem, setSelectedItem] = useState<MarketItem | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
 
-  const filteredItems = MOCK_MARKET_ITEMS.filter((item) => {
+  // Fetch market items from API
+  useEffect(() => {
+    async function fetchMarketItems() {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
+        const params = new URLSearchParams();
+        if (selectedCategory !== 'all') params.append('category', selectedCategory);
+        if (selectedRarity !== 'all') params.append('rarity', selectedRarity);
+
+        const response = await fetch(`${baseUrl}/api/v1/marketplace/items?${params.toString()}`);
+
+        if (response.ok) {
+          const data: APIMarketResponse = await response.json();
+          const apiItems = data.data || [];
+          const mappedItems: MarketItem[] = apiItems.map(mapAPIToMarketItem);
+          setMarketItems(mappedItems);
+        } else {
+          setMarketItems([]);
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load marketplace";
+        logger.error("Failed to fetch market items", err);
+        setError(errorMessage);
+        setMarketItems([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchMarketItems();
+  }, [selectedCategory, selectedRarity]);
+
+  // Handle listing a new item
+  const handleListItem = () => {
+    if (!session) {
+      router.push('/signin?callbackUrl=/supply');
+      return;
+    }
+    onListOpen();
+  };
+
+  // Handle buying an item
+  const handleBuyItem = (item: MarketItem) => {
+    if (!session) {
+      router.push('/signin?callbackUrl=/supply');
+      return;
+    }
+    setSelectedItem(item);
+    onBuyOpen();
+  };
+
+  // Confirm purchase
+  const handleConfirmPurchase = async () => {
+    if (!selectedItem || !session) return;
+
+    setPurchasing(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
+      const response = await fetch(`${baseUrl}/api/v1/marketplace/items/${selectedItem.id}/purchase`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          buyer_email: session.user?.email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Purchase failed');
+      }
+
+      logger.info('Purchase successful', { itemId: selectedItem.id });
+      onBuyClose();
+      // Refresh items
+      setMarketItems(prev => prev.map(item =>
+        item.id === selectedItem.id
+          ? { ...item, stock: Math.max(0, item.stock - 1), sales: item.sales + 1 }
+          : item
+      ));
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Purchase failed';
+      logger.error('Purchase failed', err);
+      setError(errorMessage);
+    } finally {
+      setPurchasing(false);
+    }
+  };
+
+  const filteredItems = marketItems.filter((item) => {
     const matchesSearch =
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -285,7 +298,26 @@ export default function SupplyPage() {
         </CardBody>
       </Card>
 
+      {/* Loading State */}
+      {loading && (
+        <div className="w-full max-w-7xl flex justify-center py-12">
+          <Spinner size="lg" label="Loading marketplace items..." color="primary" />
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !loading && (
+        <Card className="w-full max-w-md">
+          <CardBody className="text-center">
+            <Icon icon="mdi:alert-circle" className="text-danger mx-auto mb-4" width={48} />
+            <p className="text-danger font-semibold mb-2">Error loading marketplace</p>
+            <p className="text-default-500 mb-4">{error}</p>
+          </CardBody>
+        </Card>
+      )}
+
       {/* Items Grid */}
+      {!loading && (
       <div className="w-full max-w-7xl">
         <div className="flex justify-between items-center mb-4">
           <p className="text-default-500">
@@ -295,6 +327,7 @@ export default function SupplyPage() {
             color="primary"
             variant="flat"
             startContent={<Icon icon="mdi:plus" width={20} />}
+            onPress={handleListItem}
           >
             List Item
           </Button>
@@ -396,8 +429,10 @@ export default function SupplyPage() {
                       variant="shadow"
                       size="md"
                       endContent={<Icon icon="mdi:cart" width={18} />}
+                      onPress={() => handleBuyItem(item)}
+                      isDisabled={item.stock <= 0}
                     >
-                      Buy Now
+                      {item.stock > 0 ? 'Buy Now' : 'Sold Out'}
                     </Button>
                   </div>
                 </CardFooter>
@@ -406,6 +441,7 @@ export default function SupplyPage() {
           </div>
         )}
       </div>
+      )}
 
       {/* Info Cards */}
       <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -429,6 +465,109 @@ export default function SupplyPage() {
           </CardBody>
         </Card>
       </div>
+
+      {/* Purchase Confirmation Modal */}
+      <Modal isOpen={isBuyOpen} onClose={onBuyClose} size="md">
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            Confirm Purchase
+          </ModalHeader>
+          <ModalBody>
+            {selectedItem && (
+              <div className="flex flex-col gap-4">
+                <div className="flex gap-4">
+                  <Image
+                    src={selectedItem.image}
+                    alt={selectedItem.name}
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+                  <div className="flex flex-col justify-center">
+                    <h4 className="font-semibold">{selectedItem.name}</h4>
+                    <p className="text-sm text-default-500">{selectedItem.description}</p>
+                  </div>
+                </div>
+                <Divider />
+                <div className="flex justify-between items-center">
+                  <span className="text-default-500">Price</span>
+                  <span className="text-xl font-bold text-primary">${selectedItem.price.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-default-500">Seller</span>
+                  <div className="flex items-center gap-2">
+                    <span>{selectedItem.seller.name}</span>
+                    {selectedItem.seller.verified && (
+                      <Icon icon="mdi:check-decagram" className="text-primary" width={16} />
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="light" onPress={onBuyClose} isDisabled={purchasing}>
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onPress={handleConfirmPurchase}
+              isLoading={purchasing}
+              startContent={!purchasing && <Icon icon="mdi:cart" width={18} />}
+            >
+              Confirm Purchase
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* List Item Modal */}
+      <Modal isOpen={isListOpen} onClose={onListClose} size="lg">
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            List Item for Sale
+          </ModalHeader>
+          <ModalBody>
+            <div className="flex flex-col gap-4">
+              <Input
+                label="Item Name"
+                placeholder="Enter item name"
+                variant="bordered"
+              />
+              <Input
+                label="Description"
+                placeholder="Describe your item"
+                variant="bordered"
+              />
+              <Select
+                label="Category"
+                placeholder="Select category"
+                variant="bordered"
+              >
+                <SelectItem key="skins" value="skins">Skins & Items</SelectItem>
+                <SelectItem key="coaching" value="coaching">Coaching</SelectItem>
+                <SelectItem key="services" value="services">Services</SelectItem>
+              </Select>
+              <Input
+                label="Price"
+                placeholder="0.00"
+                type="number"
+                startContent={<span className="text-default-400">$</span>}
+                variant="bordered"
+              />
+              <p className="text-xs text-default-400">
+                A 5% platform fee will be deducted from each sale.
+              </p>
+            </div>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="light" onPress={onListClose}>
+              Cancel
+            </Button>
+            <Button color="primary" onPress={onListClose}>
+              List Item
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

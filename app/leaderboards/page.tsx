@@ -41,234 +41,25 @@ interface LeaderboardPlayer {
   country: string;
 }
 
-const MOCK_LEADERBOARD_DATA: LeaderboardPlayer[] = [
-  {
-    rank: 1,
-    previousRank: 1,
-    name: "s1mple",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    rating: 4850,
-    wins: 342,
-    losses: 128,
-    winRate: 72.8,
-    kd: 1.42,
-    tier: "Challenger",
-    country: "UA",
-  },
-  {
-    rank: 2,
-    previousRank: 3,
-    name: "ZywOo",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    rating: 4720,
-    wins: 318,
-    losses: 145,
-    winRate: 68.7,
-    kd: 1.38,
-    tier: "Challenger",
-    country: "FR",
-  },
-  {
-    rank: 3,
-    previousRank: 2,
-    name: "NiKo",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    rating: 4680,
-    wins: 305,
-    losses: 152,
-    winRate: 66.7,
-    kd: 1.35,
-    tier: "Challenger",
-    country: "BA",
-  },
-  {
-    rank: 4,
-    previousRank: 5,
-    name: "device",
-    avatar: "https://i.pravatar.cc/150?img=4",
-    rating: 4540,
-    wins: 298,
-    losses: 160,
-    winRate: 65.1,
-    kd: 1.31,
-    tier: "Grandmaster",
-    country: "DK",
-  },
-  {
-    rank: 5,
-    previousRank: 4,
-    name: "m0NESY",
-    avatar: "https://i.pravatar.cc/150?img=5",
-    rating: 4510,
-    wins: 285,
-    losses: 168,
-    winRate: 62.9,
-    kd: 1.29,
-    tier: "Grandmaster",
-    country: "RU",
-  },
-  {
-    rank: 6,
-    previousRank: 7,
-    name: "donk",
-    avatar: "https://i.pravatar.cc/150?img=6",
-    rating: 4420,
-    wins: 276,
-    losses: 175,
-    winRate: 61.2,
-    kd: 1.27,
-    tier: "Grandmaster",
-    country: "RU",
-  },
-  {
-    rank: 7,
-    previousRank: 6,
-    name: "frozen",
-    avatar: "https://i.pravatar.cc/150?img=7",
-    rating: 4380,
-    wins: 268,
-    losses: 182,
-    winRate: 59.6,
-    kd: 1.24,
-    tier: "Grandmaster",
-    country: "SK",
-  },
-  {
-    rank: 8,
-    previousRank: 9,
-    name: "ropz",
-    avatar: "https://i.pravatar.cc/150?img=8",
-    rating: 4310,
-    wins: 259,
-    losses: 188,
-    winRate: 57.9,
-    kd: 1.22,
-    tier: "Grandmaster",
-    country: "EE",
-  },
-  {
-    rank: 9,
-    previousRank: 8,
-    name: "electronic",
-    avatar: "https://i.pravatar.cc/150?img=9",
-    rating: 4280,
-    wins: 252,
-    losses: 194,
-    winRate: 56.5,
-    kd: 1.20,
-    tier: "Grandmaster",
-    country: "RU",
-  },
-  {
-    rank: 10,
-    previousRank: 11,
-    name: "Twistzz",
-    avatar: "https://i.pravatar.cc/150?img=10",
-    rating: 4250,
-    wins: 245,
-    losses: 200,
-    winRate: 55.1,
-    kd: 1.18,
-    tier: "Master",
-    country: "CA",
-  },
-  {
-    rank: 11,
-    previousRank: 10,
-    name: "blameF",
-    avatar: "https://i.pravatar.cc/150?img=11",
-    rating: 4180,
-    wins: 238,
-    losses: 207,
-    winRate: 53.5,
-    kd: 1.16,
-    tier: "Master",
-    country: "DK",
-  },
-  {
-    rank: 12,
-    previousRank: 13,
-    name: "rain",
-    avatar: "https://i.pravatar.cc/150?img=12",
-    rating: 4120,
-    wins: 231,
-    losses: 213,
-    winRate: 52.0,
-    kd: 1.14,
-    tier: "Master",
-    country: "NO",
-  },
-];
-
-const TEAM_LEADERBOARD = [
-  {
-    rank: 1,
-    previousRank: 1,
-    name: "FaZe Clan",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    rating: 5200,
-    wins: 127,
-    losses: 38,
-    winRate: 77.0,
-    members: 5,
-    country: "EU",
-  },
-  {
-    rank: 2,
-    previousRank: 3,
-    name: "Natus Vincere",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    rating: 5150,
-    wins: 122,
-    losses: 42,
-    winRate: 74.4,
-    members: 5,
-    country: "UA",
-  },
-  {
-    rank: 3,
-    previousRank: 2,
-    name: "G2 Esports",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    rating: 5080,
-    wins: 118,
-    losses: 47,
-    winRate: 71.5,
-    members: 5,
-    country: "EU",
-  },
-  {
-    rank: 4,
-    previousRank: 4,
-    name: "Vitality",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    rating: 4920,
-    wins: 112,
-    losses: 53,
-    winRate: 67.9,
-    members: 5,
-    country: "FR",
-  },
-  {
-    rank: 5,
-    previousRank: 6,
-    name: "Spirit",
-    avatar: "https://avatars.githubusercontent.com/u/168373383",
-    rating: 4850,
-    wins: 108,
-    losses: 58,
-    winRate: 65.1,
-    members: 5,
-    country: "RU",
-  },
-];
+interface LeaderboardTeam {
+  rank: number;
+  previousRank: number;
+  name: string;
+  avatar: string;
+  rating: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  members: number;
+  country: string;
+}
 
 export default function LeaderboardsPage() {
   const [selectedTab, setSelectedTab] = useState("players");
   const [selectedRegion, setSelectedRegion] = useState("global");
   const [selectedGame, setSelectedGame] = useState("cs2");
   const [playerLeaderboard, setPlayerLeaderboard] = useState<LeaderboardPlayer[]>([]);
-  const [teamLeaderboard, setTeamLeaderboard] = useState<typeof TEAM_LEADERBOARD>([]);
+  const [teamLeaderboard, setTeamLeaderboard] = useState<LeaderboardTeam[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -325,15 +116,15 @@ export default function LeaderboardsPage() {
           country: t.region || "XX",
         }));
 
-        // Use API data or fallback to mock if empty
-        setPlayerLeaderboard(mappedPlayers.length > 0 ? mappedPlayers : MOCK_LEADERBOARD_DATA);
-        setTeamLeaderboard(mappedTeams.length > 0 ? mappedTeams : TEAM_LEADERBOARD);
+        // Use API data
+        setPlayerLeaderboard(mappedPlayers);
+        setTeamLeaderboard(mappedTeams);
       } catch (err: any) {
         logger.error("Failed to fetch leaderboards", err);
         setError(err.message || "Failed to load leaderboards");
-        // Fallback to mock data on error
-        setPlayerLeaderboard(MOCK_LEADERBOARD_DATA);
-        setTeamLeaderboard(TEAM_LEADERBOARD);
+        // Don't use mock data - show empty state when API fails
+        setPlayerLeaderboard([]);
+        setTeamLeaderboard([]);
       } finally {
         setLoading(false);
       }

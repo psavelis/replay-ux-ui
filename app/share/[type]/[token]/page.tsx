@@ -46,19 +46,8 @@ export default function SharedContentPage() {
         setContent(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load shared content');
-        // Mock data for development
-        const mockContent: SharedContent = {
-          content_type: contentType as any,
-          content_id: token.split('_')[1] || 'unknown',
-          token: token,
-          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          created_at: new Date().toISOString(),
-          metadata: {
-            title: `Shared ${contentType}`,
-            description: `This is a shared ${contentType}`,
-          },
-        };
-        setContent(mockContent);
+        // Show error state - no mock data fallback
+        setContent(null);
       } finally {
         setLoading(false);
       }

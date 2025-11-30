@@ -5,10 +5,11 @@
  * Features: Categories, featured posts, recent posts, search integration
  */
 
-import React, { useState } from 'react';
-import { Card, CardHeader, CardBody, CardFooter, Image, Button, Chip, Input } from '@nextui-org/react';
+import React, { useState, useEffect } from 'react';
+import { Card, CardHeader, CardBody, CardFooter, Image, Button, Chip, Input, Spinner } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
 import { PageContainer } from '@/components/layouts/centered-content';
+import { logger } from '@/lib/logger';
 
 interface BlogPost {
   id: string;
@@ -28,111 +29,52 @@ interface BlogPost {
   slug: string;
 }
 
-// Mock blog posts data - in production, fetch from API/CMS
-const mockPosts: BlogPost[] = [
-  {
-    id: '1',
-    title: 'Introducing Advanced Match Analytics: Deep Dive into Your CS2 Performance',
-    excerpt: 'Learn how our new analytics engine breaks down every round, every kill, and every decision you make in Counter-Strike 2.',
-    content: '',
-    author: {
-      name: 'Sarah Chen',
-      avatar: 'https://i.pravatar.cc/150?u=sarah',
-    },
-    category: 'Product Updates',
-    tags: ['analytics', 'cs2', 'features'],
-    publishedAt: '2024-01-15',
-    readTime: 8,
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
-    slug: 'advanced-match-analytics',
+// API response types
+interface APIBlogPost {
+  id?: string;
+  post_id?: string;
+  title?: string;
+  excerpt?: string;
+  summary?: string;
+  content?: string;
+  author?: { name?: string; avatar?: string };
+  author_name?: string;
+  author_avatar?: string;
+  author_id?: string;
+  category?: string;
+  tags?: string[];
+  published_at?: string;
+  created_at?: string;
+  read_time?: number;
+  featured?: boolean;
+  image_url?: string;
+  cover_image?: string;
+  slug?: string;
+}
+
+interface APIBlogResponse {
+  data?: APIBlogPost[];
+  posts?: APIBlogPost[];
+}
+
+// Map API response to BlogPost
+const mapAPIToBlogPost = (p: APIBlogPost): BlogPost => ({
+  id: p.id || p.post_id || '',
+  title: p.title || 'Untitled',
+  excerpt: p.excerpt || p.summary || '',
+  content: p.content || '',
+  author: {
+    name: p.author?.name || p.author_name || 'Unknown',
+    avatar: p.author?.avatar || p.author_avatar || `https://i.pravatar.cc/150?u=${p.author_id}`,
   },
-  {
-    id: '2',
-    title: 'Pro Player Spotlight: Interview with Team Liquid\'s Entry Fragger',
-    excerpt: 'We sat down with one of the best entry fraggers in competitive CS2 to discuss strategies, warmup routines, and mental preparation.',
-    content: '',
-    author: {
-      name: 'Mike Rodriguez',
-      avatar: 'https://i.pravatar.cc/150?u=mike',
-    },
-    category: 'Interviews',
-    tags: ['pro-players', 'interviews', 'strategies'],
-    publishedAt: '2024-01-12',
-    readTime: 12,
-    featured: true,
-    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800',
-    slug: 'pro-player-spotlight-team-liquid',
-  },
-  {
-    id: '3',
-    title: 'Matchmaking 2.0: Premium Tiers and Priority Queues Explained',
-    excerpt: 'Everything you need to know about our new matchmaking system, tier benefits, and how priority queues work.',
-    content: '',
-    author: {
-      name: 'Alex Kim',
-      avatar: 'https://i.pravatar.cc/150?u=alex',
-    },
-    category: 'Product Updates',
-    tags: ['matchmaking', 'premium', 'features'],
-    publishedAt: '2024-01-10',
-    readTime: 6,
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=800',
-    slug: 'matchmaking-premium-tiers',
-  },
-  {
-    id: '4',
-    title: 'Community Tournament Results: January 2024',
-    excerpt: 'Recap of last month\'s community tournaments, top performers, and prize distributions.',
-    content: '',
-    author: {
-      name: 'Emma Watson',
-      avatar: 'https://i.pravatar.cc/150?u=emma',
-    },
-    category: 'Community',
-    tags: ['tournaments', 'community', 'esports'],
-    publishedAt: '2024-01-08',
-    readTime: 5,
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?w=800',
-    slug: 'january-tournament-results',
-  },
-  {
-    id: '5',
-    title: '5 Tips to Improve Your CS2 Aim from Pro Coaches',
-    excerpt: 'Professional CS2 coaches share their top tips for improving aim consistency, reaction time, and crosshair placement.',
-    content: '',
-    author: {
-      name: 'Coach James',
-      avatar: 'https://i.pravatar.cc/150?u=james',
-    },
-    category: 'Guides',
-    tags: ['guides', 'aim', 'coaching'],
-    publishedAt: '2024-01-05',
-    readTime: 10,
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800',
-    slug: 'improve-cs2-aim-tips',
-  },
-  {
-    id: '6',
-    title: 'Behind the Scenes: How We Process 1M+ Replays Monthly',
-    excerpt: 'Technical deep dive into our replay processing pipeline, infrastructure, and the challenges we\'ve overcome.',
-    content: '',
-    author: {
-      name: 'Tech Team',
-      avatar: 'https://i.pravatar.cc/150?u=tech',
-    },
-    category: 'Engineering',
-    tags: ['technical', 'infrastructure', 'replays'],
-    publishedAt: '2024-01-03',
-    readTime: 15,
-    featured: false,
-    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800',
-    slug: 'replay-processing-pipeline',
-  },
-];
+  category: p.category || 'General',
+  tags: p.tags || [],
+  publishedAt: p.published_at || p.created_at || new Date().toISOString(),
+  readTime: p.read_time || Math.ceil((p.content?.length || 0) / 1000) || 5,
+  featured: p.featured || false,
+  image: p.image_url || p.cover_image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+  slug: p.slug || p.id || '',
+});
 
 const categories = ['All', 'Product Updates', 'Interviews', 'Community', 'Guides', 'Engineering'];
 
@@ -145,11 +87,45 @@ const categoryColors: Record<string, 'primary' | 'secondary' | 'success' | 'warn
 };
 
 export default function BlogPage() {
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const featuredPosts = mockPosts.filter((post) => post.featured);
-  const regularPosts = mockPosts.filter((post) => !post.featured);
+  useEffect(() => {
+    async function fetchPosts() {
+      try {
+        setLoading(true);
+        setError(null);
+        const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
+        const response = await fetch(`${baseUrl}/api/v1/blog/posts`);
+
+        if (response.ok) {
+          const data: APIBlogResponse = await response.json();
+          const apiPosts = data.data || data.posts || [];
+          const mappedPosts: BlogPost[] = apiPosts.map(mapAPIToBlogPost);
+          setPosts(mappedPosts);
+        } else {
+          // Show empty state when API fails
+          setPosts([]);
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load blog posts';
+        logger.error('Failed to fetch blog posts', err);
+        setError(errorMessage);
+        // Show empty state on error - no mock data fallback
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, []);
+
+  const featuredPosts = posts.filter((post) => post.featured);
+  const regularPosts = posts.filter((post) => !post.featured);
 
   const filteredPosts = regularPosts.filter((post) => {
     const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
@@ -162,12 +138,37 @@ export default function BlogPage() {
     return matchesCategory && matchesSearch;
   });
 
+  if (loading) {
+    return (
+      <PageContainer
+        title="News & Insights"
+        description="Loading blog posts..."
+        maxWidth="7xl"
+      >
+        <div className="flex justify-center py-12">
+          <Spinner size="lg" label="Loading blog posts..." color="primary" />
+        </div>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer
       title="News & Insights"
       description="Latest updates, guides, and stories from the LeetGaming.PRO community"
       maxWidth="7xl"
     >
+      {/* Error State */}
+      {error && (
+        <Card className="mb-6">
+          <CardBody className="text-center py-8">
+            <Icon icon="solar:danger-triangle-bold" width={48} className="mx-auto mb-4 text-warning" />
+            <p className="text-warning font-semibold mb-2">Error loading posts</p>
+            <p className="text-default-500">{error}</p>
+          </CardBody>
+        </Card>
+      )}
+
       {/* Featured Posts */}
       {featuredPosts.length > 0 && (
         <div className="mb-12">

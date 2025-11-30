@@ -101,18 +101,18 @@ export function NotificationCenter({
 
   const loadNotifications = async () => {
     try {
-      // In production, fetch from API
       const response = await fetch('/api/notifications');
       if (response.ok) {
         const data = await response.json();
-        setNotifications(data.notifications || mockNotifications);
+        setNotifications(data.notifications || []);
       } else {
-        // Use mock data for development
-        setNotifications(mockNotifications);
+        // Show empty state when API fails
+        setNotifications([]);
       }
     } catch (error) {
       console.error('Failed to load notifications:', error);
-      setNotifications(mockNotifications);
+      // Show empty state on error - no mock data fallback
+      setNotifications([]);
     }
   };
 
@@ -298,51 +298,3 @@ function formatTimestamp(timestamp: string): string {
   return date.toLocaleDateString();
 }
 
-// Mock notifications for development
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'match',
-    title: 'Match Result',
-    message: 'Your match on de_inferno has ended. You won 16-14!',
-    timestamp: new Date(Date.now() - 5 * 60000).toISOString(),
-    read: false,
-    actionUrl: '/matches/1',
-  },
-  {
-    id: '2',
-    type: 'team',
-    title: 'Team Invitation',
-    message: 'Elite Gamers has invited you to join their team.',
-    timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
-    read: false,
-    actionUrl: '/teams/1',
-  },
-  {
-    id: '3',
-    type: 'friend',
-    title: 'Friend Request',
-    message: 'ProGamer_2024 sent you a friend request.',
-    timestamp: new Date(Date.now() - 2 * 3600000).toISOString(),
-    read: false,
-    actionUrl: '/friends',
-  },
-  {
-    id: '4',
-    type: 'achievement',
-    title: 'Achievement Unlocked!',
-    message: 'You earned the "First Blood King" achievement.',
-    timestamp: new Date(Date.now() - 24 * 3600000).toISOString(),
-    read: true,
-    actionUrl: '/profile/achievements',
-  },
-  {
-    id: '5',
-    type: 'message',
-    title: 'New Message',
-    message: 'You have a new message from Captain_Alpha.',
-    timestamp: new Date(Date.now() - 3 * 24 * 3600000).toISOString(),
-    read: true,
-    actionUrl: '/messages',
-  },
-];

@@ -45,6 +45,11 @@ export default function App() {
   const [displayName, setDisplayName] = useState("");
   const [slug, setSlug] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [selectedGame, setSelectedGame] = useState<string>("");
+  const [selectedRole, setSelectedRole] = useState<string>("");
+  const [visibility, setVisibility] = useState<string>("public");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleOpen = () => {
     if (!session) {
@@ -59,8 +64,49 @@ export default function App() {
     logger.info("Avatar selected", { fileName: file.name, size: file.size });
   };
 
-  const onSubmit = (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
+    if (!session) return;
+
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
+
+      const playerData = {
+        display_name: displayName,
+        slug_uri: slug,
+        game_id: selectedGame,
+        role: selectedRole,
+        visibility: visibility,
+        email: session.user?.email,
+      };
+
+      const response = await fetch(`${baseUrl}/api/v1/players`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(playerData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create player profile');
+      }
+
+      logger.info('Player profile created successfully', { slug });
+      router.push(`/players/${slug}`);
+    } catch (err: any) {
+      logger.error('Failed to create player profile', err);
+      setError(err.message || 'Failed to create player profile');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSubmit = () => {
+    onSubmit({ preventDefault: () => {} });
   };
 
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +133,8 @@ export default function App() {
                       isMultiline={true}
                       items={games}
                       placeholder="Select a game"
+                      selectedKeys={selectedGame ? [selectedGame] : []}
+                      onSelectionChange={(keys) => setSelectedGame(Array.from(keys)[0] as string)}
                       renderValue={(items) => {
                         return (
                           <div className="flex flex-wrap gap-2">
@@ -162,10 +210,12 @@ export default function App() {
                         className="pt-2"
                         label="Profile Visibility Options"
                         placeholder="Select a visibility option"
+                        selectedKeys={[visibility]}
+                        onSelectionChange={(keys) => setVisibility(Array.from(keys)[0] as string)}
                       >
-                        <SelectItem key="Public" value="public" textValue="Public"><div className="flex items-center"> <Icon icon="mdi:earth" /><Spacer x={2} />Public (Default)</div></SelectItem>
-                        <SelectItem key="Private" value="private" textValue="Private"><div className="flex items-center"> <Icon icon="mdi:lock" /><Spacer x={2} /> Private</div></SelectItem>
-                        <SelectItem key="Restricted" value="restricted" textValue="Restricted"><div className="flex items-center"> <Icon icon="mdi:account-group" /><Spacer x={2} /> Group & Members </div></SelectItem>
+                        <SelectItem key="public" value="public" textValue="Public"><div className="flex items-center"> <Icon icon="mdi:earth" /><Spacer x={2} />Public (Default)</div></SelectItem>
+                        <SelectItem key="private" value="private" textValue="Private"><div className="flex items-center"> <Icon icon="mdi:lock" /><Spacer x={2} /> Private</div></SelectItem>
+                        <SelectItem key="restricted" value="restricted" textValue="Restricted"><div className="flex items-center"> <Icon icon="mdi:account-group" /><Spacer x={2} /> Group & Members </div></SelectItem>
                       </Select>
                     </div>
                   </div>
@@ -184,10 +234,19 @@ export default function App() {
                 </Form>
               </ModalBody>
               <ModalFooter>
-                <Button variant="bordered" onPress={onClose}>
+                {error && (
+                  <p className="text-danger text-sm flex-1">{error}</p>
+                )}
+                <Button variant="bordered" onPress={onClose} isDisabled={submitting}>
                   Close
                 </Button>
-                <Button type="submit" color="primary" onPress={onClose}>
+                <Button
+                  type="submit"
+                  color="primary"
+                  onPress={handleSubmit}
+                  isLoading={submitting}
+                  isDisabled={!displayName || !selectedGame}
+                >
                   Submit
                 </Button>
               </ModalFooter>

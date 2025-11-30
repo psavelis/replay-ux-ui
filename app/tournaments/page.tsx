@@ -6,6 +6,8 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   Card,
   CardHeader,
@@ -19,12 +21,25 @@ import {
   Progress,
   Divider,
   Spinner,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
 import { PageContainer } from '@/components/layout/page-container';
 import { logger } from '@/lib/logger';
+import { ReplayAPISDK } from '@/types/replay-api/sdk';
+import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
+import type {
+  Tournament as APItournament,
+  TournamentStatus as APITournamentStatus,
+} from '@/types/replay-api/tournament.types';
 
-interface Tournament {
+// UI-specific tournament type for display
+interface TournamentDisplay {
   id: string;
   name: string;
   game: string;
@@ -39,151 +54,84 @@ interface Tournament {
   start_date: string;
   end_date: string;
   region: string;
-  format: string; // e.g., "5v5", "1v1"
+  format: string;
   organizer: {
     name: string;
     logo?: string;
   };
 }
 
-const mockTournaments: Tournament[] = [
-  {
-    id: '1',
-    name: 'LeetGaming Pro Series - Winter 2024',
-    game: 'CS2',
-    type: 'single-elimination',
-    status: 'registration',
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
-    description: 'Premium CS2 tournament with top prize pool. 16 teams battle for glory.',
-    prize_pool: 10000,
-    entry_fee: 50,
-    max_teams: 16,
-    registered_teams: 12,
-    start_date: '2024-02-15',
-    end_date: '2024-02-18',
-    region: 'North America',
-    format: '5v5',
-    organizer: {
-      name: 'LeetGaming.PRO',
-      logo: '/logo.png',
-    },
-  },
-  {
-    id: '2',
-    name: 'Community Cup #12',
-    game: 'CS2',
-    type: 'double-elimination',
-    status: 'ongoing',
-    image: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?w=800',
-    description: 'Free-to-enter community tournament. All skill levels welcome!',
-    prize_pool: 500,
-    entry_fee: 0,
-    max_teams: 32,
-    registered_teams: 32,
-    start_date: '2024-01-20',
-    end_date: '2024-01-22',
-    region: 'Global',
-    format: '5v5',
-    organizer: {
-      name: 'Community Events',
-    },
-  },
-  {
-    id: '3',
-    name: '1v1 Aim Championship',
-    game: 'CS2',
-    type: 'single-elimination',
-    status: 'upcoming',
-    image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800',
-    description: 'Pure aim duel tournament. Show off your mechanical skills.',
-    prize_pool: 2000,
-    entry_fee: 10,
-    max_teams: 64,
-    registered_teams: 45,
-    start_date: '2024-02-01',
-    end_date: '2024-02-03',
-    region: 'Europe',
-    format: '1v1',
-    organizer: {
-      name: 'Aim Masters',
-    },
-  },
-  {
-    id: '4',
-    name: 'December Championship Finals',
-    game: 'CS2',
-    type: 'single-elimination',
-    status: 'completed',
-    image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800',
-    description: 'Season finale tournament featuring the best teams.',
-    prize_pool: 25000,
-    entry_fee: 100,
-    max_teams: 16,
-    registered_teams: 16,
-    start_date: '2023-12-20',
-    end_date: '2023-12-23',
-    region: 'Global',
-    format: '5v5',
-    organizer: {
-      name: 'LeetGaming.PRO',
-    },
-  },
-];
+// Map API status to UI status
+const mapAPIStatusToUI = (status: APITournamentStatus): TournamentDisplay['status'] => {
+  const statusMap: Record<APITournamentStatus, TournamentDisplay['status']> = {
+    'draft': 'upcoming',
+    'registration': 'registration',
+    'ready': 'upcoming',
+    'in_progress': 'ongoing',
+    'completed': 'completed',
+    'cancelled': 'completed',
+  };
+  return statusMap[status] || 'upcoming';
+};
 
-// Default seed data - used as fallback when API unavailable
-const SEED_TOURNAMENTS = mockTournaments;
+// Map API tournament to UI display format
+const mapAPITournamentToDisplay = (t: APItournament): TournamentDisplay => ({
+  id: t.id,
+  name: t.name || 'Unnamed Tournament',
+  game: t.game_id?.toUpperCase() || 'CS2',
+  type: (t.format?.replace('_', '-') as TournamentDisplay['type']) || 'single-elimination',
+  status: mapAPIStatusToUI(t.status),
+  image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+  description: t.description || '',
+  prize_pool: t.prize_pool || 0,
+  entry_fee: t.entry_fee || 0,
+  max_teams: t.max_participants || 16,
+  registered_teams: t.participants?.length || 0,
+  start_date: t.start_time || new Date().toISOString(),
+  end_date: t.end_time || new Date().toISOString(),
+  region: t.region || 'Global',
+  format: t.game_mode || '5v5',
+  organizer: {
+    name: 'LeetGaming.PRO',
+    logo: undefined,
+  },
+});
 
 export default function TournamentsPage() {
+  const router = useRouter();
+  const { data: session } = useSession();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedTab, setSelectedTab] = useState<string>('all');
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [tournaments, setTournaments] = useState<TournamentDisplay[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTournament, setSelectedTournament] = useState<TournamentDisplay | null>(null);
+  const [registering, setRegistering] = useState(false);
 
-  // Fetch tournaments from API
+  // Fetch tournaments from API using SDK
   useEffect(() => {
     async function fetchTournaments() {
       try {
         setLoading(true);
         setError(null);
 
-        const baseUrl = process.env.NEXT_PUBLIC_REPLAY_API_URL || 'http://localhost:8080';
-        const response = await fetch(`${baseUrl}/tournaments`);
+        const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
+        const result = await sdk.tournaments.listTournaments({});
 
-        if (!response.ok) {
-          throw new Error(`Failed to fetch tournaments: ${response.statusText}`);
+        if (!result) {
+          throw new Error('Failed to fetch tournaments');
         }
 
-        const data = await response.json();
+        // Map API response to display format with proper types
+        const mappedTournaments: TournamentDisplay[] = (result.tournaments || []).map(mapAPITournamentToDisplay);
 
-        // Map API response to Tournament interface
-        const mappedTournaments: Tournament[] = (data || []).map((t: any) => ({
-          id: t.id,
-          name: t.name || 'Unnamed Tournament',
-          game: t.game_id?.toUpperCase() || 'CS2',
-          type: t.bracket_type || 'single-elimination',
-          status: t.status || 'upcoming',
-          image: t.image_url || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
-          description: t.description || '',
-          prize_pool: t.prize_pool || 0,
-          entry_fee: t.entry_fee || 0,
-          max_teams: t.max_participants || 16,
-          registered_teams: t.current_participants || 0,
-          start_date: t.start_date || new Date().toISOString(),
-          end_date: t.end_date || new Date().toISOString(),
-          region: t.region || 'Global',
-          format: t.format || '5v5',
-          organizer: {
-            name: t.organizer_name || 'LeetGaming.PRO',
-            logo: t.organizer_logo,
-          },
-        }));
-
-        setTournaments(mappedTournaments.length > 0 ? mappedTournaments : SEED_TOURNAMENTS);
-      } catch (err: any) {
+        setTournaments(mappedTournaments);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch tournaments';
         logger.error('Failed to fetch tournaments', err);
-        setError(err.message);
-        // Use seed data as fallback
-        setTournaments(SEED_TOURNAMENTS);
+        setError(errorMessage);
+        // Don't use mock data - show empty state when API fails
+        setTournaments([]);
       } finally {
         setLoading(false);
       }
@@ -192,12 +140,74 @@ export default function TournamentsPage() {
     fetchTournaments();
   }, []);
 
+  const handleRegister = async (tournament: TournamentDisplay) => {
+    if (!session) {
+      router.push('/signin?callbackUrl=/tournaments');
+      return;
+    }
+    setSelectedTournament(tournament);
+    onOpen();
+  };
+
+  const handleConfirmRegistration = async () => {
+    if (!selectedTournament || !session) return;
+
+    setRegistering(true);
+    try {
+      const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
+      const result = await sdk.tournaments.registerPlayer(selectedTournament.id, {
+        player_id: session.user?.email || '',
+        display_name: session.user?.name || 'Player',
+      });
+
+      if (!result) {
+        throw new Error('Failed to register for tournament');
+      }
+
+      router.push(`/tournaments/${selectedTournament.id}`);
+    } catch (err) {
+      logger.error('Registration failed', err);
+      alert('Registration failed. Please try again.');
+    } finally {
+      setRegistering(false);
+      onClose();
+    }
+  };
+
+  const handleWatchLive = (tournament: TournamentDisplay) => {
+    router.push(`/tournaments/${tournament.id}/live`);
+  };
+
+  const handleViewResults = (tournament: TournamentDisplay) => {
+    router.push(`/tournaments/${tournament.id}/results`);
+  };
+
+  const handleSetReminder = async (tournament: TournamentDisplay) => {
+    if (!session) {
+      router.push('/signin?callbackUrl=/tournaments');
+      return;
+    }
+    // Show browser notification permission request
+    if ('Notification' in window && Notification.permission === 'default') {
+      await Notification.requestPermission();
+    }
+    alert(`Reminder set for ${tournament.name}! You'll be notified when registration opens.`);
+  };
+
+  const handleCreateTournament = () => {
+    if (!session) {
+      router.push('/signin?callbackUrl=/tournaments/create');
+      return;
+    }
+    router.push('/tournaments/create');
+  };
+
   const filteredTournaments =
     selectedTab === 'all'
       ? tournaments
       : tournaments.filter((t) => t.status === selectedTab);
 
-  const renderTournamentCard = (tournament: Tournament) => {
+  const renderTournamentCard = (tournament: TournamentDisplay) => {
     const registrationProgress = (tournament.registered_teams / tournament.max_teams) * 100;
 
     const statusColor = {
@@ -290,26 +300,50 @@ export default function TournamentsPage() {
         <CardFooter>
           <div className="flex gap-2 w-full">
             {tournament.status === 'registration' && (
-              <Button color="primary" className="flex-1" startContent={<Icon icon="solar:user-plus-bold" width={20} />}>
+              <Button
+                color="primary"
+                className="flex-1"
+                startContent={<Icon icon="solar:user-plus-bold" width={20} />}
+                onPress={() => handleRegister(tournament)}
+              >
                 Register Now
               </Button>
             )}
             {tournament.status === 'ongoing' && (
-              <Button color="warning" className="flex-1" startContent={<Icon icon="solar:eye-bold" width={20} />}>
+              <Button
+                color="warning"
+                className="flex-1"
+                startContent={<Icon icon="solar:eye-bold" width={20} />}
+                onPress={() => handleWatchLive(tournament)}
+              >
                 Watch Live
               </Button>
             )}
             {tournament.status === 'completed' && (
-              <Button variant="flat" className="flex-1" startContent={<Icon icon="solar:chart-bold" width={20} />}>
+              <Button
+                variant="flat"
+                className="flex-1"
+                startContent={<Icon icon="solar:chart-bold" width={20} />}
+                onPress={() => handleViewResults(tournament)}
+              >
                 View Results
               </Button>
             )}
             {tournament.status === 'upcoming' && (
-              <Button variant="bordered" className="flex-1" startContent={<Icon icon="solar:bell-bold" width={20} />}>
+              <Button
+                variant="bordered"
+                className="flex-1"
+                startContent={<Icon icon="solar:bell-bold" width={20} />}
+                onPress={() => handleSetReminder(tournament)}
+              >
                 Set Reminder
               </Button>
             )}
-            <Button variant="bordered" isIconOnly>
+            <Button
+              variant="bordered"
+              isIconOnly
+              onPress={() => router.push(`/tournaments/${tournament.id}`)}
+            >
               <Icon icon="solar:info-circle-bold" width={20} />
             </Button>
           </div>
@@ -431,15 +465,91 @@ export default function TournamentsPage() {
             Create and manage tournaments for your community with our easy-to-use tools
           </p>
           <div className="flex gap-3 justify-center">
-            <Button color="default" variant="solid" className="bg-white text-primary font-semibold">
+            <Button
+              color="default"
+              variant="solid"
+              className="bg-white text-primary font-semibold"
+              onPress={handleCreateTournament}
+            >
               Create Tournament
             </Button>
-            <Button variant="bordered" className="border-white text-white">
+            <Button
+              variant="bordered"
+              className="border-white text-white"
+              onPress={() => router.push('/docs/tournaments')}
+            >
               Learn More
             </Button>
           </div>
         </CardBody>
       </Card>
+
+      {/* Registration Modal */}
+      <Modal isOpen={isOpen} onClose={onClose} size="lg">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Register for Tournament
+              </ModalHeader>
+              <ModalBody>
+                {selectedTournament && (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4">
+                      <Image
+                        src={selectedTournament.image}
+                        alt={selectedTournament.name}
+                        className="w-24 h-16 object-cover rounded-lg"
+                      />
+                      <div>
+                        <h4 className="font-bold text-lg">{selectedTournament.name}</h4>
+                        <p className="text-default-500 text-sm">{selectedTournament.game} - {selectedTournament.format}</p>
+                      </div>
+                    </div>
+                    <Divider />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-default-500 text-sm">Entry Fee</p>
+                        <p className="font-semibold">
+                          {selectedTournament.entry_fee === 0 ? 'Free' : `$${selectedTournament.entry_fee}`}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-default-500 text-sm">Prize Pool</p>
+                        <p className="font-semibold text-warning">${selectedTournament.prize_pool.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-default-500 text-sm">Start Date</p>
+                        <p className="font-semibold">{new Date(selectedTournament.start_date).toLocaleDateString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-default-500 text-sm">Teams</p>
+                        <p className="font-semibold">{selectedTournament.registered_teams}/{selectedTournament.max_teams}</p>
+                      </div>
+                    </div>
+                    <Divider />
+                    <p className="text-sm text-default-600">
+                      By registering, you agree to the tournament rules and code of conduct.
+                    </p>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="flat" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={handleConfirmRegistration}
+                  isLoading={registering}
+                >
+                  Confirm Registration
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </PageContainer>
   );
 }
