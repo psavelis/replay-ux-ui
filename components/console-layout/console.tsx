@@ -56,9 +56,9 @@ export default function ConsoleLayout({
   children: React.ReactNode;
 }) {
   const { data: session } = useSession()
-  let { theme, setTheme, systemTheme } = useTheme()
+  const { theme: rawTheme, setTheme: _setTheme, systemTheme: _systemTheme } = useTheme()
 
-  theme ??= "light"
+  const theme = rawTheme ?? "light"
   const backfilter = theme === "light" ? "brightness(1)" : "brightness(0.4)"
 
 
