@@ -9,11 +9,13 @@ import { Icon } from "@iconify/react";
 import { SearchIcon } from "../icons";
 import { title } from "../primitives";
 import { useTheme } from "next-themes";
+import { useWizard } from "./wizard-context";
 
 export type SignUpFormProps = React.HTMLAttributes<HTMLFormElement>;
 
 const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
   ({ className, ...props }, ref) => {
+    const { updateState } = useWizard();
     const inputProps: Pick<InputProps, "labelPlacement" | "classNames"> = {
       labelPlacement: "outside",
       classNames: {
@@ -31,6 +33,7 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
 
     const [isSelected, setIsSelected] = React.useState(false);
 
+
     const user = {
       name: "Pedro Savelis",
       avatar: "https://avatars.githubusercontent.com/u/3760203?v=4",
@@ -42,6 +45,27 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
 
     const defaultContent =
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+
+
+    const teamMock = {
+      id: "team-mock-1",
+      displayName: "Eth3ernity*",
+      tag: "ETH3",
+      url: "leetgaming.pro/teams/ethernity",
+      avatar: "https://avatars.githubusercontent.com/u/168373520?s=200&v=4",
+      members: [
+        { nickname: "sound", avatar: "https://avatars.githubusercontent.com/u/3760203?v=4", type: "Owner", role: "AWPER" }, // Role: ??? AWPER, Lurker etc?
+        { nickname: "sound", avatar: "https://avatars.githubusercontent.com/u/3760203?v=4", type: "Owner", role: "AWPER" }, // Role: ??? AWPER, Lurker etc?
+        { nickname: "sound", avatar: "https://avatars.githubusercontent.com/u/3760203?v=4", type: "Owner", role: "AWPER" }, // Role: ??? AWPER, Lurker etc?
+        { nickname: "sound", avatar: "https://avatars.githubusercontent.com/u/3760203?v=4", type: "Owner", role: "AWPER" }, // Role: ??? AWPER, Lurker etc?
+        { nickname: "sound", avatar: "https://avatars.githubusercontent.com/u/3760203?v=4", type: "Owner", role: "AWPER" }, // Role: ??? AWPER, Lurker etc?
+      ],
+      description: defaultContent
+    }
+
+    const teams = [teamMock]
+
+
 
     return (
       <>
@@ -62,7 +86,7 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
               className={cn("flex grid grid-cols-12 flex-col gap-4 py-8 w-[500px]", className)}
             >
               <Input
-             
+
                 startContent={
                   <div>
                     <Icon className="text-default-500" icon="solar:users-group-two-rounded-outline" width={20} />
@@ -78,19 +102,6 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
                 placeholder="Type to search for your friends or team"
                 {...inputProps}
               />
-
-
-              <Card className="col-span-12 m-0 p-2 text-center">
-                <div className="col-span-12 m-0 p-2 text-center">
-                  Don&lsquo;t have a team yet?
-                  <Link className="ml-2 text-secondary underline" href="#" size="md">
-                    Create a new team
-                  </Link>
-                </div>
-              </Card>
-
-
-
 
 
               {/* <Checkbox
@@ -147,66 +158,61 @@ const SignUpForm = React.forwardRef<HTMLFormElement, SignUpFormProps>(
 
             <Spacer y={32} />
 
+            <Card className="col-span-12 m-0 p-2 text-center">
+              <div className="col-span-12 m-0 p-2 text-center">
+                Don&lsquo;t have a team yet?
+                <Link className="ml-2 text-secondary underline" href="#" size="md">
+                  Create a new team
+                </Link>
+              </div>
+            </Card>
+
           </Tab>
 
           <Tab key="your-teams" title="Your Teams">
             <Card className="w-[580px]">
               <CardBody>
 
-                <Accordion selectionMode="multiple">
-                  <AccordionItem
-                    key="1"
-                    aria-label="Et3ernity*"
-                    startContent={
-                      <Avatar
-                        isBordered
-                        color="primary"
-                        radius="lg"
-                        src="https://avatars.githubusercontent.com/u/168373520?s=200&v=4"
-                      />
-                    }
-                    subtitle="4 unread messages"
-                    title="Et3ernity*"
+                {teams.map((team) => (
+                  <Accordion
+                    key={team.displayName}
+                    selectionMode="multiple"
+                    onSelectionChange={() => updateState({ squadId: team.id })}
                   >
-                    {defaultContent}
-                  </AccordionItem>
-                  <AccordionItem
-                    key="2"
-                    aria-label="T@Games"
-                    startContent={
-                      <Avatar
-                        isBordered
-                        color="success"
-                        radius="lg"
-                        src="https://avatars.githubusercontent.com/u/168373520?s=200&v=4"
-                      />
-                    }
-                    subtitle="3 incompleted steps"
-                    title="T@Games"
-                  >
-                    {defaultContent}
-                  </AccordionItem>
-                  <AccordionItem
-                    key="3"
-                    aria-label="LaResistance!"
-                    startContent={
-                      <Avatar
-                        isBordered
-                        color="warning"
-                        radius="lg"
-                        src="https://avatars.githubusercontent.com/u/168373520?s=200&v=4"
-                      />
-                    }
-                    subtitle={
-                      <p className="flex">
-                        2 issues to<span className="text-primary ml-1">fix now</span>
-                      </p>
-                    }
-                    title="LaRes Instance!i"
-                  >
-                    {defaultContent}
-                  </AccordionItem>
-                </Accordion>
+                    <AccordionItem
+                      key="1"
+                      aria-label={team.displayName}
+                      startContent={
+                        <Avatar
+                          isBordered
+                          color="primary"
+                          radius="lg"
+                          src={team.avatar}
+                        />
+                      }
+                      subtitle={`${team.displayName} (${team.members.length} member)`}
+                      title={team.tag}
+                    >
+                      {defaultContent}
+
+                      {team.members.map((member) => (
+                        <div key={member.nickname} className="flex items-center gap-2">
+                          <Spacer y={2} />
+                          <Card className="w-1/2 border" style={{ borderRadius: "50px" }}>
+                            <div key={member.nickname} className="flex items-center gap-2">
+                              <Avatar alt={member.nickname.charAt(0).toUpperCase()} src={member.avatar} />
+                              <span>{member.nickname}</span>
+                            </div>
+
+                          </Card>
+                        </div>
+                      ))}
+                    </AccordionItem>
+
+                  </Accordion>
+                ))
+                }
+
 
               </CardBody>
             </Card>

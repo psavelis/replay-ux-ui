@@ -28,22 +28,22 @@ const MultistepNavigationButtons = React.forwardRef<
     {...props}
   >
     <Button
-      className="rounded-medium border-default-200 text-medium font-medium text-default-500 lg:hidden"
+      className="rounded-lg border-2 border-slate-300 dark:border-slate-600 text-medium font-semibold text-slate-600 dark:text-slate-300 hover:border-purple-400 dark:hover:border-cyan-400 hover:text-purple-500 dark:hover:text-cyan-400 transition-all lg:hidden"
       variant="bordered"
       onPress={onBack}
       {...backButtonProps}
     >
-      <Icon icon="solar:arrow-left-outline" width={24} />
-      Go Back
+      <Icon icon="solar:arrow-left-outline" width={20} />
+      Back
     </Button>
 
     <ButtonWithBorderGradient
-      className="text-medium font-medium"
+      className="text-medium font-bold px-8"
       type="submit"
       onPress={onNext}
       {...nextButtonProps}
     >
-      {nextButtonProps?.children || "Sign Up for Free"}
+      {nextButtonProps?.children || "Continue"}
     </ButtonWithBorderGradient>
   </div>
 ));

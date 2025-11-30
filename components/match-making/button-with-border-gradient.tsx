@@ -18,10 +18,10 @@ export const ButtonWithBorderGradient = ({
 }: ButtonWithBorderGradientProps) => {
   const linearGradientBg = background?.startsWith("--") ? `hsl(var(${background}))` : background;
 
+  // E-sports inspired gradient - purple to cyan
   const style = {
     border: "solid 2px transparent",
-    // backgroundImage: `linear-gradient(${linearGradientBg}, ${linearGradientBg}), linear-gradient(to right, #FF4654, #FFC700)`,
-    backgroundImage: `linear-gradient(${linearGradientBg}, ${linearGradientBg}), linear-gradient(to right, #FF4654, #FFC700)`,
+    backgroundImage: `linear-gradient(${linearGradientBg}, ${linearGradientBg}), linear-gradient(to right, #8B5CF6, #22D3EE)`,
     backgroundOrigin: "border-box",
     backgroundClip: "padding-box, border-box",
   };
@@ -31,6 +31,7 @@ export const ButtonWithBorderGradient = ({
       as={Link}
       href="#"
       {...props}
+      className="font-bold uppercase tracking-wide hover:scale-105 transition-transform"
       style={{
         ...style,
         ...styleProp,

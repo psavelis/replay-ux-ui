@@ -7,15 +7,16 @@ import FadeInImage from "./landing/fade-in-image";
 import AppScreenshotSkewed from "./landing/app-screenshot-skewed";
 import { useTheme } from "next-themes";
 import { logo, title } from "@/components/primitives";
-import router from "next/router";
+import { useRouter } from "next/navigation";
 
 export default function Component() {
   const { theme } = useTheme()
+  const router = useRouter()
   return (
     <div className="relative flex h-screen min-h-dvh w-full flex-col overflow-hidden bg-background left-0 right-0">
       {/* <BasicNavbar /> */}
       <main className="container mx-auto mt-[24px] flex w-full flex-col items-start px-8">
-        <section className="z-20 flex flex-col items-start justify-center gap-[18px] sm:gap-6">
+        <section className="z-10 flex flex-col items-start justify-center gap-[18px] sm:gap-6">
           <Button
             className="h-9 overflow-hidden border-1 border-default-100 bg-default-50 px-[18px] py-2 text-small font-normal leading-5 text-default-500"
             endContent={
@@ -27,6 +28,7 @@ export default function Component() {
             }
             radius="full"
             variant="bordered"
+            onPress={() => router.push('/onboarding')}
           >
             New onboarding experience
           </Button>
@@ -105,29 +107,30 @@ export default function Component() {
                   }}
                 >
                   <Button
-                    className="h-10 w-[163px] bg-default-foreground px-[16px] py-[10px] text-small font-medium leading-5 text-background"
-                    style={{backgroundColor: theme === 'dark' ? "#DCFF37" : "#34445C"}}
-                    radius="full"
+                    className="h-12 px-8 text-base font-semibold shadow-lg hover:shadow-xl transition-shadow"
+                    style={{backgroundColor: theme === 'dark' ? "#DCFF37" : "#34445C", color: theme === 'dark' ? "#333" : "#F2F2F2"}}
+                    radius="lg"
+                    size="lg"
+                    onPress={() => router.push('/onboarding')}
                   >
                     Get Started
                   </Button>
                   <Button
-                    className="h-10 w-[163px] border-1 border-default-100 px-[16px] py-[10px] text-small font-medium leading-5"
+                    className="h-12 px-8 text-base font-medium border-2"
                     endContent={
                       <span className="pointer-events-none flex h-[22px] w-[22px] items-center justify-center rounded-full bg-default-100">
                         <Icon
                           className="text-default-500 [&>path]:stroke-[1.5]"
-                          icon="solar:arrow-right-linear" 
+                          icon="solar:arrow-right-linear"
                           width={16}
                         />
                       </span>
                     }
-                    onClick={() => { 
-                      // href to /pricing without router.push
+                    onClick={() => {
                       window.location.href = "/pricing"
-
                      }}
-                    radius="full"
+                    radius="lg"
+                    size="lg"
                     variant="bordered"
                   >
                     See our plans
