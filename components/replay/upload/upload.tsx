@@ -58,13 +58,13 @@ export function UploadForm() {
       if (result.success) {
         setStatus('completed');
         setProgress(100);
-        console.log('Upload successful:', result.replayFile);
+        logger.info('Upload successful', { replayFile: result.replayFile });
       } else {
         setStatus('failed');
         setError(result.error || 'Upload failed');
       }
     } catch (error: any) {
-      console.error('Error uploading file:', error);
+      logger.error('Error uploading file', error);
       setStatus('failed');
       setError(error.message || 'Upload failed');
     }

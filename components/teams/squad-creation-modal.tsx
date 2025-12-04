@@ -31,6 +31,7 @@ import {
 } from '@nextui-org/react';
 import { Icon } from '@iconify/react';
 import AvatarUploader from '@/components/avatar/avatar-uploader';
+import { logger } from '@/lib/logger';
 
 interface SquadCreationModalProps {
   isOpen: boolean;
@@ -156,7 +157,7 @@ export function SquadCreationModal({ isOpen, onClose }: SquadCreationModalProps)
       // TODO: Submit to API
       await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call
 
-      console.log('Squad created:', formData);
+      logger.info('Squad created', { teamName: formData.teamName, slug: formData.slug });
       onClose();
       // Reset form
       setStep(1);
@@ -177,7 +178,7 @@ export function SquadCreationModal({ isOpen, onClose }: SquadCreationModalProps)
         members: [],
       });
     } catch (error) {
-      console.error('Failed to create squad:', error);
+      logger.error('Failed to create squad', error);
     } finally {
       setIsSubmitting(false);
     }
