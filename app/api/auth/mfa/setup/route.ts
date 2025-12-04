@@ -58,10 +58,10 @@ export async function POST(request: NextRequest) {
       totpSecret: data.totp_secret, // Only if method is 'totp'
       totpQrCode: data.totp_qr_code, // Only if method is 'totp'
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/auth/mfa/setup] Error enabling MFA', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to enable MFA' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to enable MFA') },
       { status: 500 }
     );
   }
@@ -117,10 +117,10 @@ export async function DELETE(request: NextRequest) {
       success: true,
       message: 'MFA disabled successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/auth/mfa/setup] Error disabling MFA', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to disable MFA' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to disable MFA') },
       { status: 500 }
     );
   }
@@ -163,10 +163,10 @@ export async function GET(request: NextRequest) {
       method: data.method,
       backupCodesRemaining: data.backup_codes_remaining,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/auth/mfa/setup] Error getting MFA status', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to get MFA status' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to get MFA status') },
       { status: 500 }
     );
   }

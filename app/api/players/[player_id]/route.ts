@@ -48,7 +48,7 @@ export async function GET(
       { success: true, data },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Get player error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to get player profile' },
@@ -100,10 +100,10 @@ export async function PATCH(
       { success: true, data },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Update player error:', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to update player profile' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to update player profile') },
       { status: 500 }
     );
   }

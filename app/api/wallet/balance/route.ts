@@ -61,12 +61,12 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/wallet/balance] Error getting wallet balance', error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to get wallet balance',
+        error: (error instanceof Error ? error.message : 'Failed to get wallet balance'),
       },
       { status: 500 }
     );

@@ -41,11 +41,11 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=60',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/matchmaking/prize-pools/stats] Error fetching statistics', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch prize pool statistics',
+      error: (error instanceof Error ? error.message : 'Failed to fetch prize pool statistics'),
     }, { status: 500 });
   }
 }

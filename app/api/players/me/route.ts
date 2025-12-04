@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       { success: response.ok, data },
       { status: response.status }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Get my player profile error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to get player profile' },

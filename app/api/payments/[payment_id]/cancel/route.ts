@@ -52,11 +52,11 @@ export async function POST(
       success: true,
       data,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/payments/${params.payment_id}/cancel] Error cancelling payment`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to cancel payment',
+      error: (error instanceof Error ? error.message : 'Failed to cancel payment'),
     }, { status: 500 });
   }
 }

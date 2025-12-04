@@ -34,11 +34,11 @@ export async function DELETE(
       success: true,
       message: 'Left lobby successfully',
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/lobbies/${params.lobby_id}/leave] Error leaving lobby`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to leave lobby',
+      error: (error instanceof Error ? error.message : 'Failed to leave lobby'),
     }, { status: 500 });
   }
 }

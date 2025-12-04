@@ -56,11 +56,11 @@ export async function POST(
       success: true,
       data,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/payments/${params.payment_id}/confirm] Error confirming payment`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to confirm payment',
+      error: (error instanceof Error ? error.message : 'Failed to confirm payment'),
     }, { status: 500 });
   }
 }

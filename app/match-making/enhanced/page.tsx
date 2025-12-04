@@ -36,6 +36,14 @@ import {
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 const matchmakingSDK = sdk.matchmaking;
 
+/** Extended user type for session */
+interface ExtendedUser {
+  id?: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}
+
 export default function EnhancedMatchmakingPage() {
   const { data: session } = useSession();
   const [selectedTier, setSelectedTier] = useState<MatchmakingTier>('free');
@@ -60,9 +68,7 @@ export default function EnhancedMatchmakingPage() {
   useEffect(() => {
     const unsubscribe = matchmakingSDK.subscribeToPoolUpdates(
       'cs2',
-      selectedGameMode,
-      selectedRegion,
-      (stats) => {
+      (stats: PoolStatsResponse) => {
         setPoolStats(stats);
       },
       5000 // Update every 5 seconds
@@ -95,8 +101,9 @@ export default function EnhancedMatchmakingPage() {
     }
 
     try {
+      const user = session?.user as ExtendedUser | undefined;
       const response = await matchmakingSDK.joinQueue({
-        player_id: (session?.user as any)?.id || 'mock-player-id',
+        player_id: user?.id || 'mock-player-id',
         preferences: {
           game_id: 'cs2',
           game_mode: selectedGameMode,
@@ -109,6 +116,14 @@ export default function EnhancedMatchmakingPage() {
         },
         player_mmr: 1500,
       });
+
+      if (!response) {
+        setMatchmakingState((prev) => ({
+          ...prev,
+          error: 'Failed to join queue',
+        }));
+        return;
+      }
 
       setMatchmakingState({
         isSearching: true,
@@ -129,10 +144,11 @@ export default function EnhancedMatchmakingPage() {
           elapsedTime: status.elapsed_time,
         }));
       });
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to join matchmaking';
       setMatchmakingState((prev) => ({
         ...prev,
-        error: error.message,
+        error: errorMessage,
       }));
     }
   };
@@ -150,10 +166,11 @@ export default function EnhancedMatchmakingPage() {
           poolStats: null,
           error: null,
         });
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to cancel matchmaking';
         setMatchmakingState((prev) => ({
           ...prev,
-          error: error.message,
+          error: errorMessage,
         }));
       }
     }
@@ -210,7 +227,7 @@ export default function EnhancedMatchmakingPage() {
                       <div className="flex items-center justify-between">
                         <Icon icon={tier.icon} width={32} className="text-primary" />
                         {tier.price > 0 && (
-                          <Chip size="sm" variant="flat" color={tier.color as any}>
+                          <Chip size="sm" variant="flat" color={tier.color}>
                             ${tier.price}/mo
                           </Chip>
                         )}

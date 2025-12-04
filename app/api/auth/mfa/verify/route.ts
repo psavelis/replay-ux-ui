@@ -63,10 +63,10 @@ export async function POST(request: NextRequest) {
       token: data.token, // Short-lived token for the verified action
       expiresAt: data.expires_at,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/auth/mfa/verify] Error verifying MFA', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to verify MFA' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to verify MFA') },
       { status: 500 }
     );
   }
@@ -116,10 +116,10 @@ export async function PUT(request: NextRequest) {
       message: 'MFA code sent',
       expiresAt: data.expires_at,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/auth/mfa/verify] Error sending MFA code', error);
     return NextResponse.json(
-      { success: false, error: error.message || 'Failed to send MFA code' },
+      { success: false, error: (error instanceof Error ? error.message : 'Failed to send MFA code') },
       { status: 500 }
     );
   }

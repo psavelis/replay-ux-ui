@@ -61,10 +61,28 @@ import { logger } from "@/lib/logger";
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+/** Dashboard stats interface */
+interface DashboardStats {
+    totalReplays: number;
+    publicReplays: number;
+    privateReplays: number;
+    sharedReplays: number;
+    storageUsed: number;
+    storageTotal: number;
+}
+
+/** Replay file from API */
+interface ReplayFile {
+    id: string;
+    settings?: {
+        visibility?: number;
+    };
+}
+
 export default function Component() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [stats, setStats] = useState<any>({
+    const [stats, setStats] = useState<DashboardStats>({
         totalReplays: 0,
         publicReplays: 0,
         privateReplays: 0,
@@ -86,9 +104,9 @@ export default function Component() {
                 // Fetch user's replays to calculate stats
                 const replays = await sdk.replayFiles.searchReplayFiles({ game_id: "cs2" });
                 
-                const publicCount = replays.filter((r: any) => r.settings?.visibility === 1).length;
-                const privateCount = replays.filter((r: any) => r.settings?.visibility === 4).length;
-                const sharedCount = replays.filter((r: any) => r.settings?.visibility === 2).length;
+                const publicCount = replays.filter((r: ReplayFile) => r.settings?.visibility === 1).length;
+                const privateCount = replays.filter((r: ReplayFile) => r.settings?.visibility === 4).length;
+                const sharedCount = replays.filter((r: ReplayFile) => r.settings?.visibility === 2).length;
                 
                 // Mock storage calculation (would come from API in real scenario)
                 const storageUsed = replays.length * 52428800; // ~50MB per replay

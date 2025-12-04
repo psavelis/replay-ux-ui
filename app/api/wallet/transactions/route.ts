@@ -86,12 +86,12 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(data);
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/wallet/transactions] Error getting transactions', error);
     return NextResponse.json(
       {
         success: false,
-        error: error.message || 'Failed to get transactions',
+        error: (error instanceof Error ? error.message : 'Failed to get transactions'),
       },
       { status: 500 }
     );

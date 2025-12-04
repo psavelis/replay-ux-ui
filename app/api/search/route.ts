@@ -4,10 +4,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { ReplayAPISDK } from '@/types/replay-api/sdk';
+import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
-
-const BACKEND_URL = process.env.REPLAY_API_URL || 'http://localhost:30800';
 
 /**
  * GET /api/search
@@ -17,7 +18,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q') || '';
-    const category = searchParams.get('category') || '';
+    const category = searchParams.get('category') || undefined;
     const limit = parseInt(searchParams.get('limit') || '5', 10);
 
     if (query.length < 2) {
@@ -27,43 +28,19 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Build query params for backend
-    const params = new URLSearchParams({
-      q: query,
-      limit: limit.toString(),
-    });
-
-    if (category) {
-      params.append('category', category);
-    }
-
-    const response = await fetch(`${BACKEND_URL}/search?${params.toString()}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      // Return empty results if backend search is not available
-      return NextResponse.json({
-        success: true,
-        data: { groups: [], total: 0 },
-      });
-    }
-
-    const data = await response.json();
+    const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
+    const result = await sdk.search.search(query, { category, limit });
 
     return NextResponse.json({
       success: true,
       data: {
-        groups: data.groups || [],
-        total: data.total || 0,
+        groups: result.groups || [],
+        total: result.total || 0,
       },
     });
-  } catch (error: any) {
-    console.error('[API] Search error:', error);
-    // Return empty results on error (frontend will use mock data)
+  } catch (error) {
+    logger.error('[API] Search error:', error);
+    // Return empty results on error
     return NextResponse.json({
       success: true,
       data: { groups: [], total: 0 },

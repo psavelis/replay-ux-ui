@@ -41,11 +41,11 @@ export async function POST(
       success: true,
       data: result,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/lobbies/${params.lobby_id}/join] Error joining lobby`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to join lobby',
+      error: (error instanceof Error ? error.message : 'Failed to join lobby'),
     }, { status: 500 });
   }
 }

@@ -41,11 +41,11 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'public, s-maxage=10, stale-while-revalidate=20',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/matchmaking/lobbies] Error listing lobbies', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to list lobbies',
+      error: (error instanceof Error ? error.message : 'Failed to list lobbies'),
     }, { status: 500 });
   }
 }
@@ -76,11 +76,11 @@ export async function POST(request: NextRequest) {
       success: true,
       data: result,
     }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/matchmaking/lobbies] Error creating lobby', error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to create lobby',
+      error: (error instanceof Error ? error.message : 'Failed to create lobby'),
     }, { status: 500 });
   }
 }

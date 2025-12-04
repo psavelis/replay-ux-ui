@@ -27,16 +27,22 @@ export default function AdvancedSearchPage() {
     setLoading(true);
     setError(null);
     try {
+      type GameIdType = 'cs2' | 'csgo' | 'valorant';
+      type VisibilityType = 'public' | 'private' | 'shared' | 'unlisted';
       const builder = new SearchBuilder()
-        .withGameIds(gameFilter[0] as any)
+        .withGameIds(gameFilter[0] as GameIdType)
         .paginate(1, 30);
-      if (visibility !== "all") builder.withResourceVisibilities(visibility as any);
+      const validVisibilities: VisibilityType[] = ['public', 'private', 'shared', 'unlisted'];
+      if (visibility !== "all" && validVisibilities.includes(visibility as VisibilityType)) {
+        builder.withResourceVisibilities(visibility as VisibilityType);
+      }
       const response = await sdk.replayFiles.searchReplayFiles(builder.build().filters);
       // naive text filter against id
       const filtered = response.filter(r => !query || r.id.includes(query));
       setResults(filtered.map(r => ({ id: r.id, gameId: r.gameId, createdAt: r.createdAt, status: r.status, size: r.size })));
-    } catch (e: any) {
-      setError(e?.message || "Search failed");
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : "Search failed";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

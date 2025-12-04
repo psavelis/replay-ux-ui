@@ -23,9 +23,33 @@ import { Icon } from "@iconify/react";
 import { title, subtitle } from "@/components/primitives";
 import { ReplayAPISDK } from "@/types/replay-api/sdk";
 import { ReplayApiSettingsMock } from "@/types/replay-api/settings";
+import { PlayerProfile, Squad } from "@/types/replay-api/entities.types";
 import { logger } from "@/lib/logger";
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
+
+/** Extended player profile with stats from API */
+interface PlayerProfileWithStats extends PlayerProfile {
+  rating?: number;
+  stats?: {
+    wins?: number;
+    losses?: number;
+    win_rate?: number;
+    kd_ratio?: number;
+  };
+  country?: string;
+}
+
+/** Extended squad with stats from API */
+interface SquadWithStats extends Squad {
+  rating?: number;
+  stats?: {
+    wins?: number;
+    losses?: number;
+    win_rate?: number;
+  };
+  region?: string;
+}
 
 interface LeaderboardPlayer {
   rank: number;
@@ -81,11 +105,11 @@ export default function LeaderboardsPage() {
         });
 
         // Map API data to leaderboard interface
-        const mappedPlayers: LeaderboardPlayer[] = players.map((p: any, index: number) => ({
+        const mappedPlayers: LeaderboardPlayer[] = players.map((p: PlayerProfileWithStats, index: number) => ({
           rank: index + 1,
           previousRank: index + 1, // API would need to track this
-          name: p.nickname || p.name || "Unknown",
-          avatar: p.avatar_uri || `https://i.pravatar.cc/150?u=${p.player_id}`,
+          name: p.nickname || "Unknown",
+          avatar: p.avatar_uri || `https://i.pravatar.cc/150?u=${p.id}`,
           rating: p.rating || 0,
           wins: p.stats?.wins || 0,
           losses: p.stats?.losses || 0,
@@ -103,7 +127,7 @@ export default function LeaderboardsPage() {
         });
 
         // Map API data to team leaderboard interface
-        const mappedTeams = teams.map((t: any, index: number) => ({
+        const mappedTeams = teams.map((t: SquadWithStats, index: number) => ({
           rank: index + 1,
           previousRank: index + 1,
           name: t.name || "Unknown Team",
@@ -112,16 +136,17 @@ export default function LeaderboardsPage() {
           wins: t.stats?.wins || 0,
           losses: t.stats?.losses || 0,
           winRate: t.stats?.win_rate || 0,
-          members: t.members?.length || 5,
+          members: Object.keys(t.members || {}).length || 5,
           country: t.region || "XX",
         }));
 
         // Use API data
         setPlayerLeaderboard(mappedPlayers);
         setTeamLeaderboard(mappedTeams);
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load leaderboards";
         logger.error("Failed to fetch leaderboards", err);
-        setError(err.message || "Failed to load leaderboards");
+        setError(errorMessage);
         // Don't use mock data - show empty state when API fails
         setPlayerLeaderboard([]);
         setTeamLeaderboard([]);

@@ -31,6 +31,31 @@ import { logger } from '@/lib/logger';
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+import { PlayerProfile as PlayerProfileBase } from '@/types/replay-api/entities.types';
+
+/** Extended player profile from API response - uses Omit to avoid type conflicts with base Date properties */
+interface PlayerAPIResponse extends Omit<PlayerProfileBase, 'created_at' | 'updated_at'> {
+  player_id?: string;
+  name?: string;
+  steam_id?: string;
+  discord_id?: string;
+  country?: string;
+  created_at?: string;
+  updated_at?: string;
+  rating?: number;
+  stats?: {
+    matches_played?: number;
+    wins?: number;
+    losses?: number;
+    kills?: number;
+    deaths?: number;
+    assists?: number;
+    headshot_percentage?: number;
+    accuracy?: number;
+    adr?: number;
+  };
+}
+
 interface PlayerProfile {
   id: string;
   nickname: string;
@@ -79,44 +104,6 @@ export default function PlayerDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data for fallback
-  const getMockPlayer = (): PlayerProfile => ({
-    id: playerId,
-    nickname: 'ProGamer_2024',
-    avatar: `https://i.pravatar.cc/150?u=${playerId}`,
-    description:
-      'Professional CS2 player specializing in entry fragging. Former Team Liquid member. Looking for competitive team.',
-    roles: ['Entry Fragger', 'IGL'],
-    steam_id: '76561198012345678',
-    discord_id: 'ProGamer#1234',
-    country: 'USA',
-    join_date: '2023-06-15',
-    stats: {
-      matches_played: 247,
-      wins: 152,
-      losses: 95,
-      kills: 3842,
-      deaths: 2918,
-      assists: 876,
-      headshot_percentage: 58.4,
-      accuracy: 24.7,
-      adr: 87.3,
-      rating: 1.24,
-    },
-    achievements: [
-      { id: '1', name: 'First Blood King', description: 'Get first kill in 100 matches', icon: 'solar:cup-star-bold', earned_at: '2024-01-10' },
-      { id: '2', name: 'Ace Master', description: 'Win 50 rounds with an ace', icon: 'solar:star-bold', earned_at: '2023-12-20' },
-      { id: '3', name: 'Clutch King', description: 'Win 25 1v3+ clutches', icon: 'solar:crown-star-bold', earned_at: '2023-11-05' },
-    ],
-    recent_matches: [
-      { id: '1', date: '2024-01-15', map: 'de_inferno', result: 'win', score: '16-14', kills: 28, deaths: 19, assists: 5 },
-      { id: '2', date: '2024-01-14', map: 'de_dust2', result: 'win', score: '16-12', kills: 24, deaths: 17, assists: 7 },
-      { id: '3', date: '2024-01-13', map: 'de_mirage', result: 'loss', score: '14-16', kills: 21, deaths: 20, assists: 4 },
-      { id: '4', date: '2024-01-12', map: 'de_nuke', result: 'win', score: '16-10', kills: 26, deaths: 15, assists: 6 },
-      { id: '5', date: '2024-01-11', map: 'de_ancient', result: 'loss', score: '13-16', kills: 19, deaths: 22, assists: 3 },
-    ],
-  });
-
   useEffect(() => {
     async function fetchPlayerProfile() {
       try {
@@ -124,10 +111,15 @@ export default function PlayerDetailPage() {
         setError(null);
 
         // Fetch player from API
-        const playerData = await sdk.playerProfiles.getPlayerProfile(playerId);
+        const response = await sdk.playerProfiles.getPlayerProfile(playerId);
+        const playerData = response as PlayerAPIResponse | null;
 
         if (playerData) {
           // Map API response to PlayerProfile interface
+          const createdAt = playerData.created_at
+            ? (typeof playerData.created_at === 'string' ? playerData.created_at : new Date(playerData.created_at).toISOString())
+            : new Date().toISOString();
+
           const apiPlayer: PlayerProfile = {
             id: playerData.player_id || playerId,
             nickname: playerData.nickname || playerData.name || 'Unknown Player',
@@ -137,7 +129,7 @@ export default function PlayerDetailPage() {
             steam_id: playerData.steam_id,
             discord_id: playerData.discord_id,
             country: playerData.country || 'Global',
-            join_date: playerData.created_at || new Date().toISOString(),
+            join_date: createdAt,
             stats: {
               matches_played: playerData.stats?.matches_played || 0,
               wins: playerData.stats?.wins || 0,
@@ -150,19 +142,21 @@ export default function PlayerDetailPage() {
               adr: playerData.stats?.adr || 0,
               rating: playerData.rating || 1.0,
             },
-            achievements: getMockPlayer().achievements, // Achievements would need separate API
-            recent_matches: getMockPlayer().recent_matches, // Match history would need separate API
+            achievements: [], // Achievements need separate API - empty for now
+            recent_matches: [], // Match history needs separate API - empty for now
           };
           setPlayer(apiPlayer);
         } else {
-          // Fallback to mock data
-          setPlayer(getMockPlayer());
+          // Player not found - show error state
+          setError('Player not found');
+          setPlayer(null);
         }
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load player profile';
         logger.error('Failed to load player profile', err);
-        setError('Failed to load player profile');
-        // Fallback to mock data on error
-        setPlayer(getMockPlayer());
+        setError(errorMessage);
+        // No fallback to mock data - show error state instead
+        setPlayer(null);
       } finally {
         setLoading(false);
       }

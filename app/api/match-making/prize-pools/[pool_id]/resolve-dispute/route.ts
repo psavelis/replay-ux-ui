@@ -44,11 +44,11 @@ export async function POST(
       success: true,
       data: result,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[API /api/matchmaking/prize-pools/${params.pool_id}/resolve-dispute] Error resolving dispute`, error);
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to resolve dispute',
+      error: (error instanceof Error ? error.message : 'Failed to resolve dispute'),
     }, { status: 500 });
   }
 }

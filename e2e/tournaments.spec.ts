@@ -14,8 +14,8 @@ test.describe('Tournaments Page', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000);
 
-    // Verify page title/header is visible (use heading role for specificity)
-    await expect(page.getByRole('heading', { name: /tournaments/i })).toBeVisible({ timeout: 10000 });
+    // Verify page title/header is visible (use exact match to avoid ambiguity with "No tournaments found")
+    await expect(page.getByRole('heading', { name: 'Tournaments', exact: true })).toBeVisible({ timeout: 10000 });
   });
 
   test('should display tournament filters', async ({ page }) => {
@@ -34,17 +34,20 @@ test.describe('Tournaments Page', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(5000);
 
-    // Check for loading spinner, tournament cards, or empty state
-    const loadingSpinner = page.locator('[role="status"]');
-    const emptyState = page.getByText(/no tournaments/i);
+    // After loading, should show either tournament cards, empty state, or stats cards
+    const tournamentCard = page.locator('[class*="card"]').first();
+    // Empty state can be in heading or regular text
+    const emptyStateHeading = page.getByRole('heading', { name: /no tournaments/i });
+    const emptyStateText = page.getByText(/no tournaments/i);
+    const statsCard = page.getByText(/total tournaments/i);
 
-    const isLoading = await loadingSpinner.isVisible().catch(() => false);
-    const isEmpty = await emptyState.isVisible().catch(() => false);
+    const hasCards = await tournamentCard.isVisible().catch(() => false);
+    const isEmptyHeading = await emptyStateHeading.isVisible().catch(() => false);
+    const isEmptyText = await emptyStateText.first().isVisible().catch(() => false);
+    const hasStats = await statsCard.isVisible().catch(() => false);
 
-    // The page should have content - either loading, cards, or empty state
-    const body = page.locator('body');
-    await expect(body).toBeVisible();
-    expect(isLoading || isEmpty || true).toBe(true);
+    // Must show either tournament cards, stats cards, OR empty state - not neither
+    expect(hasCards || isEmptyHeading || isEmptyText || hasStats).toBe(true);
   });
 
   test('should show tournament status badges', async ({ page }) => {
@@ -56,16 +59,18 @@ test.describe('Tournaments Page', () => {
     const inProgressBadge = page.getByText(/in progress/i);
     const completedBadge = page.getByText(/completed/i);
     const upcomingBadge = page.getByText(/upcoming/i);
+    const emptyState = page.getByText(/no tournaments/i);
 
-    // Any status badge being visible is valid
+    // Any status badge being visible OR empty state is valid
     const hasStatus =
       (await registrationBadge.first().isVisible().catch(() => false)) ||
       (await inProgressBadge.first().isVisible().catch(() => false)) ||
       (await completedBadge.first().isVisible().catch(() => false)) ||
       (await upcomingBadge.first().isVisible().catch(() => false));
+    const isEmpty = await emptyState.isVisible().catch(() => false);
 
-    // Either has status badges or no tournaments to show
-    expect(true).toBe(true);
+    // Must show status badges OR empty state - not neither
+    expect(hasStatus || isEmpty).toBe(true);
   });
 
   test('should be responsive on mobile', async ({ page }) => {
@@ -104,9 +109,16 @@ test.describe('Tournaments Page', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000);
 
-    // Find a tournament card (they are pressable cards)
-    const tournamentCard = page.locator('[class*="card"]').first();
+    // Find a tournament card that's pressable (not the stats cards)
+    const tournamentCard = page.locator('[class*="card"][class*="hover"]').first();
+    // Empty state can be in heading or regular text
+    const emptyStateHeading = page.getByRole('heading', { name: /no tournaments/i });
+    const emptyStateText = page.getByText(/no tournaments/i);
+    const statsCard = page.getByText(/total tournaments/i);
     const hasCard = await tournamentCard.isVisible().catch(() => false);
+    const isEmptyHeading = await emptyStateHeading.isVisible().catch(() => false);
+    const isEmptyText = await emptyStateText.first().isVisible().catch(() => false);
+    const hasStats = await statsCard.isVisible().catch(() => false);
 
     if (hasCard) {
       await tournamentCard.click();
@@ -116,8 +128,8 @@ test.describe('Tournaments Page', () => {
       await page.waitForLoadState('domcontentloaded');
       expect(page.url()).toContain('/tournaments/');
     } else {
-      // No tournaments to click - that's okay
-      expect(true).toBe(true);
+      // Empty state or stats only shown - page is functional
+      expect(isEmptyHeading || isEmptyText || hasStats).toBe(true);
     }
   });
 });
@@ -154,12 +166,19 @@ test.describe('Tournament Details', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000);
 
-    // Prize pool is visible on the main tournaments page cards
+    // Prize pool is visible on the main tournaments page cards, stats, or empty state
     const prizeText = page.getByText(/prize pool/i);
+    const totalPrize = page.getByText(/total prize pool/i);
+    // Empty state can be in heading or regular text
+    const emptyStateHeading = page.getByRole('heading', { name: /no tournaments/i });
+    const emptyStateText = page.getByText(/no tournaments/i);
     const hasPrize = await prizeText.first().isVisible().catch(() => false);
+    const hasTotalPrize = await totalPrize.isVisible().catch(() => false);
+    const isEmptyHeading = await emptyStateHeading.isVisible().catch(() => false);
+    const isEmptyText = await emptyStateText.first().isVisible().catch(() => false);
 
-    // Prize info should be visible on tournament cards
-    expect(true).toBe(true);
+    // Must show prize info (tournaments/stats exist) OR empty state - not neither
+    expect(hasPrize || hasTotalPrize || isEmptyHeading || isEmptyText).toBe(true);
   });
 });
 
@@ -169,12 +188,21 @@ test.describe('Tournament Registration', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(3000);
 
-    // Look for register button (Register Now)
+    // Look for register button (Register Now), other action buttons, or empty state
     const registerButton = page.getByRole('button', { name: /register/i });
+    const actionButtons = page.getByRole('button', { name: /watch|view|reminder/i });
+    // Empty state can be in heading or regular text
+    const emptyStateHeading = page.getByRole('heading', { name: /no tournaments/i });
+    const emptyStateText = page.getByText(/no tournaments/i);
+    const statsCard = page.getByText(/total tournaments/i);
     const hasRegister = await registerButton.first().isVisible().catch(() => false);
+    const hasActions = await actionButtons.first().isVisible().catch(() => false);
+    const isEmptyHeading = await emptyStateHeading.isVisible().catch(() => false);
+    const isEmptyText = await emptyStateText.first().isVisible().catch(() => false);
+    const hasStats = await statsCard.isVisible().catch(() => false);
 
-    // Either register buttons exist or no open tournaments
-    expect(true).toBe(true);
+    // Page should show action buttons, empty state, or stats - validates page is functional
+    expect(hasRegister || hasActions || isEmptyHeading || isEmptyText || hasStats).toBe(true);
   });
 
   test('should require authentication for registration', async ({ page }) => {
@@ -183,7 +211,14 @@ test.describe('Tournament Registration', () => {
     await page.waitForTimeout(3000);
 
     const registerButton = page.getByRole('button', { name: /register/i }).first();
+    // Empty state can be in heading or regular text
+    const emptyStateHeading = page.getByRole('heading', { name: /no tournaments/i });
+    const emptyStateText = page.getByText(/no tournaments/i);
+    const statsCard = page.getByText(/total tournaments/i);
     const hasRegister = await registerButton.isVisible().catch(() => false);
+    const isEmptyHeading = await emptyStateHeading.isVisible().catch(() => false);
+    const isEmptyText = await emptyStateText.first().isVisible().catch(() => false);
+    const hasStats = await statsCard.isVisible().catch(() => false);
 
     if (hasRegister) {
       await registerButton.click();
@@ -194,10 +229,11 @@ test.describe('Tournament Registration', () => {
       const authModal = page.getByRole('dialog');
       const hasAuthModal = await authModal.isVisible().catch(() => false);
 
-      // Either redirected to signin or shown auth modal or stayed on page (modal didn't open)
-      expect(isSignin || hasAuthModal || true).toBe(true);
+      // Must redirect to signin OR show auth modal (for unauthenticated users)
+      expect(isSignin || hasAuthModal).toBe(true);
     } else {
-      test.skip();
+      // No register button - page should still be functional with empty state or stats
+      expect(isEmptyHeading || isEmptyText || hasStats).toBe(true);
     }
   });
 });

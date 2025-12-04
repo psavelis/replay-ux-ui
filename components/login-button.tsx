@@ -1,3 +1,5 @@
+'use client';
+
 import { logo } from './primitives'
 import { Link } from '@nextui-org/react'
 import BattleButton from './filters/ctas/material-button/battle-button'

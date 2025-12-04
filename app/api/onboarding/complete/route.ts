@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
         requiresPayment: selectedPlan !== 'free',
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Onboarding complete error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to complete onboarding' },

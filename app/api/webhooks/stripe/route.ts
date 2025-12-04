@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     logger.info('[Stripe Webhook] Processed successfully');
     return NextResponse.json({ received: true }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[Stripe Webhook] Error processing webhook', error);
     // Return 200 to Stripe to prevent retries
     return NextResponse.json({ received: true }, { status: 200 });

@@ -19,11 +19,12 @@ export default async function handler(
     try {
       const userData = await fetchSteamUserData(steamId);
       return res.status(200).json(userData);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Failed to fetch Steam user data:", error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(500).json({
         error: "Failed to fetch user data",
-        details: error.message,
+        details: errorMessage,
       });
     }
   } else {

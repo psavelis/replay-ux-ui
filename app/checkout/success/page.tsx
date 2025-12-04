@@ -39,8 +39,9 @@ export default function CheckoutSuccessPage() {
         } else {
           setError(result.error || 'Failed to load payment details');
         }
-      } catch (err: any) {
-        setError(err.message || 'Failed to load payment details');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load payment details';
+        setError(errorMessage);
       } finally {
         setIsLoading(false);
       }

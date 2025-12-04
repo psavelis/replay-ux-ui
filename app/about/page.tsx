@@ -191,10 +191,10 @@ export default function AboutPage() {
         <CardBody className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { name: "Alex Chen", role: "CEO & Founder", avatar: "https://i.pravatar.cc/150?img=60" },
-              { name: "Sarah Johnson", role: "CTO", avatar: "https://i.pravatar.cc/150?img=61" },
-              { name: "Mike Rodriguez", role: "Head of Product", avatar: "https://i.pravatar.cc/150?img=62" },
-              { name: "Emma Williams", role: "Community Manager", avatar: "https://i.pravatar.cc/150?img=63" },
+              { name: "Team Lead Alpha", role: "CEO & Founder", avatar: "/avatars/team-1.svg" },
+              { name: "Team Lead Bravo", role: "CTO", avatar: "/avatars/team-2.svg" },
+              { name: "Team Lead Charlie", role: "Head of Product", avatar: "/avatars/team-3.svg" },
+              { name: "Team Lead Delta", role: "Community Manager", avatar: "/avatars/team-4.svg" },
             ].map((member, index) => (
               <div key={index} className="flex flex-col items-center text-center">
                 <Avatar src={member.avatar} className="w-24 h-24 mb-3" isBordered color="primary" />

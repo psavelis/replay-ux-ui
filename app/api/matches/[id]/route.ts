@@ -42,12 +42,12 @@ export async function GET(
       },
     });
     
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/matches/[id]] Error fetching match', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch match',
+      error: (error instanceof Error ? error.message : 'Failed to fetch match'),
     }, {
       status: 500,
     });

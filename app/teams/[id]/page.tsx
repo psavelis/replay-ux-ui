@@ -37,6 +37,39 @@ import { logger } from '@/lib/logger';
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+import { Squad as SquadBase, SquadMembership } from '@/types/replay-api/entities.types';
+
+/** Extended squad response from API */
+interface SquadAPIResponse extends SquadBase {
+  squad_id?: string;
+  tag?: string;
+  region?: string;
+  visibility?: string;
+  rating?: number;
+  stats?: {
+    matches_played?: number;
+    wins?: number;
+    losses?: number;
+    win_streak?: number;
+    ranking?: number;
+  };
+}
+
+/** Member from API response */
+interface SquadMemberAPIResponse {
+  player_id?: string;
+  nickname?: string;
+  name?: string;
+  avatar_uri?: string;
+  role?: string;
+  joined_at?: string;
+  stats?: {
+    matches?: number;
+    wins?: number;
+    kd_ratio?: number;
+  };
+}
+
 interface TeamMember {
   id: string;
   nickname: string;
@@ -85,68 +118,6 @@ export default function TeamDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data for fallback
-  const getMockTeam = (): TeamProfile => ({
-    id: teamId,
-    name: 'Elite Gamers',
-    tag: '[EG]',
-    logo: `https://i.pravatar.cc/200?u=team-${teamId}`,
-    description:
-      'Competitive CS2 team looking to dominate the esports scene. We focus on strategy, teamwork, and continuous improvement.',
-    founded: '2023-03-15',
-    region: 'North America',
-    status: 'recruiting',
-    members: [
-      {
-        id: '1',
-        nickname: 'Captain_Alpha',
-        avatar: 'https://i.pravatar.cc/100?u=1',
-        role: 'Captain / IGL',
-        join_date: '2023-03-15',
-        stats: { matches: 156, wins: 98, kd: 1.32 },
-      },
-      {
-        id: '2',
-        nickname: 'FragMaster',
-        avatar: 'https://i.pravatar.cc/100?u=2',
-        role: 'Entry Fragger',
-        join_date: '2023-03-20',
-        stats: { matches: 142, wins: 89, kd: 1.45 },
-      },
-      {
-        id: '3',
-        nickname: 'AWP_God',
-        avatar: 'https://i.pravatar.cc/100?u=3',
-        role: 'AWPer',
-        join_date: '2023-04-01',
-        stats: { matches: 138, wins: 84, kd: 1.28 },
-      },
-      {
-        id: '4',
-        nickname: 'Support_Pro',
-        avatar: 'https://i.pravatar.cc/100?u=4',
-        role: 'Support',
-        join_date: '2023-04-10',
-        stats: { matches: 135, wins: 82, kd: 1.12 },
-      },
-    ],
-    stats: {
-      matches_played: 156,
-      wins: 98,
-      losses: 58,
-      win_streak: 5,
-      ranking: 42,
-      rating: 1825,
-    },
-    recent_matches: [
-      { id: '1', date: '2024-01-15', opponent: 'Team Fortress', result: 'win', score: '16-12', map: 'de_inferno' },
-      { id: '2', date: '2024-01-14', opponent: 'Cyber Warriors', result: 'win', score: '16-10', map: 'de_mirage' },
-      { id: '3', date: '2024-01-13', opponent: 'Pro Legends', result: 'loss', score: '14-16', map: 'de_dust2' },
-      { id: '4', date: '2024-01-12', opponent: 'Night Hawks', result: 'win', score: '16-8', map: 'de_nuke' },
-      { id: '5', date: '2024-01-11', opponent: 'Steel Titans', result: 'win', score: '16-13', map: 'de_ancient' },
-    ],
-  });
-
   useEffect(() => {
     async function fetchTeamProfile() {
       try {
@@ -154,9 +125,24 @@ export default function TeamDetailPage() {
         setError(null);
 
         // Fetch squad from API
-        const squadData = await sdk.squads.getSquad(teamId);
+        const response = await sdk.squads.getSquad(teamId);
+        const squadData = response as SquadAPIResponse | null;
 
         if (squadData) {
+          // Convert created_at to string
+          const createdAt = squadData.created_at
+            ? (typeof squadData.created_at === 'string' ? squadData.created_at : new Date(squadData.created_at as unknown as Date).toISOString())
+            : new Date().toISOString();
+
+          // Convert members Record to array
+          const membersArray: SquadMemberAPIResponse[] = squadData.members
+            ? Object.entries(squadData.members).map(([userId, membership]) => ({
+                player_id: userId,
+                nickname: membership.roles?.[0] || 'Member',
+                role: membership.roles?.[0] || 'Member',
+              }))
+            : [];
+
           // Map API response to TeamProfile interface
           const apiTeam: TeamProfile = {
             id: squadData.squad_id || teamId,
@@ -164,15 +150,15 @@ export default function TeamDetailPage() {
             tag: squadData.tag || `[${squadData.name?.slice(0, 3).toUpperCase()}]`,
             logo: squadData.logo_uri || `https://i.pravatar.cc/200?u=team-${teamId}`,
             description: squadData.description || 'A competitive esports team.',
-            founded: squadData.created_at || new Date().toISOString(),
+            founded: createdAt,
             region: squadData.region || 'Global',
             status: squadData.visibility === 'public' ? 'recruiting' : 'full',
-            members: (squadData.members || []).map((m: any, idx: number) => ({
+            members: membersArray.map((m: SquadMemberAPIResponse, idx: number) => ({
               id: m.player_id || `member-${idx}`,
               nickname: m.nickname || m.name || `Player ${idx + 1}`,
               avatar: m.avatar_uri || `https://i.pravatar.cc/100?u=${m.player_id || idx}`,
               role: m.role || 'Member',
-              join_date: m.joined_at || squadData.created_at || new Date().toISOString(),
+              join_date: m.joined_at || createdAt,
               stats: {
                 matches: m.stats?.matches || 0,
                 wins: m.stats?.wins || 0,
@@ -187,18 +173,20 @@ export default function TeamDetailPage() {
               ranking: squadData.stats?.ranking || 0,
               rating: squadData.rating || 1500,
             },
-            recent_matches: getMockTeam().recent_matches, // Match history would need separate API
+            recent_matches: [], // Match history needs separate API - empty for now
           };
           setTeam(apiTeam);
         } else {
-          // Fallback to mock data
-          setTeam(getMockTeam());
+          // Team not found - show error state
+          setError('Team not found');
+          setTeam(null);
         }
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load team profile';
         logger.error('Failed to load team profile', err);
-        setError('Failed to load team profile');
-        // Fallback to mock data on error
-        setTeam(getMockTeam());
+        setError(errorMessage);
+        // No fallback to mock data - show error state instead
+        setTeam(null);
       } finally {
         setLoading(false);
       }

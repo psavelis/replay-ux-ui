@@ -225,8 +225,9 @@ export default function PlayerRegistrationPage() {
 
       const profile = await playersSDK.createPlayer(request);
       router.push(`/players/${profile.slug}?welcome=true`);
-    } catch (err: any) {
-      setError(err.message || 'Failed to create profile');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create profile';
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

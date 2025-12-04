@@ -64,6 +64,7 @@ export function SuccessConfetti({
 
       return () => clearTimeout(timeout);
     }
+    return undefined;
   }, [trigger, isActive, count, colors, duration]);
 
   if (!isActive) return null;
@@ -147,6 +148,7 @@ export function ConfettiBurst({ x, y, trigger, onComplete }: ConfettiBurstProps)
 
       return () => clearTimeout(timeout);
     }
+    return undefined;
   }, [trigger, x, y, onComplete]);
 
   return (
@@ -214,6 +216,7 @@ export function SuccessCelebration({
         clearTimeout(completeTimeout);
       };
     }
+    return undefined;
   }, [show, onComplete]);
 
   if (!show) return null;

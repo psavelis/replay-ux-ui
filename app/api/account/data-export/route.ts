@@ -45,7 +45,7 @@ export async function POST(_request: NextRequest) {
       { success: true, data },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Data export request error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to request data export' },
@@ -88,7 +88,7 @@ export async function GET(_request: NextRequest) {
       { success: response.ok, data },
       { status: response.status }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Get data export status error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to get data export status' },

@@ -19,12 +19,35 @@ import { Icon } from "@iconify/react";
 import { title, subtitle } from "@/components/primitives";
 import { ReplayAPISDK } from "@/types/replay-api/sdk";
 import { ReplayApiSettingsMock } from "@/types/replay-api/settings";
+import { PlayerProfile } from "@/types/replay-api/entities.types";
 import { logger } from "@/lib/logger";
 import { PlayerCreationModal } from "@/components/players/player-creation-modal";
 import { useDisclosure } from "@nextui-org/react";
 import { PageContainer } from "@/components/layout/page-container";
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
+
+/** Extended player profile with stats from API */
+interface PlayerProfileWithStats extends PlayerProfile {
+  rating?: number;
+  rank?: string;
+  country?: string;
+  team_name?: string;
+  stats?: {
+    wins?: number;
+    losses?: number;
+    win_rate?: number;
+    kd_ratio?: number;
+  };
+  achievements?: string[];
+  verified?: boolean;
+  looking_for_team?: boolean;
+}
+
+/** Search filters for players */
+interface PlayerSearchFilters {
+  game_id?: string;
+}
 
 interface Player {
   id: string;
@@ -63,18 +86,18 @@ export default function PlayersPage() {
         setLoading(true);
         setError(null);
 
-        const filters: any = {};
+        const filters: PlayerSearchFilters = {};
         if (selectedGame !== "all") {
           filters.game_id = selectedGame;
         }
 
         const playersData = await sdk.playerProfiles.searchPlayerProfiles(filters);
-        
+
         // Convert API data to Player interface
-        const mappedPlayers: Player[] = (playersData || []).map((p: any) => ({
-          id: p.player_id || p.id,
-          name: p.nickname || p.name || "Unknown",
-          avatar: p.avatar_uri || `https://i.pravatar.cc/150?u=${p.player_id}`,
+        const mappedPlayers: Player[] = (playersData || []).map((p: PlayerProfileWithStats) => ({
+          id: p.id,
+          name: p.nickname || "Unknown",
+          avatar: p.avatar_uri || `https://i.pravatar.cc/150?u=${p.id}`,
           rank: p.rank || "Unranked",
           rating: p.rating || 0,
           country: p.country || "XX",
@@ -92,9 +115,10 @@ export default function PlayersPage() {
 
         // Use real data from API
         setPlayers(mappedPlayers);
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load players";
         logger.error("Failed to fetch players", err);
-        setError(err.message || "Failed to load players");
+        setError(errorMessage);
         // Don't use mock data - show empty state when API fails
         setPlayers([]);
       } finally {

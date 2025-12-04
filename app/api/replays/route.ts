@@ -9,6 +9,7 @@ import { ReplayAPISDK } from '@/types/replay-api/sdk';
 import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
 import { SearchBuilder } from '@/types/replay-api/search-builder';
 import { logger } from '@/lib/logger';
+import { getUserIdFromToken } from '@/lib/auth/server-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,14 +44,27 @@ export async function GET(request: NextRequest) {
     }
     
     // Apply visibility filter
-    if (visibility !== 'all') {
-      searchBuilder.withResourceVisibilities(visibility as any);
+    type VisibilityType = 'public' | 'private' | 'shared' | 'unlisted';
+    const validVisibilities: VisibilityType[] = ['public', 'private', 'shared', 'unlisted'];
+    if (visibility !== 'all' && validVisibilities.includes(visibility as VisibilityType)) {
+      searchBuilder.withResourceVisibilities(visibility as VisibilityType);
     }
     
     // Apply user filter if authenticated and requesting private replays
-    if (session?.user && visibility === 'private') {
-      // TODO: Get user ID from session and filter by owner
-      // searchBuilder.withResourceOwners(userId);
+    // Private replays require authentication and filter by owner
+    if (visibility === 'private') {
+      if (!session?.user) {
+        return NextResponse.json({
+          success: false,
+          error: 'Authentication required for private replays',
+        }, {
+          status: 401,
+        });
+      }
+      const userId = getUserIdFromToken();
+      if (userId) {
+        searchBuilder.withResourceOwners(userId);
+      }
     }
     
     const search = searchBuilder.build();
@@ -73,12 +87,12 @@ export async function GET(request: NextRequest) {
       },
     });
     
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/replays] Error fetching replays', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to fetch replays',
+      error: (error instanceof Error ? error.message : 'Failed to fetch replays'),
     }, {
       status: 500,
     });
@@ -119,12 +133,12 @@ export async function POST(request: NextRequest) {
       message: 'Upload endpoint - to be implemented with file handling',
     });
     
-  } catch (error: any) {
+  } catch (error) {
     logger.error('[API /api/replays] Error creating replay', error);
     
     return NextResponse.json({
       success: false,
-      error: error.message || 'Failed to create replay',
+      error: (error instanceof Error ? error.message : 'Failed to create replay'),
     }, {
       status: 500,
     });

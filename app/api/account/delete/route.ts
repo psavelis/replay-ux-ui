@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       { success: true, data },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Account deletion request error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to request account deletion' },
@@ -104,7 +104,7 @@ export async function DELETE(_request: NextRequest) {
       { success: true },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Cancel deletion error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to cancel deletion request' },
@@ -147,7 +147,7 @@ export async function GET(_request: NextRequest) {
       { success: response.ok, data },
       { status: response.status }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('[API] Get deletion status error:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to get deletion status' },

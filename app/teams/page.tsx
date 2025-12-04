@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import type { Team, Squad } from "@/components/teams/team-card/App";
+import { useRouter } from "next/navigation";
+import type { Team, Squad as TeamCardSquad } from "@/components/teams/team-card/App";
 
 import {
   Button,
@@ -23,13 +24,21 @@ import LaunchYourSquadButton from "@/components/teams/team-form/launch-your-squa
 import ApplyNowButton from "@/components/players/player-form/apply-now-button";
 import { ReplayAPISDK } from "@/types/replay-api/sdk";
 import { ReplayApiSettingsMock } from "@/types/replay-api/settings";
+import { Squad, SquadMembership } from "@/types/replay-api/entities.types";
 import { logger } from "@/lib/logger";
 
 const sdk = new ReplayAPISDK(ReplayApiSettingsMock, logger);
 
+/** Search filters for squads */
+interface SquadSearchFilters {
+  game_id?: string;
+  name?: string;
+}
+
 export default function TeamsPage() {
   const { data: session } = useSession();
-  const [squads, setSquads] = useState<any[]>([]);
+  const router = useRouter();
+  const [squads, setSquads] = useState<Squad[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -41,7 +50,7 @@ export default function TeamsPage() {
         setLoading(true);
         setError(null);
 
-        const filters: any = {};
+        const filters: SquadSearchFilters = {};
         if (gameFilter !== "all") {
           filters.game_id = gameFilter;
         }
@@ -51,9 +60,10 @@ export default function TeamsPage() {
 
         const squadsData = await sdk.squads.searchSquads(filters);
         setSquads(squadsData || []);
-      } catch (err: any) {
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to load squads";
         logger.error("Failed to fetch squads", err);
-        setError(err.message || "Failed to load squads");
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -63,23 +73,23 @@ export default function TeamsPage() {
   }, [gameFilter, searchQuery]);
 
   // Convert SDK squads to Team format for existing components
-  const teamsFromSquads: Team[] = squads.map((squad: any) => ({
+  const teamsFromSquads: Team[] = squads.map((squad: Squad) => ({
     name: squad.name,
     avatar: squad.logo_uri || "https://avatars.githubusercontent.com/u/168373383",
     tag: squad.symbol || squad.name?.slice(0, 4).toUpperCase(),
-    slug: squad.slug_uri,
+    slug: squad.slug_uri || "",
     squad: {
       title: getGameTitle(squad.game_id),
       description: squad.description || "",
-      members: squad.membership?.map((m: any) => ({
+      members: Object.values(squad.members || {}).map((m: SquadMembership) => ({
         nickname: m.roles?.[0] || "Player",
         avatar: "https://i.pravatar.cc/150",
-      })) || [],
+      })),
     },
     bio: squad.description || "",
     social: {
       twitter: `@${squad.symbol || squad.name}`,
-      linkedin: squad.slug_uri,
+      linkedin: squad.slug_uri || "",
       github: `@${squad.symbol || squad.name}`,
     },
   }));
@@ -153,7 +163,7 @@ export default function TeamsPage() {
             <Button
               color="primary"
               variant="flat"
-              onPress={() => window.location.reload()}
+              onPress={() => router.refresh()}
               startContent={<Icon icon="solar:refresh-bold" width={18} />}
             >
               Try Again

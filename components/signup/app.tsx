@@ -68,7 +68,7 @@ export default function SignUp() {
           setError(result.error);
         }
       } else if (result?.ok) {
-        router.push('/');
+        router.push('/match-making');
         router.refresh();
       }
     } catch (err) {
@@ -220,8 +220,8 @@ export default function SignUp() {
             variant="bordered"
             size="lg"
             radius="md"
-            onClick={() => {/* @ts-ignore */
-              if (typeof window !== 'undefined') import('next-auth/react').then(m => m.signIn('steam'))
+            onClick={() => {
+              if (typeof window !== 'undefined') import('next-auth/react').then(m => m.signIn('steam', { callbackUrl: '/match-making' }))
             }}
           >
             Continue with Steam
@@ -231,8 +231,8 @@ export default function SignUp() {
             variant="bordered"
             size="lg"
             radius="md"
-            onClick={() => {/* @ts-ignore */
-              if (typeof window !== 'undefined') import('next-auth/react').then(m => m.signIn('google'))
+            onClick={() => {
+              if (typeof window !== 'undefined') import('next-auth/react').then(m => m.signIn('google', { callbackUrl: '/match-making' }))
             }}
           >
             Continue with Google

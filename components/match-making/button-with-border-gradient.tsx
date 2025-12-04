@@ -1,20 +1,31 @@
 "use client";
 
-import type {ButtonProps, LinkProps} from "@nextui-org/react";
-
+import React from "react";
 import {Button} from "@nextui-org/react";
 import Link from "next/link";
 
-export type ButtonWithBorderGradientProps = ButtonProps &
-  LinkProps & {
-    background?: string;
-  };
+export interface ButtonWithBorderGradientProps {
+  children: React.ReactNode;
+  background?: string;
+  href?: string;
+  className?: string;
+  size?: "sm" | "md" | "lg";
+  radius?: "none" | "sm" | "md" | "lg" | "full";
+  isDisabled?: boolean;
+  type?: "button" | "submit" | "reset";
+  onPress?: () => void;
+}
 
 export const ButtonWithBorderGradient = ({
   children,
   background = "--nextui-background",
-  style: styleProp,
-  ...props
+  href = "#",
+  className = "",
+  size = "md",
+  radius = "full",
+  isDisabled = false,
+  type = "button",
+  onPress,
 }: ButtonWithBorderGradientProps) => {
   const linearGradientBg = background?.startsWith("--") ? `hsl(var(${background}))` : background;
 
@@ -29,14 +40,14 @@ export const ButtonWithBorderGradient = ({
   return (
     <Button
       as={Link}
-      href="#"
-      {...props}
-      className="font-bold uppercase tracking-wide hover:scale-105 transition-transform"
-      style={{
-        ...style,
-        ...styleProp,
-      }}
-      type="submit"
+      href={href}
+      size={size}
+      radius={radius}
+      isDisabled={isDisabled}
+      type={type}
+      onPress={onPress}
+      className={`font-bold uppercase tracking-wide hover:scale-105 transition-transform ${className}`}
+      style={style}
     >
       {children}
     </Button>
