@@ -14,6 +14,7 @@ import { PrizePoolAPI } from './prize-pool.sdk';
 import { PaymentAPI } from './payment.sdk';
 import { MatchmakingAPI } from './matchmaking.sdk';
 import { TournamentAPI } from './tournament.sdk';
+import { MatchAnalyticsAPI } from './match-analytics.sdk';
 
 /**
  * Onboarding API wrapper
@@ -364,6 +365,7 @@ export class ReplayAPISDK {
   public matchmaking: MatchmakingAPI;
   public tournaments: TournamentAPI;
   public search: SearchAPI;
+  public matchAnalytics: MatchAnalyticsAPI;
 
   constructor(settings: ReplayApiSettings, logger: Loggable) {
     this.client = new ReplayApiClient(settings, logger);
@@ -380,5 +382,6 @@ export class ReplayAPISDK {
     this.matchmaking = new MatchmakingAPI(this.client);
     this.tournaments = new TournamentAPI(this.client);
     this.search = new SearchAPI(this.client);
+    this.matchAnalytics = new MatchAnalyticsAPI(this.client);
   }
 }

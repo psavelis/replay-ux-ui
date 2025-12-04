@@ -115,18 +115,21 @@ export default function RankedPage() {
   // Fetch player ranked data
   useEffect(() => {
     async function fetchRankedData() {
+      // Don't fetch if not logged in
+      if (!session?.user) {
+        setLoading(false);
+        setStats(null);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
 
-        // Fetch player profile data from API
-        const players = await sdk.playerProfiles.getLeaderboard({
-          limit: 1,
-        });
+        // Fetch current user's player profile
+        const player = await sdk.playerProfiles.getMyProfile() as PlayerProfileWithStats | null;
 
-        // For now, use first player in leaderboard as example (would use logged-in user's data in production)
-        if (players && players.length > 0) {
-          const player = players[0] as PlayerProfileWithStats;
+        if (player) {
           const rating = player.rating || 0;
           const wins = player.stats?.wins || 0;
           const losses = player.stats?.losses || 0;
@@ -193,8 +196,25 @@ export default function RankedPage() {
         </Card>
       )}
 
-      {/* No Data State */}
-      {!loading && !stats && (
+      {/* Not Logged In State */}
+      {!loading && !session?.user && (
+        <Card className="w-full max-w-6xl">
+          <CardBody className="text-center py-12">
+            <Icon icon="mdi:account-lock" className="text-6xl text-default-300 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Sign In Required</h3>
+            <p className="text-default-500 mb-4">
+              Sign in to view your ranked stats and start climbing the leaderboards.
+            </p>
+            <Button color="primary" variant="shadow" as="a" href="/api/auth/signin">
+              <Icon icon="mdi:login" width={20} />
+              Sign In
+            </Button>
+          </CardBody>
+        </Card>
+      )}
+
+      {/* No Data State (logged in but no profile) */}
+      {!loading && session?.user && !stats && (
         <Card className="w-full max-w-6xl">
           <CardBody className="text-center py-12">
             <Icon icon="mdi:chart-timeline-variant" className="text-6xl text-default-300 mx-auto mb-4" />

@@ -135,13 +135,11 @@ test.describe('Teams Page', () => {
       // Modal should be visible
       const modal = page.getByRole('dialog').or(page.locator('[role="dialog"]'));
       const modalVisible = await modal.isVisible().catch(() => false);
-
-      if (modalVisible) {
-        await expect(modal).toBeVisible();
-      }
+      expect(modalVisible).toBe(true);
+    } else {
+      // Verify we were redirected to signin page
+      expect(page.url()).toContain('/signin');
     }
-    // Either redirected to signin or modal is visible - both are valid states
-    expect(true).toBe(true);
   });
 
   test('should be responsive on mobile', async ({ page }) => {
@@ -178,18 +176,17 @@ test.describe('Teams Page', () => {
     // Wait for potential loading to complete
     await page.waitForTimeout(5000);
 
-    // Check for either team cards or empty state message
+    // Check for either team cards, empty state message, or page heading
     const emptyState = page.getByText(/no teams found/i);
-    const loadingSpinner = page.locator('[role="status"]');
+    const teamCountText = page.getByText(/\d+ teams? found/i);
+    const pageHeading = page.getByRole('heading', { name: /competitive teams/i });
 
     const isEmpty = await emptyState.isVisible().catch(() => false);
-    const isLoading = await loadingSpinner.isVisible().catch(() => false);
+    const hasTeamCount = await teamCountText.isVisible().catch(() => false);
+    const hasHeading = await pageHeading.isVisible().catch(() => false);
 
-    // Either teams are displayed, loading, or empty state is shown
-    // The page should have content
-    const body = page.locator('body');
-    await expect(body).toBeVisible();
-    expect(isEmpty || isLoading || true).toBe(true);
+    // Page is functional if it shows team count, empty state, or at minimum the heading
+    expect(isEmpty || hasTeamCount || hasHeading).toBe(true);
   });
 
   test('should handle API errors gracefully', async ({ page }) => {
@@ -214,17 +211,19 @@ test.describe('Teams Page', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForTimeout(5000);
 
-    // Check for teams found text (e.g., "8 teams found") or empty/loading state
+    // Check for teams found text (e.g., "8 teams found"), empty state, or loading
     const teamsCountText = page.getByText(/\d+ teams? found/i);
     const noTeamsText = page.getByText(/no teams found/i);
-    const loadingText = page.getByText(/loading/i);
+    const loadingState = page.getByText(/loading/i);
+    const pageHeading = page.getByRole('heading', { name: /competitive teams/i });
 
     const hasCount = await teamsCountText.isVisible().catch(() => false);
     const isEmpty = await noTeamsText.isVisible().catch(() => false);
-    const isLoading = await loadingText.isVisible().catch(() => false);
+    const isLoading = await loadingState.isVisible().catch(() => false);
+    const hasHeading = await pageHeading.isVisible().catch(() => false);
 
-    // Either count is shown, empty state, or still loading
-    expect(hasCount || isEmpty || isLoading || true).toBe(true);
+    // Page is functional if it shows count, empty state, loading, or at minimum the heading
+    expect(hasCount || isEmpty || isLoading || hasHeading).toBe(true);
   });
 });
 
@@ -242,15 +241,18 @@ test.describe('Squad Creation Flow', () => {
     await launchButton.click();
     await page.waitForTimeout(500);
 
-    // If not logged in, skip this test
+    // If not logged in, we get redirected to signin - this is valid behavior
     if (page.url().includes('/signin')) {
-      test.skip();
+      expect(page.url()).toContain('/signin');
       return;
     }
 
     // Wait for modal
     const modal = page.getByRole('dialog');
     const modalVisible = await modal.isVisible().catch(() => false);
+
+    // Modal must be visible if we're still on teams page
+    expect(modalVisible).toBe(true);
 
     if (modalVisible) {
       // Check for required fields
@@ -260,7 +262,6 @@ test.describe('Squad Creation Flow', () => {
       const hasTeamName = await teamNameField.isVisible().catch(() => false);
       expect(hasGame || hasTeamName).toBe(true);
     }
-    expect(true).toBe(true);
   });
 
   test('should auto-generate slug from team name', async ({ page }) => {
@@ -269,9 +270,9 @@ test.describe('Squad Creation Flow', () => {
     await launchButton.click();
     await page.waitForTimeout(500);
 
-    // If not logged in, skip this test
+    // If not logged in, we get redirected to signin - this is valid behavior
     if (page.url().includes('/signin')) {
-      test.skip();
+      expect(page.url()).toContain('/signin');
       return;
     }
 
@@ -281,6 +282,9 @@ test.describe('Squad Creation Flow', () => {
     // Fill team name
     const teamNameInput = page.getByLabel(/team name/i).or(page.getByPlaceholder(/enter team name/i));
     const teamNameVisible = await teamNameInput.isVisible().catch(() => false);
+
+    // Modal should have team name field if we're authenticated
+    expect(teamNameVisible).toBe(true);
 
     if (teamNameVisible) {
       await teamNameInput.fill('My Test Team');
@@ -292,6 +296,5 @@ test.describe('Squad Creation Flow', () => {
       // Slug should be generated from team name
       expect(slugValue.length).toBeGreaterThanOrEqual(0);
     }
-    expect(true).toBe(true);
   });
 });

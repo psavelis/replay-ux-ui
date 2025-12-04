@@ -118,68 +118,6 @@ export default function TeamDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data for fallback
-  const getMockTeam = (): TeamProfile => ({
-    id: teamId,
-    name: 'Elite Gamers',
-    tag: '[EG]',
-    logo: `https://i.pravatar.cc/200?u=team-${teamId}`,
-    description:
-      'Competitive CS2 team looking to dominate the esports scene. We focus on strategy, teamwork, and continuous improvement.',
-    founded: '2023-03-15',
-    region: 'North America',
-    status: 'recruiting',
-    members: [
-      {
-        id: '1',
-        nickname: 'Captain_Alpha',
-        avatar: 'https://i.pravatar.cc/100?u=1',
-        role: 'Captain / IGL',
-        join_date: '2023-03-15',
-        stats: { matches: 156, wins: 98, kd: 1.32 },
-      },
-      {
-        id: '2',
-        nickname: 'FragMaster',
-        avatar: 'https://i.pravatar.cc/100?u=2',
-        role: 'Entry Fragger',
-        join_date: '2023-03-20',
-        stats: { matches: 142, wins: 89, kd: 1.45 },
-      },
-      {
-        id: '3',
-        nickname: 'AWP_God',
-        avatar: 'https://i.pravatar.cc/100?u=3',
-        role: 'AWPer',
-        join_date: '2023-04-01',
-        stats: { matches: 138, wins: 84, kd: 1.28 },
-      },
-      {
-        id: '4',
-        nickname: 'Support_Pro',
-        avatar: 'https://i.pravatar.cc/100?u=4',
-        role: 'Support',
-        join_date: '2023-04-10',
-        stats: { matches: 135, wins: 82, kd: 1.12 },
-      },
-    ],
-    stats: {
-      matches_played: 156,
-      wins: 98,
-      losses: 58,
-      win_streak: 5,
-      ranking: 42,
-      rating: 1825,
-    },
-    recent_matches: [
-      { id: '1', date: '2024-01-15', opponent: 'Team Fortress', result: 'win', score: '16-12', map: 'de_inferno' },
-      { id: '2', date: '2024-01-14', opponent: 'Cyber Warriors', result: 'win', score: '16-10', map: 'de_mirage' },
-      { id: '3', date: '2024-01-13', opponent: 'Pro Legends', result: 'loss', score: '14-16', map: 'de_dust2' },
-      { id: '4', date: '2024-01-12', opponent: 'Night Hawks', result: 'win', score: '16-8', map: 'de_nuke' },
-      { id: '5', date: '2024-01-11', opponent: 'Steel Titans', result: 'win', score: '16-13', map: 'de_ancient' },
-    ],
-  });
-
   useEffect(() => {
     async function fetchTeamProfile() {
       try {
@@ -235,19 +173,20 @@ export default function TeamDetailPage() {
               ranking: squadData.stats?.ranking || 0,
               rating: squadData.rating || 1500,
             },
-            recent_matches: getMockTeam().recent_matches, // Match history would need separate API
+            recent_matches: [], // Match history needs separate API - empty for now
           };
           setTeam(apiTeam);
         } else {
-          // Fallback to mock data
-          setTeam(getMockTeam());
+          // Team not found - show error state
+          setError('Team not found');
+          setTeam(null);
         }
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load team profile';
         logger.error('Failed to load team profile', err);
         setError(errorMessage);
-        // Fallback to mock data on error
-        setTeam(getMockTeam());
+        // No fallback to mock data - show error state instead
+        setTeam(null);
       } finally {
         setLoading(false);
       }

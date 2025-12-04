@@ -81,7 +81,7 @@ const mapAPITournamentToDisplay = (t: APItournament): TournamentDisplay => ({
   game: t.game_id?.toUpperCase() || 'CS2',
   type: (t.format?.replace('_', '-') as TournamentDisplay['type']) || 'single-elimination',
   status: mapAPIStatusToUI(t.status),
-  image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+  image: '/images/tournament-placeholder.svg',
   description: t.description || '',
   prize_pool: t.prize_pool || 0,
   entry_fee: t.entry_fee || 0,

@@ -9,6 +9,7 @@ import { ReplayAPISDK } from '@/types/replay-api/sdk';
 import { ReplayApiSettingsMock } from '@/types/replay-api/settings';
 import { SearchBuilder } from '@/types/replay-api/search-builder';
 import { logger } from '@/lib/logger';
+import { getUserIdFromToken } from '@/lib/auth/server-auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,9 +51,20 @@ export async function GET(request: NextRequest) {
     }
     
     // Apply user filter if authenticated and requesting private replays
-    if (session?.user && visibility === 'private') {
-      // TODO: Get user ID from session and filter by owner
-      // searchBuilder.withResourceOwners(userId);
+    // Private replays require authentication and filter by owner
+    if (visibility === 'private') {
+      if (!session?.user) {
+        return NextResponse.json({
+          success: false,
+          error: 'Authentication required for private replays',
+        }, {
+          status: 401,
+        });
+      }
+      const userId = getUserIdFromToken();
+      if (userId) {
+        searchBuilder.withResourceOwners(userId);
+      }
     }
     
     const search = searchBuilder.build();

@@ -36,7 +36,7 @@ export default function SignInBlurreds() {
       if (result?.error) {
         setError(result.error === 'CredentialsSignin' ? 'Invalid email or password' : result.error);
       } else if (result?.ok) {
-        router.push('/');
+        router.push('/match-making');
         router.refresh();
       }
     } catch (err) {
@@ -145,14 +145,14 @@ export default function SignInBlurreds() {
           <Button
             className={buttonClasses}
             startContent={<SteamIcon />}
-            onClick={() => signIn("steam")}
+            onClick={() => signIn("steam", { callbackUrl: "/match-making" })}
             size="lg"
             radius="md"
           >
             Continue with Steam
           </Button>
           <Button
-            onClick={() => signIn("google")}
+            onClick={() => signIn("google", { callbackUrl: "/match-making" })}
             className={buttonClasses}
             startContent={<GoogleIcon width={24} />}
             size="lg"

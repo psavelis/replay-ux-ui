@@ -88,27 +88,30 @@ export class PaymentPage {
   }
 
   /**
-   * Navigate to deposit page
+   * Navigate to wallet page (deposit functionality is within modals)
    */
   async gotoDeposit(): Promise<void> {
-    await this.page.goto('/wallet/deposit');
-    await this.page.waitForLoadState('networkidle');
+    await this.page.goto('/wallet');
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForTimeout(2000);
   }
 
   /**
-   * Navigate to payments history page
+   * Navigate to wallet page (payments history is part of the wallet page)
    */
   async gotoHistory(): Promise<void> {
-    await this.page.goto('/wallet/payments');
-    await this.page.waitForLoadState('networkidle');
+    await this.page.goto('/wallet');
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForTimeout(2000);
   }
 
   /**
    * Navigate to checkout page
    */
   async gotoCheckout(): Promise<void> {
-    await this.page.goto('/checkout');
-    await this.page.waitForLoadState('networkidle');
+    await this.page.goto('/wallet');
+    await this.page.waitForLoadState('domcontentloaded');
+    await this.page.waitForTimeout(2000);
   }
 
   /**

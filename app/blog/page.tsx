@@ -66,14 +66,14 @@ const mapAPIToBlogPost = (p: APIBlogPost): BlogPost => ({
   content: p.content || '',
   author: {
     name: p.author?.name || p.author_name || 'Unknown',
-    avatar: p.author?.avatar || p.author_avatar || `https://i.pravatar.cc/150?u=${p.author_id}`,
+    avatar: p.author?.avatar || p.author_avatar || '/avatars/default-author.svg',
   },
   category: p.category || 'General',
   tags: p.tags || [],
   publishedAt: p.published_at || p.created_at || new Date().toISOString(),
   readTime: p.read_time || Math.ceil((p.content?.length || 0) / 1000) || 5,
   featured: p.featured || false,
-  image: p.image_url || p.cover_image || 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800',
+  image: p.image_url || p.cover_image || '/images/blog-placeholder.svg',
   slug: p.slug || p.id || '',
 });
 
