@@ -1,11 +1,99 @@
-import React from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Checkbox, Input, Link, LinkIcon, Kbd } from "@nextui-org/react";
-import { CopyDocumentIcon, DeleteDocumentIcon, EditDocumentIcon, Logo, PlusIcon, SearchIcon, ServerIcon } from '@/components/icons';
-import { ChevronDownIcon } from '@/components/files/replays-table/ChevronDownIcon';
+"use client";
+
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import {
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
+    useDisclosure,
+    Input,
+    Kbd,
+    Spinner,
+} from "@nextui-org/react";
+import { SearchIcon } from '@/components/icons';
 import SearchResults from "./player-search-results";
+import { PlayerApiClient } from "@/types/replay-api/player-api.client";
+import { Player } from "@/types/replay-api/entities.types";
+import { logger } from "@/lib/logger";
+import { useSession } from "next-auth/react";
 
 export default function SearchInput() {
-    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+    const { data: session } = useSession();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [results, setResults] = useState<Player[]>([]);
+    const [isSearching, setIsSearching] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [hasSearched, setHasSearched] = useState(false);
+
+    const playerApiClient = useMemo(() => new PlayerApiClient({ logger }), []);
+
+    const handleSearch = useCallback(async (query: string) => {
+        if (!query.trim()) {
+            setResults([]);
+            setHasSearched(false);
+            return;
+        }
+
+        setIsSearching(true);
+        setError(null);
+        setHasSearched(true);
+
+        try {
+            const authToken = (session as unknown as { accessToken?: string })?.accessToken;
+            const result = await playerApiClient.searchPlayers(query, authToken);
+
+            if (result?.data) {
+                setResults(result.data);
+            } else {
+                setResults([]);
+            }
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : "Failed to search players";
+            logger.error("Player search failed", err);
+            setError(errorMessage);
+            setResults([]);
+        } finally {
+            setIsSearching(false);
+        }
+    }, [playerApiClient, session]);
+
+    // Debounced search
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery.trim()) {
+                handleSearch(searchQuery);
+            }
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [searchQuery, handleSearch]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" && searchQuery.trim()) {
+            handleSearch(searchQuery);
+        }
+    };
+
+    const handlePlayerSelect = (player: Player) => {
+        logger.info("Player selected", { player });
+        onClose();
+    };
+
+    const handleModalOpen = () => {
+        setSearchQuery("");
+        setResults([]);
+        setError(null);
+        setHasSearched(false);
+        onOpen();
+    };
 
     return (
         <div className='w-full'>
@@ -15,11 +103,8 @@ export default function SearchInput() {
                     inputWrapper: "bg-default-100",
                     input: "text-sm radius-none text-default-500",
                 }}
-                onClick={onOpen}
-                // onFocus={onOpen}
-                onInput={onOpen}
-                // onMouseEnter={onOpen}
-                // onMouseDown={onOpen}
+                onClick={handleModalOpen}
+                onInput={handleModalOpen}
                 endContent={
                     <div>
                         <Kbd className="hidden lg:inline-block">
@@ -46,7 +131,7 @@ export default function SearchInput() {
                 size="5xl"
             >
                 <ModalContent>
-                    {(onClose) => (
+                    {(onModalClose) => (
                         <>
                             <ModalHeader className="items-center text-center justify-center">
                                 <Input
@@ -55,11 +140,19 @@ export default function SearchInput() {
                                         inputWrapper: "bg-default-100",
                                         input: "text-xl",
                                     }}
+                                    value={searchQuery}
+                                    onChange={handleInputChange}
+                                    onKeyDown={handleKeyDown}
+                                    autoFocus
                                     endContent={
-                                        <Kbd keys={["command", "enter"]} title='Search'></Kbd>
+                                        isSearching ? (
+                                            <Spinner size="sm" color="primary" />
+                                        ) : (
+                                            <Kbd keys={["command", "enter"]} title='Search'></Kbd>
+                                        )
                                     }
                                     labelPlacement="outside"
-                                    placeholder="Search..."
+                                    placeholder="Search players..."
                                     startContent={
                                         <SearchIcon className="text-default-300 md" />
                                     }
@@ -67,13 +160,23 @@ export default function SearchInput() {
                                 />
                             </ModalHeader>
                             <ModalBody>
-                                <SearchResults onPress={onClose} />
+                                {error && (
+                                    <div className="bg-danger-100 text-danger-700 p-3 rounded-lg mb-4">
+                                        {error}
+                                    </div>
+                                )}
+                                <SearchResults
+                                    players={results}
+                                    isLoading={isSearching}
+                                    hasSearched={hasSearched}
+                                    onPlayerSelect={handlePlayerSelect}
+                                    onClose={onModalClose}
+                                />
                             </ModalBody>
                             <ModalFooter>
-                                {/* <Button variant="faded" color="danger" onPress={onClose} startContent={<DeleteDocumentIcon size={16} height={16} width={16} />}>
-                                    Discard
-                                </Button> */}
-
+                                <Button variant="light" onPress={onModalClose}>
+                                    Close
+                                </Button>
                             </ModalFooter>
                         </>
                     )}

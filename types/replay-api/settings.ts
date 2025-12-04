@@ -31,8 +31,11 @@ export enum ReplayApiResourceType {
   Match = "matches",
   Round = "rounds",
   Player = "players",
+  Players = "players-list",
   Side = "sides",
   Team = "teams",
+  Squad = "squads",
+  Squads = "squads-list",
   Onboarding = "onboarding",
   Steam = "steam",
 }
@@ -83,6 +86,18 @@ const Resources: ApiResource[] = [
     path: "replays/:replayId",
     dynamic: true,
     paramName: "replayId",
+  },
+
+  // List resources (for create/search operations)
+  { type: ReplayApiResourceType.Players, path: "players" },
+  { type: ReplayApiResourceType.Squads, path: "squads" },
+
+  // Squad (dynamic)
+  {
+    type: ReplayApiResourceType.Squad,
+    path: "squads/:squadId",
+    dynamic: true,
+    paramName: "squadId",
   },
 
   // Health Check

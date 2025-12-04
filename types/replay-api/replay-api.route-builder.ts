@@ -119,6 +119,36 @@ export class RouteBuilder { // TODO: refactor ==>> criar interface (generica) pa
     return content
   }
 
+  async search<T extends Object>(resource: ReplayApiResourceType, searchQuery: string, authToken?: string): Promise<T | undefined> {
+    const url = this.buildUrl(resource)
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      'x-search': Buffer.from(searchQuery).toString('base64'),
+    }
+
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`
+    }
+
+    const res: Response = await fetch(url, {
+      method: 'GET',
+      headers,
+    })
+
+    const content: T | undefined = await res.json().catch((e) => {
+      this.logger.error(e, `json: error deserializing response body from: GET ${url} => ${res.status}-${res.statusText}`, resource, searchQuery)
+      return undefined
+    })
+
+    if (!res.ok) {
+      const msg = `Status: ${res.status}. Description: ${res.statusText}. (JSON: ${JSON.stringify(content)}))`
+      throw new Error(msg)
+    }
+
+    return content
+  }
+
   route(
     resourceType: ReplayApiResourceType,
     params?: { [key: string]: string }
