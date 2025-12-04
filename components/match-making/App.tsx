@@ -8,6 +8,7 @@ import SquadForm from "./squad-form";
 import ScheduleInformationForm from "./schedule-information-form";
 import ChooseRegionForm from "./choose-region-form";
 import GameModeForm from "./game-mode-form";
+import ReviewConfirmForm from "./review-confirm-form";
 import MultistepNavigationButtons from "./multistep-navigation-buttons";
 
 const variants = {
@@ -34,7 +35,7 @@ export default function Component() {
     setPage((prev) => {
       const nextPage = prev[0] + newDirection;
 
-      if (nextPage < 0 || nextPage > 3) return prev;
+      if (nextPage < 0 || nextPage > 4) return prev;
 
       return [nextPage, newDirection];
     });
@@ -42,7 +43,7 @@ export default function Component() {
 
   const onChangePage = React.useCallback((newPage: number) => {
     setPage((prev) => {
-      if (newPage < 0 || newPage > 3) return prev;
+      if (newPage < 0 || newPage > 4) return prev;
       const currentPage = prev[0];
 
       return [newPage, newPage > currentPage ? 1 : -1];
@@ -69,6 +70,9 @@ export default function Component() {
         break;
       case 3:
         component = <ScheduleInformationForm />;
+        break;
+      case 4:
+        component = <ReviewConfirmForm />;
         break;
     }
 
@@ -109,7 +113,8 @@ export default function Component() {
           backButtonProps={{isDisabled: page === 0}}
           className="hidden justify-start lg:flex"
           nextButtonProps={{
-            children: page === 0 ? "Next" : page === 3 ? "Find Match" : "Next",
+            children: page === 4 ? "Find Match" : "Next",
+            isDisabled: page === 4,
           }}
           onBack={onBack}
           onNext={onNext}

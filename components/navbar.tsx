@@ -58,7 +58,7 @@ export const Navbar = () => {
     SessionArea = LoginButton;
   }
 
-  const searchInput = SearchInput();
+  const searchInput = <SearchInput />;
 
   return (
     <NextUINavbar maxWidth="full" height={16} position="sticky" isBordered={true} isBlurred={true} style={{
