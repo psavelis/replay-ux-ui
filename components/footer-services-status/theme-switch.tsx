@@ -1,12 +1,23 @@
 "use client";
 
-import type {RadioGroupProps, RadioProps} from "@nextui-org/react";
+import type {RadioProps} from "@nextui-org/react";
 
 import React from "react";
 import {RadioGroup, VisuallyHidden, useRadio, useRadioGroupContext} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
 
 import {cl} from "../cl";
+
+interface ThemeSwitchProps {
+  classNames?: {
+    wrapper?: string;
+    [key: string]: string | undefined;
+  };
+  defaultValue?: string;
+  orientation?: "horizontal" | "vertical";
+  className?: string;
+  onChange?: (value: string) => void;
+}
 
 const ThemeRadioItem = ({icon, ...props}: RadioProps & {icon: string}) => {
   const {
@@ -45,18 +56,19 @@ const ThemeRadioItem = ({icon, ...props}: RadioProps & {icon: string}) => {
   );
 };
 
-const ThemeSwitch = React.forwardRef<HTMLDivElement, Omit<RadioGroupProps, "children">>(
-  ({classNames = {}, ...props}, ref) => (
+const ThemeSwitch = React.forwardRef<HTMLDivElement, ThemeSwitchProps>(
+  ({classNames = {}, className, defaultValue = "dark", orientation = "horizontal", onChange}, ref) => (
     <RadioGroup
       ref={ref}
       aria-label="Select a theme"
+      className={className}
       classNames={{
         ...classNames,
         wrapper: cl("gap-0 items-center", classNames?.wrapper),
       }}
-      defaultValue="dark"
-      orientation="horizontal"
-      {...props}
+      defaultValue={defaultValue}
+      orientation={orientation}
+      onValueChange={onChange}
     >
       <ThemeRadioItem icon="solar:moon-linear" value="dark" />
       <ThemeRadioItem icon="solar:sun-2-linear" value="light" />
