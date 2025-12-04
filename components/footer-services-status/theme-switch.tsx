@@ -1,7 +1,5 @@
 "use client";
 
-import type {RadioProps} from "@nextui-org/react";
-
 import React from "react";
 import {RadioGroup, VisuallyHidden, useRadio, useRadioGroupContext} from "@nextui-org/react";
 import {Icon} from "@iconify/react";
@@ -19,19 +17,24 @@ interface ThemeSwitchProps {
   onChange?: (value: string) => void;
 }
 
-const ThemeRadioItem = ({icon, ...props}: RadioProps & {icon: string}) => {
+interface ThemeRadioItemProps {
+  icon: string;
+  value?: string;
+}
+
+const ThemeRadioItem = ({icon, value}: ThemeRadioItemProps) => {
   const {
     Component,
     isSelected: isSelfSelected,
     getBaseProps,
     getInputProps,
     getWrapperProps,
-  } = useRadio(props);
+  } = useRadio({value});
 
   const groupContext = useRadioGroupContext();
 
   const isSelected =
-    isSelfSelected || Number(groupContext.groupState.selectedValue) >= Number(props.value);
+    isSelfSelected || Number(groupContext.groupState.selectedValue) >= Number(value);
 
   const wrapperProps = getWrapperProps();
 
