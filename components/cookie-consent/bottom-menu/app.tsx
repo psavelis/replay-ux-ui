@@ -7,21 +7,18 @@ export default function CookieBottomMenu() {
   const [showCookieMenu, setShowCookieMenu] = React.useState(true);
 
   const handleRejectAll = () => {
-    console.log("All cookies rejected");
     sessionStorage.setItem("cookieConsent", "rejected");
     setShowCookieSettings(false);
     setShowCookieMenu(false);
   };
 
   const handleAcceptAll = () => {
-    console.log("All cookies accepted");
     sessionStorage.setItem("cookieConsent", "accepted");
     setShowCookieSettings(false);
     setShowCookieMenu(false);
   };
 
   const handleAcceptSelected = () => {
-    console.log("Selected cookies accepted");
     sessionStorage.setItem("cookieConsent", "selected");
     setShowCookieSettings(false);
     setShowCookieMenu(false);

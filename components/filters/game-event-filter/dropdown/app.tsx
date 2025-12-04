@@ -31,8 +31,7 @@ const GameEventFilter: React.FC = () => {
   };
 
   const addFilterToQuery = () => {
-    // Implement your logic to add the selected filter to the query here
-    console.log(selectedCategory, selectedVariation, selectedValue);
+    // TODO: Implement filter query logic with selectedCategory, selectedVariation, selectedValue
   };
 
   const selectedBadges = useMemo(() => {
@@ -65,10 +64,8 @@ const GameEventFilter: React.FC = () => {
           selectionMode="single"
         >
           {categories.map((item) => {
-            console.log("SectionItem/item ->", item );
             const sectionKeyString = item?.toString().replace(" ", "") || "a";
             const sectionKey = item as keyof typeof GameEventVariationsMap;
-            console.log("GameEventVariationsMap[sectionKey", GameEventVariationsMap[sectionKey])
             const section = GameEventVariationsMap[sectionKey];
 
             return (
