@@ -20,6 +20,36 @@ export enum PlayerRole {
     Support = 'support',
 }
 
+export enum VisibilityType {
+    Public = 'public',
+    Private = 'private',
+    Restricted = 'restricted',
+    Custom = 'custom',
+}
+
+export interface PlayerProfile {
+    id: string;
+    game_id: GameIDKey;
+    nickname: string;
+    slug_uri: string;
+    avatar?: string;
+    roles: string[];
+    description?: string;
+    network_ids?: Record<string, string>;
+    visibility: VisibilityType;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface CreatePlayerProfileRequest {
+    game_id: GameIDKey;
+    nickname: string;
+    roles?: string[];
+    description?: string;
+    visibility?: VisibilityType;
+    avatar?: string;
+}
+
 export interface User {
     id: string,
     name: string,
@@ -72,13 +102,6 @@ export interface Squad {
     visibility?: VisibilityType,
     created_at : Date,
     updated_at : Date
-}
-
-export enum VisibilityType {
-    Public = 'public',
-    Private = 'private',
-    Restricted = 'restricted',
-    Custom = 'custom',
 }
 
 export interface Player {

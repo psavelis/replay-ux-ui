@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useMemo } from "react";
 import {
   Modal,
   ModalContent,
@@ -16,29 +18,40 @@ import {
   Autocomplete,
   AutocompleteSection,
   AutocompleteItem,
+  Spinner,
 } from "@nextui-org/react";
 import { Form } from "@nextui-org/form";
 import { Icon } from "@iconify/react";
 import AvatarUploader from "@/components/avatar/avatar-uploader";
 import { UserIcon } from "@/components/icons";
 import { useSession } from "next-auth/react";
+import { PlayerApiClient } from "@/types/replay-api/player-api.client";
+import { GameIDKey, VisibilityType, CreatePlayerProfileRequest } from "@/types/replay-api/entities.types";
+import { logger } from "@/lib/logger";
 
 const games = [
-  { id: 1, name: "Counter-Strike: Global Offensive", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 2, name: "Valorant", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 3, name: "League of Legends", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 4, name: "Dota 2", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 5, name: "Overwatch", icon: "https://avatars.githubusercontent.com/u/168373383" },
-  { id: 6, name: "Rainbow Six Siege", icon: "https://avatars.githubusercontent.com/u/168373383" },
+  { id: GameIDKey.CounterStrike2, name: "Counter-Strike 2", icon: "https://avatars.githubusercontent.com/u/168373383" },
+  { id: GameIDKey.Valorant, name: "Valorant", icon: "https://avatars.githubusercontent.com/u/168373383" },
+  { id: GameIDKey.LeagueOfLegends, name: "League of Legends", icon: "https://avatars.githubusercontent.com/u/168373383" },
+  { id: GameIDKey.Dota2, name: "Dota 2", icon: "https://avatars.githubusercontent.com/u/168373383" },
 ];
 
 const headingClasses = "flex w-full sticky top-1 z-10 py-1.5 px-2 pt-4 bg-default-100 shadow-small rounded-small";
 
 export default function App() {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { data: session } = useSession();
   const [displayName, setDisplayName] = useState("");
   const [slug, setSlug] = useState("");
+  const [selectedGame, setSelectedGame] = useState<GameIDKey | null>(null);
+  const [selectedRole, setSelectedRole] = useState<string>("");
+  const [visibility, setVisibility] = useState<VisibilityType>(VisibilityType.Public);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const playerApiClient = useMemo(() => new PlayerApiClient({ logger }), []);
 
   const handleOpen = () => {
     if (!session) {
@@ -48,8 +61,66 @@ export default function App() {
     }
   };
 
-  const onSubmit = (e: any) => {
+  const resetForm = () => {
+    setDisplayName("");
+    setSlug("");
+    setSelectedGame(null);
+    setSelectedRole("");
+    setVisibility(VisibilityType.Public);
+    setAvatarFile(null);
+    setError(null);
+    setSuccessMessage(null);
+  };
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!session?.user) {
+      setError("Please sign in to create a player profile");
+      return;
+    }
+
+    if (!selectedGame) {
+      setError("Please select a game");
+      return;
+    }
+
+    if (!displayName.trim()) {
+      setError("Please enter a display name");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const request: CreatePlayerProfileRequest = {
+        game_id: selectedGame,
+        nickname: displayName.trim(),
+        roles: selectedRole ? [selectedRole] : undefined,
+        visibility: visibility,
+      };
+
+      const authToken = (session as unknown as { accessToken?: string }).accessToken || "";
+
+      const result = await playerApiClient.createPlayer(request, authToken);
+
+      if (result) {
+        setSuccessMessage(`Player profile "${result.nickname}" created successfully!`);
+        setTimeout(() => {
+          resetForm();
+          onClose();
+        }, 1500);
+      } else {
+        setError("Failed to create player profile. Please try again.");
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred";
+      logger.error("Failed to create player profile", err);
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,15 +129,37 @@ export default function App() {
     setSlug(value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""));
   };
 
+  const handleGameSelection = (keys: "all" | Set<React.Key>) => {
+    if (keys === "all") return;
+    const selected = Array.from(keys)[0] as GameIDKey;
+    setSelectedGame(selected || null);
+  };
+
+  const handleVisibilitySelection = (keys: "all" | Set<React.Key>) => {
+    if (keys === "all") return;
+    const selected = Array.from(keys)[0] as VisibilityType;
+    setVisibility(selected || VisibilityType.Public);
+  };
+
   return (
     <>
       <Button startContent={<UserIcon size={18} />} color="primary" variant="faded" onPress={handleOpen}>Apply Now</Button>
       <Modal isOpen={isOpen} placement="top-center" onOpenChange={onOpenChange}>
         <ModalContent>
-          {(onClose) => (
+          {(onModalClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">Create Player Profile</ModalHeader>
               <ModalBody>
+                {successMessage && (
+                  <div className="bg-success-100 text-success-700 p-3 rounded-lg mb-4">
+                    {successMessage}
+                  </div>
+                )}
+                {error && (
+                  <div className="bg-danger-100 text-danger-700 p-3 rounded-lg mb-4">
+                    {error}
+                  </div>
+                )}
                 <Form className="w-full" validationBehavior="native" onSubmit={onSubmit}>
                   <div className="flex w-full gap-4 items-center pb-4">
                     <Select
@@ -76,6 +169,10 @@ export default function App() {
                       isMultiline={true}
                       items={games}
                       placeholder="Select a game"
+                      isRequired
+                      isDisabled={isSubmitting}
+                      selectedKeys={selectedGame ? new Set([selectedGame]) : new Set()}
+                      onSelectionChange={handleGameSelection}
                       renderValue={(items) => {
                         return (
                           <div className="flex flex-wrap gap-2">
@@ -102,7 +199,7 @@ export default function App() {
                   </div>
                   <div className="flex w-full gap-4">
                     <div className="flex flex-col gap-1 w-1/2">
-                      <AvatarUploader onUpload={() => {}} />
+                      <AvatarUploader onUpload={(file) => setAvatarFile(file)} />
                     </div>
 
                     <div className="flex flex-col gap-1 w-full">
@@ -116,16 +213,19 @@ export default function App() {
                         type="text"
                         value={displayName}
                         onChange={handleDisplayNameChange}
+                        isDisabled={isSubmitting}
                       />
 
                       <Autocomplete
                         className="max-w-xs"
                         label="Playing Role"
-                        placeholder="Search an playing roles"
+                        placeholder="Search playing roles"
                         scrollShadowProps={{
                           isEnabled: false,
                         }}
                         variant="bordered"
+                        isDisabled={isSubmitting}
+                        onSelectionChange={(key) => setSelectedRole(key as string || "")}
                       >
                         <AutocompleteSection
                           classNames={{
@@ -147,14 +247,18 @@ export default function App() {
                         </AutocompleteSection>
                       </Autocomplete>
 
-                      <Select variant="bordered"
+                      <Select
+                        variant="bordered"
                         className="pt-2"
                         label="Profile Visibility Options"
                         placeholder="Select a visibility option"
+                        isDisabled={isSubmitting}
+                        selectedKeys={new Set([visibility])}
+                        onSelectionChange={handleVisibilitySelection}
                       >
-                        <SelectItem key="Public" value="public" textValue="Public"><div className="flex items-center"> <Icon icon="mdi:earth" /><Spacer x={2} />Public (Default)</div></SelectItem>
-                        <SelectItem key="Private" value="private" textValue="Private"><div className="flex items-center"> <Icon icon="mdi:lock" /><Spacer x={2} /> Private</div></SelectItem>
-                        <SelectItem key="Restricted" value="restricted" textValue="Restricted"><div className="flex items-center"> <Icon icon="mdi:account-group" /><Spacer x={2} /> Group & Members </div></SelectItem>
+                        <SelectItem key={VisibilityType.Public} textValue="Public"><div className="flex items-center"> <Icon icon="mdi:earth" /><Spacer x={2} />Public (Default)</div></SelectItem>
+                        <SelectItem key={VisibilityType.Private} textValue="Private"><div className="flex items-center"> <Icon icon="mdi:lock" /><Spacer x={2} /> Private</div></SelectItem>
+                        <SelectItem key={VisibilityType.Restricted} textValue="Restricted"><div className="flex items-center"> <Icon icon="mdi:account-group" /><Spacer x={2} /> Group & Members </div></SelectItem>
                       </Select>
                     </div>
                   </div>
@@ -173,11 +277,17 @@ export default function App() {
                 </Form>
               </ModalBody>
               <ModalFooter>
-                <Button variant="bordered" onPress={onClose}>
+                <Button variant="bordered" onPress={onModalClose} isDisabled={isSubmitting}>
                   Close
                 </Button>
-                <Button type="submit" color="primary" onPress={onClose}>
-                  Submit
+                <Button
+                  type="submit"
+                  color="primary"
+                  onPress={onSubmit as unknown as () => void}
+                  isDisabled={isSubmitting || !displayName.trim() || !selectedGame}
+                  startContent={isSubmitting ? <Spinner size="sm" color="current" /> : null}
+                >
+                  {isSubmitting ? "Creating..." : "Submit"}
                 </Button>
               </ModalFooter>
             </>

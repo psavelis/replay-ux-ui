@@ -1,7 +1,7 @@
 import { Loggable } from "@/lib/logger";
 import { RouteBuilder } from "./replay-api.route-builder";
 import { ReplayApiSettings, ReplayApiResourceType, ReplayApiSettingsMock } from "./settings";
-import { Player, PlayerSearchResult } from "./entities.types";
+import { Player, PlayerSearchResult, CreatePlayerProfileRequest, PlayerProfile } from "./entities.types";
 
 export interface PlayerApiClientConfig {
   settings?: ReplayApiSettings;
@@ -20,6 +20,14 @@ export class PlayerApiClient {
     };
     this.logger = config.logger;
     this.routeBuilder = new RouteBuilder(this.settings, this.logger);
+  }
+
+  async createPlayer(request: CreatePlayerProfileRequest, authToken: string): Promise<PlayerProfile | undefined> {
+    return this.routeBuilder.post<CreatePlayerProfileRequest, PlayerProfile>(
+      ReplayApiResourceType.Players,
+      request,
+      authToken
+    );
   }
 
   async searchPlayers(query: string, authToken?: string): Promise<PlayerSearchResult | undefined> {
