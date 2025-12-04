@@ -4,6 +4,20 @@ export enum IdentifierSourceType {
     Google = 'google',
 }
 
+export enum GameIDKey {
+    CounterStrike2 = 'cs2',
+    Valorant = 'valorant',
+    LeagueOfLegends = 'lol',
+    Dota2 = 'dota2',
+}
+
+export enum VisibilityType {
+    Public = 'public',
+    Private = 'private',
+    Restricted = 'restricted',
+    Custom = 'custom',
+}
+
 export interface User {
     id: string,
     name: string,
@@ -45,13 +59,29 @@ export interface SquadHistory {
 export interface Squad {
     id : string,
     group_id : string,
-    game_id : string,
+    game_id : GameIDKey,
     name : string,
     symbol : string,
+    slug_uri?: string,
     description : string,
     members : Record<string, Membership>,
-    profiles : Record<string, ProfileDetails>, // ie.: github, faceit, steam, twitter/x, 
+    profiles : Record<string, ProfileDetails>, // ie.: github, faceit, steam, twitter/x,
     history: SquadHistory[],
+    visibility?: VisibilityType,
     created_at : Date,
     updated_at : Date
+}
+
+export interface CreateSquadRequest {
+    game_id: GameIDKey;
+    name: string;
+    symbol: string;
+    description?: string;
+    visibility?: VisibilityType;
+}
+
+export interface SquadSearchResult {
+    data: Squad[];
+    next_offset?: string;
+    total?: number;
 }
