@@ -95,7 +95,7 @@ export default function App() {
                       </div>
                       <div className="flex w-full gap-4">
                         <div className="flex flex-col gap-1 w-1/2">
-                          <AvatarUploader onUpload={(file) => console.log(file)} />
+                          <AvatarUploader onUpload={() => {}} />
                         </div>
 
                         <div className="flex flex-col gap-1 w-full">

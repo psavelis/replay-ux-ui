@@ -12,17 +12,14 @@ interface CookieSettingsModalProps {
 
 const CookieSettingsModal: React.FC<CookieSettingsModalProps> = ({ onClose, onRejectAll, onAcceptAll, onAcceptSelected }) => {
   const handleRejectAll = () => {
-    console.log("All cookies rejected");
     onRejectAll();
   };
 
   const handleAcceptAll = () => {
-    console.log("All cookies accepted");
     onAcceptAll();
   };
 
   const handleAcceptSelected = () => {
-    console.log("Selected cookies accepted");
     onAcceptSelected();
   };
 

@@ -34,7 +34,6 @@ export const getServerSideProps = async (context: any) => {
   }, {} as any);
 
   if (!queryFilter || !Object.keys(queryFilter).length) {
-    console.log('No parameters provided');
     return { notFound: true };
   }
 
