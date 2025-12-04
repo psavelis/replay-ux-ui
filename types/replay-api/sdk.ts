@@ -175,6 +175,14 @@ export class PlayerProfileAPI {
   }
 
   /**
+   * Get the current authenticated user's player profile
+   */
+  async getMyProfile(): Promise<PlayerProfile | null> {
+    const response = await this.client.get<PlayerProfile>('/players/me');
+    return response.data || null;
+  }
+
+  /**
    * Update player profile
    */
   async updatePlayerProfile(profileId: string, updates: Partial<PlayerProfile>): Promise<PlayerProfile | null> {

@@ -233,7 +233,7 @@ export default function ConsoleLayout({
                       id="theme"
                       name="theme"
                       value={theme}
-                      onChange={(e) => setTheme(e.target.value.toLowerCase())}
+                      onChange={(e) => _setTheme(e.target.value.toLowerCase())}
                     >
                       <option value="system">System</option>
                       <option value="dark">Dark</option>
