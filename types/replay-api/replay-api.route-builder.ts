@@ -55,7 +55,7 @@ export class RouteBuilder { // TODO: refactor ==>> criar interface (generica) pa
       return this.route(ReplayApiResourceType.Match, { matchId: matchId[0] });
     }
 
-    return this.route(ReplayApiResourceType.Match, { matchId }); 
+    return this.route(ReplayApiResourceType.Match, { matchId });
   }
 
   forRound(roundId?: UUIDParams): RouteBuilder {
@@ -208,7 +208,7 @@ export class RouteBuilder { // TODO: refactor ==>> criar interface (generica) pa
         this.route(resourceType, params);
       } else if (action.startsWith("for")) {
         for (const k of Object.keys(params)) {
-          this[action as RootFilterMethod](params[k] as any); 
+          this[action as RootFilterMethod](params[k] as any);
         }
       }
     }
