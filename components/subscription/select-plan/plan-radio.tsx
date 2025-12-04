@@ -15,7 +15,7 @@ export interface PlanRadioProps {
     wrapper?: string;
     labelWrapper?: string;
   };
-  value?: string;
+  value: string;
 }
 
 const PlanRadio = React.forwardRef<HTMLInputElement, PlanRadioProps>(

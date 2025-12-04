@@ -6,7 +6,7 @@ import {Icon} from "@iconify/react";
 import {cn} from "@nextui-org/react";
 
 interface RatingRadioItemProps {
-  value?: string;
+  value: string;
   size?: "sm" | "md" | "lg";
   color?: "default" | "primary" | "secondary" | "success" | "warning" | "danger";
 }

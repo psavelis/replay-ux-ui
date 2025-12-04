@@ -19,7 +19,7 @@ interface ThemeSwitchProps {
 
 interface ThemeRadioItemProps {
   icon: string;
-  value?: string;
+  value: string;
 }
 
 const ThemeRadioItem = ({icon, value}: ThemeRadioItemProps) => {
