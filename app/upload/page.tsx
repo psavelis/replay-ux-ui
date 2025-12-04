@@ -12,7 +12,6 @@ const SubmitReplay: React.FC = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Handle form submission (e.g., send the URL to the server)
-    console.log('Submitted URL:', replayUrl);
   };
 
   return (

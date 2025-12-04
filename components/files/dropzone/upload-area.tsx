@@ -31,17 +31,13 @@ const UploadArea = () => {
             const percentCompleted = Math.round(
               (progressEvent.loaded * 100) / progressEvent.total!
             );
-            console.log(`Upload progress: ${percentCompleted}%`);
             setProgress(percentCompleted/2);
           },
         };
   
         const response = await axios.post("http://localhost:4991/games/csgo/replay", formData, options);
   
-        console.log("Upload successful:", response.data);
         setProgress(100);
-
-        console.log(acceptedFiles);
     }, []);
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
