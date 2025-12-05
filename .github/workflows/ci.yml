@@ -179,10 +179,10 @@ jobs:
       - name: Checkout Backend API
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/replay-api
+          repository: leetgaming-pro/replay-api
           ref: ${{ inputs.backend_branch || 'main' }}
           path: replay-api
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -302,16 +302,18 @@ jobs:
       - name: Checkout Backend API
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/replay-api
+          repository: leetgaming-pro/replay-api
           ref: main
           path: replay-api
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Checkout K8s configs
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository_owner }}/leetgaming-pro
+          repository: leetgaming-pro/leetgaming-pro
           ref: main
           path: leetgaming-pro
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           sparse-checkout: |
             k8s
 
