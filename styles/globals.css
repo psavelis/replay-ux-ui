@@ -22,6 +22,218 @@
   color: rgba(52, 68, 92, 1) !important;
 }
 
+/* ******* ESPORTS ANGULAR BUTTON SYSTEM ******** */
+/* Angular cut on bottom-right corner - competitive gaming aesthetic */
+.esports-btn {
+  --cut-size: 12px;
+  position: relative;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--cut-size)),
+    calc(100% - var(--cut-size)) 100%,
+    0 100%
+  );
+  border-radius: 0 !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.esports-btn:hover {
+  --cut-size: 16px;
+  transform: translateY(-1px);
+}
+
+.esports-btn:active {
+  transform: translateY(1px);
+}
+
+/* Small variant */
+.esports-btn-sm {
+  --cut-size: 8px;
+}
+
+.esports-btn-sm:hover {
+  --cut-size: 10px;
+}
+
+/* Large variant */
+.esports-btn-lg {
+  --cut-size: 18px;
+}
+
+.esports-btn-lg:hover {
+  --cut-size: 22px;
+}
+
+/* Primary esports button - Light mode */
+.esports-btn-primary {
+  background: linear-gradient(135deg, #34445C 0%, #2a3749 50%, #34445C 100%);
+  color: #F2F2F2 !important;
+  box-shadow:
+    0 4px 15px rgba(52, 68, 92, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.esports-btn-primary:hover {
+  background: linear-gradient(135deg, #3d5170 0%, #34445C 50%, #3d5170 100%);
+  box-shadow:
+    0 6px 20px rgba(52, 68, 92, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* Primary esports button - Dark mode */
+.dark .esports-btn-primary {
+  background: linear-gradient(135deg, #DCFF37 0%, #c4e530 50%, #DCFF37 100%);
+  color: #1a1a1a !important;
+  box-shadow:
+    0 4px 20px rgba(220, 255, 55, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.dark .esports-btn-primary:hover {
+  background: linear-gradient(135deg, #e4ff52 0%, #DCFF37 50%, #e4ff52 100%);
+  box-shadow:
+    0 6px 25px rgba(220, 255, 55, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Secondary/Action esports button */
+.esports-btn-action {
+  background: linear-gradient(135deg, #FF4654 0%, #e63e4b 50%, #FF4654 100%);
+  color: #ffffff !important;
+  box-shadow:
+    0 4px 15px rgba(255, 70, 84, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.esports-btn-action:hover {
+  background: linear-gradient(135deg, #ff5c68 0%, #FF4654 50%, #ff5c68 100%);
+  box-shadow:
+    0 6px 20px rgba(255, 70, 84, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Ghost/Outlined esports button */
+.esports-btn-ghost {
+  background: transparent;
+  border: 2px solid #34445C;
+  color: #34445C !important;
+}
+
+.esports-btn-ghost:hover {
+  background: rgba(52, 68, 92, 0.1);
+  border-color: #34445C;
+}
+
+.dark .esports-btn-ghost {
+  border-color: #DCFF37;
+  color: #DCFF37 !important;
+}
+
+.dark .esports-btn-ghost:hover {
+  background: rgba(220, 255, 55, 0.1);
+  border-color: #DCFF37;
+}
+
+/* Full-height navbar button variant */
+.esports-btn-nav {
+  --cut-size: 10px;
+  height: 100%;
+  min-height: 3.5rem;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Accent glow effect for important buttons */
+.esports-btn-glow {
+  position: relative;
+}
+
+.esports-btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: inherit;
+  filter: blur(10px);
+  opacity: 0.5;
+  z-index: -1;
+  clip-path: inherit;
+}
+
+.dark .esports-btn-glow::before {
+  opacity: 0.4;
+}
+
+/* Cyber edge decoration - optional accent line */
+.esports-btn-cyber::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: var(--cut-size);
+  width: calc(100% - var(--cut-size) * 2);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.5;
+}
+
+/* Match-making special button */
+.esports-btn-matchmaking {
+  --cut-size: 14px;
+  background: linear-gradient(135deg, #DCFF37 0%, #B8D930 50%, #DCFF37 100%);
+  color: #1a1a1a !important;
+  font-weight: 800;
+  box-shadow:
+    0 4px 20px rgba(220, 255, 55, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.esports-btn-matchmaking:hover {
+  background: linear-gradient(135deg, #e4ff52 0%, #DCFF37 50%, #e4ff52 100%);
+  box-shadow:
+    0 6px 30px rgba(220, 255, 55, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Nav link with angular styling */
+.esports-nav-link {
+  position: relative;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 6px),
+    calc(100% - 6px) 100%,
+    0 100%
+  );
+}
+
+.esports-nav-link:hover {
+  background: rgba(52, 68, 92, 0.1);
+}
+
+.dark .esports-nav-link:hover {
+  background: rgba(220, 255, 55, 0.1);
+}
+
+/* Active nav link indicator */
+.esports-nav-link-active {
+  background: rgba(52, 68, 92, 0.15);
+}
+
+.dark .esports-nav-link-active {
+  background: rgba(220, 255, 55, 0.15);
+}
+
 /* ******* HERO 1 ******** */
 /* ******* HERO 1 ******** */
 /* ******* HERO 1 ******** */
